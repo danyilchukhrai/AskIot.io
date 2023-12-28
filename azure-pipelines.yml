@@ -1,0 +1,22 @@
+trigger:
+  branches:
+    include:
+    - main
+
+stages:
+- stage: Deploy
+  jobs:
+  - deployment: DeployToVM
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'askiot-fe-env'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: SSH@0
+            inputs:
+              sshEndpoint: 'askiotdevssh'
+              runOptions: 'commands'
+              commands: |
+                /home/deploy.sh

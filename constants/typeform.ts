@@ -1,0 +1,1 @@
+export const JOIN_WAITLIST_TYPEFORM_ID = 'yMI8fyIS';
