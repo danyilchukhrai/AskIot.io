@@ -15,7 +15,6 @@ const FormInput: FC<IFormInputProps> = (props) => {
     inputClassName = '',
     type = 'text',
     className,
-    value = '',
     ...rest
   } = props;
   const { control } = useFormContext();
@@ -35,7 +34,6 @@ const FormInput: FC<IFormInputProps> = (props) => {
         className={inputClassName}
         ref={ref}
         type={type}
-        value={value}
         onChange={(e) => {
           onChange(e);
           handleChange && handleChange(e);
