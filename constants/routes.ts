@@ -19,5 +19,4 @@ export const RESTRICTED_APP_ROUTES = {
   BOT: '/app/bot',
   BOT_LIVE: '/app/bot-live',
   BOT_LIVE_TRAIN: '/app/bot-live/training',
-  BOT_DASHBOARD: '/app/bot-dashboard',
 };
