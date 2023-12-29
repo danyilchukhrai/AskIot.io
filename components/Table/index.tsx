@@ -27,7 +27,6 @@ const Table: FC<ITableProps> = ({
   pagination = false,
   onClickRow,
 }) => {
-  console.log('rows', rows)
   return (
     <>
       <div

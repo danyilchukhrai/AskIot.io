@@ -28,8 +28,8 @@ const FileUpload: FC<IFileUploadProps> = ({type, files, setFiles}: IFileUploadPr
                     </p>
                 </div>} />
             <div className="flex flex-col items-start gap-2 self-stretch mt-4">
-                {files.length > 0 ? ([...files].map((file: File, idnex: number) => {
-                    return <div className="flex justify-center items-center gap-[11px]">
+                {files.length > 0 ? ([...files].map((file: File, key: number) => {
+                    return <div key={key} className="flex justify-center items-center gap-[11px]">
                         <img src="/assets/images/solar_file-bold.png" className='w-[58px] h-[58px]' />
                         <div className="flex flex-col items-start gap-[5px] max-w-[190px]">
                             <p className="text-14 text-black font-inter text-base font-normal leading-5">

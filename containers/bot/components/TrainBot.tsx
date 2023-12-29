@@ -2,7 +2,7 @@ import Button from '@/components/Button';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { FC, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { trainBot } from '@/services/bot';
+import { trainBot } from '@/modules/bots/services';
 import FileUpload from '@/containers/bot/components/FileUpload';
 import Table from '@/containers/bot/components/Table';
 
@@ -41,6 +41,15 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
     setIsLoading(false);
   }
 
+  const onHandleBack = () => {
+    if (childStep === CHILD_STEP.UPLOAD_FILES) {
+      onBackStep();
+    } else {
+      setFiles([]);
+      setChildStep(CHILD_STEP.UPLOAD_FILES);
+    }
+  }
+
   if (isLoading) return <LoadingIndicator />;
 
   return (
@@ -54,7 +63,10 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
           {childStep === CHILD_STEP.REVIEW_TRAIN && <Table rows={trainedResult} />}
         </div>
 
-        <div className="flex items-center justify-between mt-6">
+        <div className={`flex items-center justify-between mt-6 ${childStep === CHILD_STEP.UPLOAD_FILES ? 'w-[260px]' : 'w-[710px]'}`}>
+          <Button className="bg-gray" variant="secondary" onClick={onHandleBack}>
+            Previous
+          </Button>
           <Button onClick={onHandleNext}>Next</Button>
         </div>
       </div>

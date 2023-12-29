@@ -1,14 +1,36 @@
 import Button from '@/components/Button';
-import FormInput from '@/components/FormComponents/FormInput';
 import { ChangeEvent, FC, useCallback, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import Input from '@/components/Input';
+import { useRouter } from 'next/navigation';
+import {RESTRICTED_APP_ROUTES } from '@/constants/routes';
+import BotAlert from '@/components/BotAlert';
 
 interface IGoLiveProps {
+  onBackStep: () => void;
 }
 
-const GoLive: FC<IGoLiveProps> = () => {
-  const form = useFormContext();
-  const [name, setName] = useState<string>("");
+const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
+  const router = useRouter();
+
+  const [uri, setUri] = useState<string>("https://ask-iot-chatbot.vercel.app?api_key=Inljc3NlY2pmbW9heWpob211Z2JpIiwicm9sZSI6ImFub");
+  const [alert, setAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const handleCopyClick = async () => {
+    try {
+      await navigator.clipboard.writeText(uri);
+
+      setAlertMessage('Successfully copies text to clipboard!');
+      setAlert(true);
+    } catch (err) {
+      console.error('Unable to copy text to clipboard', err);
+    }
+  };
+
+  const handleFinish = () => {
+    localStorage.setItem('uri', uri);
+    router.push(`${RESTRICTED_APP_ROUTES.BOT_LIVE}`);
+  }
 
   return (
     <>
@@ -34,16 +56,15 @@ const GoLive: FC<IGoLiveProps> = () => {
             <p className='text-[#000] text-[16px] font-inter font-normal leading-6 w-full'>Embed your chatbot on website</p>
             <p className='text-[#ADB5BD] text-[14px] font-inter font-normal leading-6 mb-[6px] w-full'>Embed your chatbot on website</p>
             <div className='mt-[11px] flex'>
-              <FormInput
-                name="vendorname"
+              <Input
+                name="liveUri"
                 className="md:w-[343px] w-full"
-                placeholder="Please input the Bot name."
-                value={name}
+                placeholder="This is live Uri"
+                value={uri}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  setName(e.target.value);
                 }}
               />
-              <div className="flex py-[10px] px-[12px] justify-center items-center rounded-[8px] bg-blue-600 shadow-box cursor-pointer ml-[12px]">
+              <div className="flex py-[10px] px-[12px] justify-center items-center rounded-[8px] bg-blue-600 shadow-box cursor-pointer ml-[12px]" onClick={handleCopyClick}>
                 <p className="text-[#F8F9FA] font-inter text-[14px] leading-[20px]">
                   Copy
                 </p>
@@ -51,8 +72,13 @@ const GoLive: FC<IGoLiveProps> = () => {
             </div>
           </div>
         </div>
-
-        <Button onClick={() => { }} className='mt-5'>Finish</Button>
+        <div className={`flex items-center justify-between w-[670px] mt-5`}>
+          <Button className="bg-gray" variant="secondary" onClick={onBackStep}>
+            Previous
+          </Button>
+          <Button onClick={() => { handleFinish() }} >Finish</Button>
+        </div>
+        <BotAlert message={alertMessage} show={alert} setShow={setAlert} />
       </div>
     </>
   );

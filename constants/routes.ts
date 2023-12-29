@@ -17,4 +17,7 @@ export const RESTRICTED_APP_ROUTES = {
   VENDOR_ONBOARDING: '/app/vendor-onboarding',
   MY_COMPANY: '/app/my-company',
   BOT: '/app/bot',
+  BOT_LIVE: '/app/bot-live',
+  BOT_LIVE_TRAIN: '/app/bot-live/training',
+  BOT_DASHBOARD: '/app/bot-dashboard',
 };

@@ -2,6 +2,7 @@ import { useRef, FC, useCallback, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
+import BotAlert from '@/components/BotAlert';
 
 interface ICustomizeProps {
   onNextStep: () => void;
@@ -14,15 +15,18 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
   const userFileRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState<string>("Bot");
   const [welcomeMessage, setWelcomeMessage] = useState<string>("Hello");
-  const [primaryColor, setPrimaryColor] = useState<string>("#FFF");
-  const [backgroundColor, setBackgroundColor] = useState<string>("#06F");
-  const [chatHeight, setChatHeight] = useState<number>(85);
+  const [primaryColor, setPrimaryColor] = useState<string>("#3662E3");
+  const [backgroundColor, setBackgroundColor] = useState<string>("#FFF");
+  const [chatHeight, setChatHeight] = useState<number>(44);
   const [fontSize, setFontSize] = useState<number>(16);
 
   const [botIconFile, setBotIconFile] = useState<File | null>(null);
   const [userIconFile, setUserIconFile] = useState<File | null>(null);
   const [botIcon, setBotIconSrc] = useState('');
   const [userIcon, setUserIconSrc] = useState('');
+
+  const [alert, setAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const handleBotIconFileChange = (event: any) => {
     const file = event.target.files[0];
@@ -37,7 +41,8 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
 
       reader.readAsDataURL(file);
     } else {
-      alert('Please select a valid PNG file.');
+      setAlertMessage('Please select a valid PNG file!');
+      setAlert(true);
     }
   };
 
@@ -54,7 +59,8 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
 
       reader.readAsDataURL(file);
     } else {
-      alert('Please select a valid PNG file.');
+      setAlertMessage('Please select a valid PNG file!');
+      setAlert(true);
     }
   };
 
@@ -65,6 +71,9 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
     console.log('backgroundColor', backgroundColor);
     console.log('chatHeight', chatHeight);
     console.log('fontSize', fontSize);
+
+    setAlertMessage('The configuration information has been successfully saved!');
+    setAlert(true);
   }
 
   return (
@@ -117,7 +126,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               <p className="text-[13px] text-[#495057] font-inter text-base font-normal leading-4">
                 Primary Color
               </p>
-              <FormInput name="primary_color" placeholder="#FFF" value={primaryColor} onChange={(e: any) => {
+              <FormInput name="primary_color" placeholder="#3662E3" value={primaryColor} onChange={(e: any) => {
                 setPrimaryColor(e.target.value);
               }} />
             </div>
@@ -125,7 +134,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               <p className="text-[13px] text-[#495057] font-inter text-base font-normal leading-4">
                 Background Color
               </p>
-              <FormInput name="background_color" placeholder="#06F" value={backgroundColor} onChange={(e: any) => {
+              <FormInput name="background_color" placeholder="#FFF" value={backgroundColor} onChange={(e: any) => {
                 setBackgroundColor(e.target.value);
               }} />
             </div>
@@ -134,7 +143,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
                 <p className="text-[13px] text-[#495057] font-inter text-base font-normal leading-4">
                   Chat Height (in %)
                 </p>
-                <FormInput name="chat_height" placeholder="85" type="number" onChange={(e: any) => {
+                <FormInput name="chat_height" placeholder="46" type="number" onChange={(e: any) => {
                   setChatHeight(e.target.value);
                 }} />
               </div>
@@ -142,7 +151,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
                 <p className="text-[13px] text-[#495057] font-inter text-base font-normal leading-4">
                   Font size
                 </p>
-                <FormInput name="font_size" placeholder="16" type="number" onChange={(e: any) => {
+                <FormInput name="font_size" placeholder="16px" type="number" onChange={(e: any) => {
                   setFontSize(e.target.value);
                 }} />
               </div>
@@ -152,9 +161,8 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
                 Select bot icon
               </p>
               <div className="flex justify-center items-center gap-5">
-                <div className="w-[43px] h-[43px] bg-[#D9D9D9] rounded-[43px]">
-                  {botIcon !== '' && <img src={botIcon} className="w-[43px] h-[43px] bg-[#D9D9D9] rounded-[43px]" />}
-                </div>
+                {botIcon === '' && <div className="w-[43px] h-[43px] bg-[#D9D9D9] rounded-[43px]"></div>}
+                {botIcon !== '' && <img src={botIcon} className="w-[43px] h-[43px] rounded-[43px]" />}
                 <div className="flex items-center">
                   <input type="file" accept=".png" onChange={handleBotIconFileChange} ref={botFileRef} className='hidden' />
                   <div className="flex py-2 px-5 justify-center items-center gap-2 rounded-l-2xl bg-gray-200" onClick={() => botFileRef?.current?.click()}>
@@ -173,9 +181,8 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
                 Select user icon
               </p>
               <div className="flex justify-center items-center gap-5">
-                <div className="w-[43px] h-[43px] bg-[#D9D9D9] rounded-[43px]">
-                  {userIcon !== '' && <img src={userIcon} className="w-[43px] h-[43px] bg-[#D9D9D9] rounded-[43px]" />}
-                </div>
+                {userIcon === '' && <div className="w-[43px] h-[43px] bg-[#D9D9D9] rounded-[43px]"></div>}
+                {userIcon !== '' && <img src={userIcon} className="w-[43px] h-[43px] rounded-[43px]" />}
                 <div className="flex items-center">
                   <input type="file" accept=".png" onChange={handleUserIconFileChange} ref={userFileRef} className='hidden' />
                   <div className="flex py-2 px-5 justify-center items-center gap-2 rounded-l-2xl bg-gray-200" onClick={() => userFileRef?.current?.click()}>
@@ -191,14 +198,14 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
             </div>
           </div>
           <section className='chatbot'>
-            <div className="flex w-[335px] py-[17.131px] px-[28.551px] justify-center items-center gap-[56.626px] bg-[#3662E3] rounded-t-[8.565px]">
+            <div className="flex w-[335px] py-[17.131px] px-[28.551px] justify-center items-center gap-[56.626px] rounded-t-[8.565px]" style={{ backgroundColor: primaryColor }}>
               <div className="flex items-start gap-[8.089px]">
                 <div className="flex flex-col items-start gap-[10.469px]">
                   <p className="text-white text-center w-[76px] font-inter text-[13.324px] font-semibold leading-[13.324px]">
                     AskIoT GPT
                   </p>
                   <p className="text-white text-center font-inter text-[13.324px] font-semibold leading-[13.324px]">
-                    { name }
+                    {name}
                   </p>
                 </div>
                 <div className="flex py-[1.903px] px-[4.759px] items-start rounded-[8.565px] border border-solid border-green-400 bg-green-50">
@@ -214,47 +221,47 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
                 <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/close.png" />
               </div>
             </div>
-            <div className='px-[25.22px] py-[20.54px]'>
+            <div className='px-[25.22px] py-[20.54px] relative overflow-hidden' style={{ backgroundColor: backgroundColor, height: chatHeight + 'vh' }}>
               <div className="flex items-start gap-[11.42px] self-stretch">
-                <img src='/assets/images/bot-icon.png' className="w-[11px] h-[11px]" />
+                <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
                 <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
-                  <p className="text-[#000] font-inter text-[6.662px] font-normal leading-[9px]">
-                    Sure, here’s a list of devices that are best suited for tank monitoring
+                  <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
+                    {welcomeMessage}
                   </p>
                 </div>
               </div>
               <div className="flex items-start justify-end gap-[11.42px] self-stretch">
-                <img src='/assets/images/user-icon.png' className="w-[11px] h-[11px]" />
+                <img src={`${userIcon === '' ? '/assets/images/user-icon.png' : userIcon}`} className="w-[11px] h-[11px]" />
                 <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-[#06F] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
-                  <p className="text-[#FFF] font-inter text-[6.662px] font-normal leading-[9px]">
+                  <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
                     What devices support tank monitoring?
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-[11.42px] self-stretch">
-                <img src='/assets/images/bot-icon.png' className="w-[11px] h-[11px]" />
+                <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
                 <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
-                  <p className="text-[#000] font-inter text-[6.662px] font-normal leading-[9px]">
+                  <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
                     Sure, here’s a list of devices that are best suited for tank monitoring
                   </p>
                 </div>
               </div>
               <div className="flex items-start justify-end gap-[11.42px] self-stretch">
-                <img src='/assets/images/user-icon.png' className="w-[11px] h-[11px]" />
+                <img src={`${userIcon === '' ? '/assets/images/user-icon.png' : userIcon}`} className="w-[11px] h-[11px]" />
                 <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-[#06F] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
-                  <p className="text-[#FFF] font-inter text-[6.662px] font-normal leading-[9px]">
+                  <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
                     What devices support tank monitoring?
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-[11.42px] self-stretch">
-                <img src='/assets/images/bot-icon.png' className="w-[11px] h-[11px]" />
+                <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
                 <img src='/assets/images/sample.png' className='w-full' />
               </div>
-              <div className="flex h-[23.793px] py-[4.759px] px-[5.71px] justify-between items-center self-stretch rounded-[5.71px] bg-white shadow-box backdrop-blur-[7.930870532989502px] mt-5">
+              <div className="flex h-[23.793px] py-[4.759px] px-[5.71px] justify-between items-center self-stretch rounded-[5.71px] bg-white shadow-box backdrop-blur-[7.930870532989502px] w-[289px] absolute bottom-[17px]">
                 <div className="flex w-[166.786px] items-center gap-[5.71px]">
                   <img src='/assets/images/bot-icon.png' className="w-[9.51px] h-[9.51px]" />
-                  <p className="text-[#ADB5BD] font-inter text-[6.662px] font-normal leading-[9.517px]">
+                  <p className="text-[#ADB5BD] font-inter font-normal leading-[9.517px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
                     Type
                   </p>
                 </div>
@@ -270,8 +277,14 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
         </div>
         <div className='flex justify-between items-start w-full mt-5'>
           <Button onClick={onHandleSave}>Save Changes</Button>
-          <Button onClick={form.handleSubmit(onNextStep)}>Next</Button>
+          <div className={`flex items-center justify-between w-[160px]`}>
+            <Button className="bg-gray" variant="secondary" onClick={onBackStep}>
+              Previous
+            </Button>
+            <Button onClick={form.handleSubmit(onNextStep)}>Next</Button>
+          </div>
         </div>
+        <BotAlert message={alertMessage} show={alert} setShow={setAlert} />
       </div>
     </>
   );
