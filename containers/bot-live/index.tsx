@@ -4,7 +4,7 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import BotAlert from '@/components/BotAlert';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
-import { getBotData } from '@/modules/bots/services';
+import { getBotData, getVendorId } from '@/modules/bots/services';
 
 interface ICustomLivePageProps {
 }
@@ -88,6 +88,8 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
     }
 
     const init = async () => {
+        const vendorId = await getVendorId();
+        setUri(`<script type="text/javascript">(function () { d = document; s = d.createElement("script"); s.src = "https://www.askiot.ai/api/${vendorId}.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>`);
         const data = await getBotData();
 
         console.log('data', data)
@@ -139,6 +141,7 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
     useEffect(() => {
         init();
     }, [])
+
 
     return (
         <>

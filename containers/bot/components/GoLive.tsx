@@ -35,7 +35,7 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
 
   const init = async () => {
     const vendorId = await getVendorId();
-    setUri(`<script type="text/javascript">(function () { d = document; s = d.createElement("script"); s.src = "https://www.askiot.ai//api/${vendorId}.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>`);
+    setUri(`<script type="text/javascript">(function () { d = document; s = d.createElement("script"); s.src = "https://www.askiot.ai/api/${vendorId}.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>`);
   }
 
   useEffect(() => {
