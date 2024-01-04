@@ -47,7 +47,7 @@ const Tabs: FC<ITabsProps> = ({
             .map((item) => {
               const isActiveTab = activeTab === item.key;
               return (
-                <li className={clsx('pr-0 last:pr-0', tabItemStyles)} key={item.key}>
+                <li className={clsx('md:pr-4 pr-0 last:pr-0', tabItemStyles)} key={item.key}>
                   <div
                     className={clsx(
                       'px-4 py-2 rounded-[6px] cursor-pointer',

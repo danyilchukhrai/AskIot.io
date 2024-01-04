@@ -1,5 +1,6 @@
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
+import FormPhoneNumberInput from '@/components/FormComponents/FormPhoneNumberInput';
 import FormRadio from '@/components/FormComponents/FormRadio';
 import FormTextarea from '@/components/FormComponents/FormTextarea';
 import LoadingIndicator from '@/components/LoadingIndicator';
@@ -161,7 +162,7 @@ const ClaimOwnershipForm: FC<IClaimOwnershipFormProps> = ({
             <p className="text-l text-black">
               Provide the best number to reach you for verification
             </p>
-            <FormInput name="phone_number" placeholder="Phone number" />
+            <FormPhoneNumberInput name="phone_number" placeholder="Phone number" />
           </div>
           <div className="grid grid-cols-2">
             <p className="text-l text-black">First name</p>
@@ -178,7 +179,7 @@ const ClaimOwnershipForm: FC<IClaimOwnershipFormProps> = ({
         </div>
         <Button className="mt-6">Submit</Button>
       </form>
-      {(isLoading || isSendOTPLoading) && <LoadingIndicator />}
+      <LoadingIndicator isLoading={isLoading || isSendOTPLoading} />
     </>
   );
 };

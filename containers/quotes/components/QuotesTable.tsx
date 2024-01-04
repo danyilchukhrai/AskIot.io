@@ -1,10 +1,9 @@
 import Badge, { ColorType } from '@/components/Badge';
 import { CustomNextImage } from '@/components/CustomImage';
-import DropdownButton from '@/components/DropdownButton';
 import Spinner from '@/components/Spinner';
 import Table, { ColumnsProps } from '@/components/Table';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
-import { QUOTE_STATUS } from '@/constants/quotes';
+import { QUOTE_STATUS, colorByStatus } from '@/constants/quotes';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import { askIOTApiFetch } from '@/helpers/fetchAPI';
 import { getQuotesURL } from '@/services/quotes';
@@ -12,7 +11,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { quoteTypes } from '../utils';
+import { getQuoteStatus } from '../utils';
 interface IQuotesTableProps {
   status?: QUOTE_STATUS;
   currentUserType: string;
@@ -91,10 +90,10 @@ const QuotesTable: FC<IQuotesTableProps> = ({ status, currentUserType }) => {
       renderNode: (row: any) => {
         return (
           <div className="flex items-center md:flex-row flex-col">
-            {renderImage(row?.productDetails?.img)}
+            {renderImage(row?.productDetails?.product_image)}
             <div className="md:pl-8 pt-2 md:pt-0">
               <p className="text-base text-gray-1000 font-medium pb-1 text-center md:text-start">
-                {row?.productDetails?.name}
+                {row?.productDetails?.product_name}
               </p>
               <p className="flex items-center text-s text-gray-600 w-[140px] md:w-auto">
                 <span className="capitalize text-primary-500 font-medium text-xs">{row?.type}</span>
@@ -111,12 +110,12 @@ const QuotesTable: FC<IQuotesTableProps> = ({ status, currentUserType }) => {
       renderNode: (row: any) => (
         <div className="flex items-center">
           <CustomNextImage
-            src={row?.productDetails?.logo || DEFAULT_VENDOR_LOGO || ''}
+            src={row?.productDetails?.vendorlogo || DEFAULT_VENDOR_LOGO || ''}
             width={20}
             height={20}
             alt={''}
           />
-          <p className="text-base text-gray-1000 pl-2.5">{row?.productDetails?.company}</p>
+          <p className="text-base text-gray-1000 pl-2.5">{row?.productDetails?.vendorname}</p>
         </div>
       ),
     },
@@ -132,25 +131,12 @@ const QuotesTable: FC<IQuotesTableProps> = ({ status, currentUserType }) => {
       key: 'total',
       styles: 'w-[15%]',
       renderNode: (row: any) => {
-        const colorByStatus = {
-          [QUOTE_STATUS.Pending]: 'red',
-          [QUOTE_STATUS.Requested]: 'orange',
-        };
-        const quoteStatus = quoteTypes?.find((item) => item?.key === row?.status);
+        const quoteStatus = getQuoteStatus(row?.status);
         return (
           <div className="flex items-center justify-between">
             <Badge
-              label={quoteStatus?.value}
+              label={quoteStatus}
               color={colorByStatus[row?.status as QUOTE_STATUS] as ColorType}
-            />
-            <DropdownButton
-              className="invisible group-hover:visible"
-              dropdownMenu={[
-                {
-                  label: 'View',
-                  onAction: () => router.push(`${RESTRICTED_APP_ROUTES.QUOTES}/${row?.quote_id}`),
-                },
-              ]}
             />
           </div>
         );

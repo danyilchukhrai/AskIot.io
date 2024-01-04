@@ -88,3 +88,28 @@ export const formatPhoneNumber = (value: string): string => {
 export const generateSpecificationIconPath = (iconName?: string) => {
   return `/assets/icons/${iconName}.svg`;
 };
+
+export const getArrayValueFromTags = (value: string) => {
+  if (!value) return [];
+  try {
+    return (JSON.parse(value) || [])?.map((it: any) => it?.value);
+  } catch (error) {
+    return value.split(', ');
+  }
+};
+
+export const getMultipleValue = (array: any) => {
+  return array?.map((it: any) => it?.value);
+};
+
+export const toBase64 = (file: File) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const result = (reader?.result as string) || '';
+      return resolve(result?.replace('data:', '')?.replace(/^.+,/, ''));
+    };
+
+    reader.onerror = reject;
+  });

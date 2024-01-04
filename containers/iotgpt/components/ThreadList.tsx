@@ -54,23 +54,6 @@ const ThreadList: FC<IThreadListProps> = ({ onCloseSearchList }) => {
             <img className="-rotate-90" src="/assets/icons/chevron-right-icon.svg" alt="" />
           </Button>
         ) : null}
-        {/* <Input
-          placeholder="Search anything..."
-          value={searchKey}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchKey(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === ENTER_KEY) {
-              handleAddNewSearch();
-            }
-          }}
-          endAdornment={
-            isMobileMatches ? (
-              <Button className="!p-0" variant="inline" onClick={onCloseSearchList}>
-                <img className="-rotate-90" src="/assets/icons/chevron-right-icon.svg" alt="" />
-              </Button>
-            ) : null
-          }
-        /> */}
       </div>
       <ul className="search-list flex-1 overflow-auto my-4 px-4 md:px-8">
         {threads?.map((item, index) => (

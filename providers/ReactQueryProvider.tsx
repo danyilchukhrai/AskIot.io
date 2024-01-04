@@ -1,6 +1,6 @@
 'use client';
 
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental';
 import { PropsWithChildren, useState } from 'react';
 
@@ -10,6 +10,7 @@ const ReactQueryProvider = ({ children }: PropsWithChildren) => {
       defaultOptions: {
         queries: {
           refetchOnWindowFocus: false,
+          retry: false,
         },
       },
     }),

@@ -46,6 +46,22 @@ export const VENDOR_API = {
   chatVendorQuery: {
     api: '/private/chats/process-vendor-query',
   },
+  createEditDevice: {
+    api: (id?: number) => (id ? `/private/devices/device/${id}` : '/private/devices/device'),
+  },
+  createEditProduct: {
+    api: (id?: number) => (id ? `/private/products/product/${id}` : '/private/products/product'),
+  },
+  deleteProduct: {
+    api: (id: number) => `/private/products/product/${id}`,
+  },
+  updateVendor: {
+    api: (id: number) => `/private/vendors/${id}`,
+  },
+  getProductById: {
+    api: (id: number, isDevice: boolean) =>
+      isDevice ? `/private/devices/${id}` : `/private/products/${id}`,
+  },
 };
 
 export const QUOTES_API = {
@@ -56,10 +72,10 @@ export const QUOTES_API = {
 
 export const USER_API = {
   getProviderStatus: {
-    api: '/private/users/provider-status',
+    api: '/api/private/users/provider-status',
   },
   createUser: {
-    api: '/private/users/',
+    api: '/api/private/users/',
   },
 };
 
@@ -103,5 +119,11 @@ export const MESSAGE_API = {
 export const PRODUCT_API = {
   queryDevice: {
     api: '/public/chats/queryDevice',
+  },
+};
+
+export const COMMON_API = {
+  getSASToken: {
+    api: '/private/azure-storage/get-sas-token',
   },
 };

@@ -91,7 +91,7 @@ const MessageContextProvider: FC<IMessageContextProviderProps> = ({ children }) 
       >
         {children}
       </MessageContext.Provider>
-      {isLoadingGetAllMessages && <LoadingIndicator />}
+      <LoadingIndicator isLoading={isLoadingGetAllMessages} />
     </>
   );
 };

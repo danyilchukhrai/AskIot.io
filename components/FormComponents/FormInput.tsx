@@ -1,7 +1,7 @@
-import { FC, HTMLInputTypeAttribute } from 'react';
-import Input, { IInputProps } from '../Input';
-import { useController, useFormContext } from 'react-hook-form';
 import clsx from 'clsx';
+import { FC, HTMLInputTypeAttribute } from 'react';
+import { useController, useFormContext } from 'react-hook-form';
+import Input, { IInputProps } from '../Input';
 
 interface IFormInputProps extends IInputProps {
   inputClassName?: string;
@@ -31,6 +31,7 @@ const FormInput: FC<IFormInputProps> = (props) => {
       <Input
         {...rest}
         {...inputProps}
+        name={name}
         className={inputClassName}
         ref={ref}
         type={type}

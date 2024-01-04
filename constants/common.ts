@@ -25,3 +25,5 @@ export const DEFAULT_PAGINATION = {
   limit: 10,
   page: 0,
 };
+
+export const IMAGE_ACCEPT_INPUT = 'image/*';

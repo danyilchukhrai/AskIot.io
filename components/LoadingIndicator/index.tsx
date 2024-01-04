@@ -3,9 +3,14 @@ import * as React from 'react';
 import Portal from '../PagePortal';
 import Spinner from '../Spinner';
 
-interface ILoadingIndicatorProps extends React.HTMLProps<HTMLDivElement> {}
+interface ILoadingIndicatorProps extends React.HTMLProps<HTMLDivElement> {
+  isLoading?: boolean;
+}
 
 const LoadingIndicator: React.FunctionComponent<ILoadingIndicatorProps> = (props) => {
+  const { isLoading } = props;
+  if (typeof isLoading === 'boolean' && !isLoading) return null;
+
   return (
     <Portal>
       <div

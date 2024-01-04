@@ -110,8 +110,6 @@ const ChannelDetails: FC<IChannelDetailsProps> = ({
     );
   if (!selectedChannel) return null;
 
-  console.log(getUnitMessageArray());
-
   return (
     <div className="h-full flex flex-col">
       {selectedChannel && (

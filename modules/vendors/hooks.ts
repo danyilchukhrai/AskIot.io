@@ -1,13 +1,18 @@
 import { VENDOR_API } from '@/constants/api-endpoints';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import {
   chatVendorQuery,
   claimVendor,
+  createEditDevice,
+  createEditProduct,
   createVendor,
+  deleteProduct,
+  getProductById,
   getProductsByVendor,
   getVendorDetails,
   searchVendors,
+  updateVendor,
 } from './services';
 import { ISearchVendorsQueryParams } from './type';
 
@@ -67,5 +72,44 @@ export const useGetProductsByVendor = (id: string | number) => {
 export const useChatVendorQuery = () => {
   return useMutation({
     mutationFn: chatVendorQuery,
+  });
+};
+
+export const useCreateEditDevice = () => {
+  return useMutation({
+    mutationFn: createEditDevice,
+  });
+};
+
+export const useCreateEditProduct = () => {
+  return useMutation({
+    mutationFn: createEditProduct,
+  });
+};
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  const fn = async ({ id, vendorId }: { id: number; vendorId: number }) => {
+    await deleteProduct(id);
+    queryClient.invalidateQueries({
+      queryKey: [VENDOR_API.getProductsByVendor.api(vendorId), vendorId],
+    });
+  };
+  return useMutation({
+    mutationFn: fn,
+  });
+};
+
+export const useUpdateVendor = () => {
+  return useMutation({
+    mutationFn: updateVendor,
+  });
+};
+
+export const useGetProductById = (id: number, isDevice: boolean) => {
+  return useQuery({
+    queryKey: [VENDOR_API.getProductById.api(id, isDevice), id],
+    queryFn: () => getProductById(id, isDevice),
+    enabled: !!id,
   });
 };

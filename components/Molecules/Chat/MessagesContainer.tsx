@@ -1,6 +1,7 @@
 import { IThreadInteraction } from '@/modules/iot-gpt/type';
 import { FC, Fragment } from 'react';
 import MessageItem from './MessageItem';
+import { useUserContext } from '@/providers/UserProvider';
 
 interface IMessagesContainerProps {
   data?: IThreadInteraction[];
@@ -8,12 +9,18 @@ interface IMessagesContainerProps {
 }
 
 const MessagesContainer: FC<IMessagesContainerProps> = ({ data = [], isLoading }) => {
+  const { askIOTUserDetails } = useUserContext();
   return (
     <div className="h-full">
       {data.map((item, index) => (
         <Fragment key={item.id}>
           <div className="mb-5 last:mb-0">
-            <MessageItem content={item.user} isCurrentUser />
+            <MessageItem
+              content={item.user}
+              senderFirstName={askIOTUserDetails?.first_name}
+              senderLastName={askIOTUserDetails?.last_name}
+              isCurrentUser
+            />
           </div>
           {item.ai && (
             <div className="mb-5 last:mb-0">

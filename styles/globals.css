@@ -63,10 +63,39 @@
       background-color: rgba(152, 128, 255, 0.2);
     }
   }
+
+  .custom-select-arrow {
+    background-image: url('/assets/icons/chevron-down-icon.svg');
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    padding-right: 2.5rem;
+  }
+
+  .toggle-input:checked ~ .block {
+    background-color: #0066ff;
+  }
+  .toggle-input:checked ~ .dot {
+    transform: translate(-100%, -50%);
+  }
+
+  .phone-number-input {
+    @apply px-3 py-2.5 border border-gray-200 rounded-lg;
+  }
+  .phone-number-input input {
+    @apply text-gray-1000 text-base w-full border-r-0 outline-none;
+  }
+  .phone-number-input .PhoneInputCountrySelect {
+    @apply rounded-lg px-3 py-2.5 border border-gray-200;
+  }
 }
 
 @layer utilities {
   .word-break {
     word-break: break-word;
   }
+}
+
+.textarea > .tagify {
+  min-height: 80px;
 }

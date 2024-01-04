@@ -21,7 +21,9 @@ export const withAuth = (Component: React.FC) => (allowedRoles: USER_TYPE[]) => 
     if (user && !allowedRoles.some((it) => allowedUserTypes.includes(it))) {
       setIsValidRoute(false);
       setTimeout(() => {
-        router.push(routeConfig[currentUserType].default);
+        if (currentUserType) {
+          router.push(routeConfig[currentUserType].default);
+        }
       }, 300);
     } else if (!user) {
       setIsValidRoute(false);

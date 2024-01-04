@@ -1,14 +1,14 @@
-import { FC, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { FormProvider, useForm } from 'react-hook-form';
-import FormInput from '@/components/FormComponents/FormInput';
 import Button from '@/components/Button';
+import FormInput from '@/components/FormComponents/FormInput';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { AUTH_ROUTES } from '@/constants/routes';
 import { IForgotPasswordForm } from '@/types/auth';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { forgotPasswordSchema } from '@/validations/auth';
+import { yupResolver } from '@hookform/resolvers/yup';
+import Image from 'next/image';
+import Link from 'next/link';
+import { FC, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 
 interface IForgotPasswordProps {}
 
@@ -60,7 +60,7 @@ const ForgotPassword: FC<IForgotPasswordProps> = (props) => {
           </Link>
         </p>
       </div>
-      {isLoading && <LoadingIndicator />}
+      <LoadingIndicator isLoading={isLoading} />
     </>
   );
 };

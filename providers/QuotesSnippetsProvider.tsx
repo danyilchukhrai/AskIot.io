@@ -1,18 +1,20 @@
 'use client';
 
+import { API_ENDPOINT } from '@/configs/appConfig';
+import { COOKIES_STORAGE_KEYS } from '@/constants/common';
+import { askIOTApiFetch } from '@/helpers/fetchAPI';
+import { getValue } from '@/helpers/storage';
+import { IUserQuoteSnippets } from '@/types/user';
 import {
+  Dispatch,
+  FC,
   ReactNode,
+  SetStateAction,
   createContext,
   useContext,
   useEffect,
   useState,
-  Dispatch,
-  SetStateAction,
-  FC,
 } from 'react';
-import { IUserQuoteSnippets } from '@/types/user';
-import { API_ENDPOINT } from '@/configs/appConfig';
-import { askIOTApiFetch } from '@/helpers/fetchAPI';
 import { toast } from 'react-toastify';
 
 interface IQuoteSnippetsProps {
@@ -51,6 +53,8 @@ const QuoteSnippetProvider: FC<IQuoteSnippetsProps> = (props) => {
   const [isQuoteRequestedLoading, setIsQuoteRequestedLoading] = useState(true);
 
   const getUserQuotesSnippets = async () => {
+    const accessToken = getValue(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
+    if (!accessToken) return;
     try {
       const snippetsData = await askIOTApiFetch(
         `${API_ENDPOINT}/private/quotes/user/quotes/snippet`,

@@ -1,23 +1,22 @@
 import LoadingIndicator from '@/components/LoadingIndicator';
 import Modal, { IModalElement } from '@/components/Modal';
 import { IOTPInputElement } from '@/components/OTPInput';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { API_ENDPOINT } from '@/configs/appConfig';
 import { OTP_LENGTH } from '@/constants/common';
 import { OTP_ERROR_MSG } from '@/constants/error-msg';
+import { askIOTApiFetch } from '@/helpers/fetchAPI';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { IQuoteVerificationForm } from '@/modules/quotes/types';
+import { useAuthContext } from '@/providers/AuthProvider';
+import { useUserContext } from '@/providers/UserProvider';
 import { quoteVerificationSchema } from '@/validations/quotes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useAuthContext } from '@/providers/AuthProvider';
-import QuoteVerificationFormDesktop from './QuoteVerificationFormDesktop';
-import QuoteVerificationFormMobile from './QuoteVerificatonFormMobile';
-import { askIOTApiFetch } from '@/helpers/fetchAPI';
-import { API_ENDPOINT } from '@/configs/appConfig';
-import OTPForm from '@/containers/phone-login/components/OTPForm';
 import { toast } from 'react-toastify';
+import QuoteVerificationFormDesktop from './QuoteVerificationFormDesktop';
 import QuoteVerificationOTPForm from './QuoteVerificationOTP';
-import { useUserContext } from '@/providers/UserProvider';
+import QuoteVerificationFormMobile from './QuoteVerificatonFormMobile';
 
 interface IQuoteVerificationProps {
   onSuccess?: () => void;
@@ -160,7 +159,7 @@ const QuoteVerification = forwardRef<IQuoteVerificationElement, IQuoteVerificati
             </FormProvider>
           )}
         </Modal>
-        {isSendOTPLoading && <LoadingIndicator />}
+        <LoadingIndicator isLoading={isSendOTPLoading} />
         {openQuoteVerificationMobile && (
           <FormProvider {...form}>
             <QuoteVerificationFormMobile

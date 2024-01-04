@@ -3,15 +3,17 @@ import Alert from '../Alert';
 import { useRouter } from 'next/navigation';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import clsx from 'clsx';
+import { IQuoteDetails } from '@/interfaces/quotes';
 
 interface IQuoteRequestedAlert {
   drawerIsValid?: boolean;
+  quote_id: number | undefined;
 }
 
-const QuoteRequestedAlert: FC<IQuoteRequestedAlert> = ({ drawerIsValid = false }) => {
+const QuoteRequestedAlert: FC<IQuoteRequestedAlert> = ({ drawerIsValid = false, quote_id }) => {
   const router = useRouter();
   const handleOpenQuote = () => {
-    router.push(RESTRICTED_APP_ROUTES.VENDOR_QUOTE);
+    router.push(`${RESTRICTED_APP_ROUTES.QUOTES}/${quote_id}`);
   };
   return (
     <div

@@ -1,5 +1,7 @@
 'use client';
 
+import { COOKIES_STORAGE_KEYS } from '@/constants/common';
+import { getValue } from '@/helpers/storage';
 import { createAskIotUser, getAskIotUserDetails } from '@/services/user';
 import { IAskIOTUserDetails } from '@/types/user';
 import * as React from 'react';
@@ -27,6 +29,9 @@ const UserProvider: React.FunctionComponent<IUserProviderProps> = (props) => {
   const [getAskIOTUserIsValid, setAskIOTUserIsValid] = React.useState(true);
 
   const userFlow = async () => {
+    const accessToken = getValue(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
+    if (!accessToken) return;
+
     const userData = await getAskIotUserDetails();
     if (userData === null) {
       const createUser = await createAskIotUser();

@@ -1,17 +1,19 @@
 import clsx from 'clsx';
 import { FC } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import PhoneInput, { IPhoneInputProps } from '../PhoneInput';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import { IInputProps } from '../Input';
 
-interface IFormPhoneNumberInputProps extends IPhoneInputProps {
+interface IFormPhoneNumberInputProps extends IInputProps {
   inputClassName?: string;
 }
 
 const FormPhoneNumberInput: FC<IFormPhoneNumberInputProps> = (props) => {
-  const { name = '', inputClassName = '', className, ...rest } = props;
+  const { name = '', inputClassName = '', className, label, ...rest } = props;
   const { control } = useFormContext();
   const {
-    field: { ref, ...inputProps },
+    field,
     fieldState: { invalid, error },
   } = useController({
     name,
@@ -20,7 +22,15 @@ const FormPhoneNumberInput: FC<IFormPhoneNumberInputProps> = (props) => {
 
   return (
     <div className={clsx('w-full input-container', className)}>
-      <PhoneInput {...rest} {...inputProps} className={inputClassName} ref={ref} />
+      {label && <p className="text-gray-700 text-s mb-2">{label}</p>}
+      <PhoneInput
+        {...field}
+        international
+        countryCallingCodeEditable={false}
+        defaultCountry="US"
+        name={name}
+        className="phone-number-input"
+      />
       {invalid && <p className="text-red-500 text-s mt-2 error-msg">{error?.message}</p>}
     </div>
   );

@@ -41,6 +41,7 @@ const ProductInfo: FC<IProductInfoProps> = ({
   const quoteVerificationRef = useRef<IModalElement>(null);
   const [product, setProduct] = useState<IRecommendationInfo>();
   const [isShowAlert, setIsShowAlert] = useState(false);
+  const [quoteId, setQuoteId] = useState<number | undefined>();
   const { data, isLoading } = useGetRecommendationProductDetail(
     product?.slug,
     product?.recommendationType,
@@ -67,7 +68,9 @@ const ProductInfo: FC<IProductInfoProps> = ({
   useEffect(() => {
     if (quotesSnippets) {
       setIsQuoteRequestedLoading(true);
-      const quoteRequested = quotesSnippets?.some((item) => item?.product_id === product?.id);
+      const quoteRequested = quotesSnippets?.some(
+        (item) => item?.product_id === product?.product_id,
+      );
       if (quoteRequested) {
         setIsQuoteRequested((prevData) => ({ ...prevData, [product?.id as number]: true }));
       }
@@ -106,7 +109,8 @@ const ProductInfo: FC<IProductInfoProps> = ({
     }
   };
 
-  const requestQuoteHandler = () => {
+  const requestQuoteHandler = (quote_id: number | undefined) => {
+    setQuoteId(quote_id);
     setIsShowAlert(true);
     setGetQuotesSnippetsIsValid(true);
   };
@@ -152,8 +156,6 @@ const ProductInfo: FC<IProductInfoProps> = ({
       isHidden: true,
     },
   ];
-
-  console.log('productData', productData);
 
   return (
     <>
@@ -244,7 +246,7 @@ const ProductInfo: FC<IProductInfoProps> = ({
         )}
       </div>
 
-      {isShowAlert && <QuoteRequestedAlert drawerIsValid />}
+      {isShowAlert && <QuoteRequestedAlert drawerIsValid quote_id={quoteId} />}
       <RequestQuoteModal
         ref={requestQuoteModalRef}
         product={productData}

@@ -67,7 +67,7 @@ export interface IProduct {
   company: string;
   name: string;
   img: string;
-  product_type: string;
+  product_type: string | string[];
   device_serp_ai: {
     features: string[];
     introduction: string;
@@ -83,6 +83,14 @@ export interface IProduct {
   product_image: string;
   vendorname: string;
   vendorlogo: string;
+  product_url?: string;
+  product_description: string;
+  product_details: {
+    name: string;
+    description: string;
+  }[];
+  usecase: string[];
+  product_name: string;
 }
 
 export interface ISpecification {

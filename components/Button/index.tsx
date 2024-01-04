@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { ButtonHTMLAttributes, FC, forwardRef } from 'react';
+import { ButtonHTMLAttributes, forwardRef } from 'react';
+import Spinner from '../Spinner';
 
 type ButtonVariant = 'primary' | 'secondary' | 'inline' | 'info' | 'error';
 
@@ -7,6 +8,7 @@ export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   disabledPadding?: boolean;
   fullWidth?: boolean;
+  isLoading?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, IButtonProps>(
@@ -17,6 +19,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
       className,
       disabledPadding = false,
       fullWidth = false,
+      isLoading = false,
+      disabled,
       ...rest
     },
     ref,
@@ -37,12 +41,15 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             'text-white bg-primary-500 disabled:bg-primary-400 disabled:text-gray-200':
               variant === 'info',
             'text-white bg-red-500': variant === 'error',
+            'flex items-center gap-2': isLoading,
           },
           disabledPadding ? 'p-0' : 'px-3 py-2.5',
           fullWidth ? 'w-full' : 'w-fit',
           className,
         )}
+        disabled={disabled || isLoading}
       >
+        {isLoading && <Spinner width={22} height={22} />}
         {children}
       </button>
     );

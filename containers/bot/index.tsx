@@ -1,23 +1,37 @@
 import { FC, useEffect, useState } from 'react';
 import NewBot from './components/NewBot';
 import CustomLivePage from '@/containers/bot-live';
+import { checkBotStatus } from '@/modules/bots/services';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
 interface IBotProps { }
 
 const Bot: FC<IBotProps> = (props) => {
-  const [liveUri, setLiveUri] = useState('');
+  const [isCreated, setIsCreated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const initialize = async () => {
+    setIsLoading(true);
+
+    const res = await checkBotStatus();
+    
+    if(res.data !== true && res.data !== null) {
+      setIsCreated(true);
+    }
+
+    setIsLoading(false);
+  }
 
   useEffect(() => {
-    const uri = localStorage.getItem('uri');
-    if(uri !== null && uri !== '' && uri !== undefined) {
-      setLiveUri(uri);
-    }
+    initialize();
   }, [])
+
+  if (isLoading) return <LoadingIndicator />;
 
   return (
     <>
-      {liveUri === '' && <NewBot />}
-      {liveUri !== '' && <CustomLivePage />}
+      {isCreated === false && <NewBot />}
+      {isCreated === true && <CustomLivePage />}
     </>
   );
 };

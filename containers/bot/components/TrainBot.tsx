@@ -2,9 +2,10 @@ import Button from '@/components/Button';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { FC, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { trainBot } from '@/modules/bots/services';
+import { trainBot, uploadFiles, processUploads } from '@/modules/bots/services';
 import FileUpload from '@/containers/bot/components/FileUpload';
 import Table from '@/containers/bot/components/Table';
+import { IFile } from '@/modules/bots/types';
 
 interface ITrainBotProps {
   onNextStep: () => void;
@@ -17,23 +18,33 @@ enum CHILD_STEP {
 }
 
 const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
-  const fileTypes = ["TXT", "MB", "JSON"];
+  const fileTypes = ["PDF", "pdf"];
   const [childStep, setChildStep] = useState(CHILD_STEP.UPLOAD_FILES);
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [trainedResult, setTrainedResult] = useState<any[]>([]);
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   const form = useFormContext();
 
   const vendorName = form.getValues('vendorname');
 
+  useEffect(() => {
+    if(isDisabled == false && childStep === CHILD_STEP.UPLOAD_FILES) {
+      onNextStep();
+    }
+  }, [isDisabled])
+
   const onHandleNext = async () => {
     setIsLoading(true);
     if (childStep === CHILD_STEP.UPLOAD_FILES) {
       if (files.length > 0) {
-        const response: any = await trainBot(files);
-        setTrainedResult(response.data);
-        setChildStep(CHILD_STEP.REVIEW_TRAIN);
+        const data: IFile[] = await uploadFiles(files);
+        // setTrainedResult(response.data);
+        // setChildStep(CHILD_STEP.REVIEW_TRAIN);
+
+        const result = await processUploads(data);
+        setIsDisabled(false);
       }
     } else if (childStep === CHILD_STEP.REVIEW_TRAIN) {
       onNextStep();
@@ -67,7 +78,7 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
           <Button className="bg-gray" variant="secondary" onClick={onHandleBack}>
             Previous
           </Button>
-          <Button onClick={onHandleNext}>Next</Button>
+          <Button onClick={onHandleNext} >{childStep === CHILD_STEP.UPLOAD_FILES ? "Upload" : "Next"}</Button>
         </div>
       </div>
     </>

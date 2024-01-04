@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import clsx from 'clsx';
 
-export type ColorType = 'green' | 'orange' | 'red' | 'gray';
+export type ColorType = 'green' | 'orange' | 'red' | 'gray' | 'blue';
 type SizeType = 'default' | 'small';
 
 interface IBadgeProps {
@@ -21,6 +21,8 @@ const Badge: FC<IBadgeProps> = ({ label, color = 'green', size = 'default' }) =>
         return 'text-red-600 border-red-200 bg-red-100';
       case 'gray':
         return 'text-gray-700 border-gray-200 bg-gray';
+      case 'blue':
+        return 'text-primary-500 border-primary-200 bg-primary-100';
       default:
         return '';
     }

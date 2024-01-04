@@ -3,6 +3,8 @@ import { useFormContext } from 'react-hook-form';
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
 import BotAlert from '@/components/BotAlert';
+import { uploadFile, updateBot } from '@/modules/bots/services';
+import Spinner from '@/components/Spinner';
 
 interface ICustomizeProps {
   onNextStep: () => void;
@@ -24,6 +26,8 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
   const [userIconFile, setUserIconFile] = useState<File | null>(null);
   const [botIcon, setBotIconSrc] = useState('');
   const [userIcon, setUserIconSrc] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -49,7 +53,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
   const handleUserIconFileChange = (event: any) => {
     const file = event.target.files[0];
 
-    if (file && file.type === 'image/png') {
+    if (file) {
       const reader = new FileReader();
 
       reader.onload = function (event: any) {
@@ -64,16 +68,48 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
     }
   };
 
-  const onHandleSave = () => {
-    console.log('name', name);
-    console.log('welcomeMessage', welcomeMessage);
-    console.log('primaryColor', primaryColor);
-    console.log('backgroundColor', backgroundColor);
-    console.log('chatHeight', chatHeight);
-    console.log('fontSize', fontSize);
+  const onHandleSave = async () => {
+    setIsLoading(true)
+    try {
 
-    setAlertMessage('The configuration information has been successfully saved!');
-    setAlert(true);
+      console.log('name', name);
+      console.log('welcomeMessage', welcomeMessage);
+      console.log('primaryColor', primaryColor);
+      console.log('backgroundColor', backgroundColor);
+      console.log('chatHeight', chatHeight);
+      console.log('fontSize', fontSize);
+
+      let data = {
+        name,
+        welcomeMessage,
+        primaryColor,
+        backgroundColor,
+        chatHeight,
+        fontSize,
+        botIcon: '',
+        userIcon: ''
+      }
+
+      if (botIconFile !== null || botIconFile !== undefined) {
+        const botIconFileObj: any = await uploadFile(botIconFile);
+        data.botIcon = botIconFileObj.url;
+      }
+
+      if (userIconFile !== null || userIconFile !== undefined) {
+        const userIconFileObj: any = await uploadFile(userIconFile);
+        data.userIcon = userIconFileObj.url;
+      }
+
+      console.log('data', data)
+
+      await updateBot(data);
+      setIsLoading(false)
+      setAlertMessage('The configuration information has been successfully saved!');
+      setAlert(true);
+    } catch (e) {
+      console.log('e', e)
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -276,7 +312,8 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
           </section>
         </div>
         <div className='flex justify-between items-start w-full mt-5'>
-          <Button onClick={onHandleSave}>Save Changes</Button>
+          {!isLoading && <Button onClick={onHandleSave}>Save Changes</Button>}
+          {isLoading && <Spinner />}
           <div className={`flex items-center justify-between w-[160px]`}>
             <Button className="bg-gray" variant="secondary" onClick={onBackStep}>
               Previous

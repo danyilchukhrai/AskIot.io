@@ -1,6 +1,8 @@
 'use client';
 
 import { supabaseClient } from '@/configs/supabase';
+import { COOKIES_STORAGE_KEYS } from '@/constants/common';
+import { getValue } from '@/helpers/storage';
 import { User } from '@supabase/supabase-js';
 import * as React from 'react';
 
@@ -29,7 +31,10 @@ const AuthProvider: React.FunctionComponent<IAuthProviderProps> = (props) => {
   const [isFetching, setIsFetching] = React.useState(true);
 
   React.useEffect(() => {
-    handleGetUserInfo();
+    const accessToken = getValue(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
+    if (!accessToken) {
+      setIsFetching(false);
+    } else handleGetUserInfo();
   }, []);
 
   const handleGetUserInfo = async () => {

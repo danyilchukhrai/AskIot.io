@@ -12,7 +12,7 @@ interface ITrainBotProps {
 }
 
 const TrainBot: FC<ITrainBotProps> = ({ }) => {
-  const fileTypes = ["TXT", "MB", "JSON"];
+  const fileTypes = ["PDF", "pdf"];
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [trainedList, setTrainedList] = useState<ITrainData[]>([]);

@@ -92,7 +92,7 @@ const RequestQuoteModal = forwardRef<IRequestQuoteModalElement, IRequestQuoteMod
             <AddToQuote product={product} />
           </FormProvider>
         </Modal>
-        {isPending && <LoadingIndicator />}
+        <LoadingIndicator isLoading={isPending} />
         {openAddToQuoteMobile && (
           <FormProvider {...form}>
             <AddToQuoteMobile

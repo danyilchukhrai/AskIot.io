@@ -1,14 +1,14 @@
 import LoadingIndicator from '@/components/LoadingIndicator';
 import Modal, { IModalElement } from '@/components/Modal';
 import { IOTPInputElement } from '@/components/OTPInput';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { API_ENDPOINT } from '@/configs/appConfig';
 import { OTP_LENGTH } from '@/constants/common';
 import { OTP_ERROR_MSG } from '@/constants/error-msg';
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { askIOTApiFetch } from '@/helpers/fetchAPI';
-import { API_ENDPOINT } from '@/configs/appConfig';
-import { toast } from 'react-toastify';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import ProviderOTPForm from './ProviderOTPForm';
 
 interface IQuoteVerificationProps {
@@ -80,7 +80,7 @@ const SwitchToProviderOTPVerification = forwardRef<
       >
         <ProviderOTPForm otpInputRef={otpInputRef} />
       </Modal>
-      {isSendOTPLoading && <LoadingIndicator />}
+      <LoadingIndicator isLoading={isSendOTPLoading} />
     </>
   );
 });

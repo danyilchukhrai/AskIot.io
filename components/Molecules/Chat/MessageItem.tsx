@@ -28,7 +28,7 @@ const MessageItem: FC<IMessageItemProps> = ({
   const products = generateProductsFromRecommendations(recommendations);
 
   return (
-    <div className={clsx('flex items-start', isCurrentUser ? 'flex-row-reverse' : '')}>
+    <div className={clsx('flex items-start', isCurrentUser ? 'flex-row' : '')}>
       <Avatar
         src={
           isCurrentUser
@@ -37,16 +37,13 @@ const MessageItem: FC<IMessageItemProps> = ({
             ? aiLogo
             : '/assets/logo/logo.svg'
         }
-        className={clsx(
-          'w-8 h-8 md:w-10 md:h-10',
-          isCurrentUser ? 'md:ml-6 ml-3 ' : 'md:mr-6 mr-3',
-        )}
+        className={clsx('w-8 h-8 md:w-10 md:h-10', isCurrentUser ? 'md:mr-6 mr-3' : 'md:mr-6 mr-3')}
         firstName={senderFirstName}
         lastName={senderLastName}
       />
       <div
         className={clsx('flex-1', {
-          'flex justify-end': isCurrentUser,
+          'flex justify-start': isCurrentUser,
         })}
       >
         {isLoading ? (

@@ -83,7 +83,7 @@ const SignUp: FC<ISignUpProps> = (props) => {
           </Link>
         </p>
       </div>
-      {isLoading && <LoadingIndicator />}
+      <LoadingIndicator isLoading={isLoading} />
     </>
   );
 };

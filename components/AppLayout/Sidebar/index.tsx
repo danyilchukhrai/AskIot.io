@@ -61,7 +61,7 @@ const Sidebar: FC<ISidebarProps> = (props) => {
 
   return (
     <>
-      {isGettingProviderStatus && <LoadingIndicator />}
+      <LoadingIndicator isLoading={isGettingProviderStatus} />
       <aside className="fixed left-0 top-0 bottom-0 h-screen w-full md:w-65 bg-white border-r border-gray-100 z-20">
         <div className="h-full flex flex-col justify-between">
           <div className="flex-1 relative">

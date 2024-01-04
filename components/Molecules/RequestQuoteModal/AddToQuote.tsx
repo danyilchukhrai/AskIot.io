@@ -13,22 +13,6 @@ const AddToQuote: FC<IAddToQuoteProps> = ({ product }) => {
   return (
     <div className="p-4 md:p-0">
       <div className="mb-5">
-        <p className="text-gray-700 text-s mb-2">Quote</p>
-        <div className="px-3 py-2.5 rounded-lg shadow-s flex items-center justify-between bg-white">
-          <p className="text-base flex md:flex-row flex-col">
-            <span className="text-gray-1000 font-medium mr-4">
-              {product?.name || product?.product_name}
-            </span>
-          </p>
-          {/* <div className="flex items-center">
-            <p className="text-gray-1000 text-base">2 products</p>
-            <Button variant="inline" disabledPadding className="ml-3">
-              <Image src="/assets/icons/chevron-down-icon.svg" alt="" width={20} height={20} />
-            </Button>
-          </div> */}
-        </div>
-      </div>
-      <div className="mb-5">
         <p className="text-gray-700 text-s mb-2">Item</p>
         <div className="p-3 rounded-lg shadow-s flex md:items-center md:flex-row flex-col bg-white">
           <div className="flex items-center w-full md:w-auto md:mr-16">
@@ -49,10 +33,10 @@ const AddToQuote: FC<IAddToQuoteProps> = ({ product }) => {
           <div className="flex md:items-center mt-4 md:mt-0">
             <CustomNextImage
               className="rounded-lg"
-              src={product?.vendorLogo || DEFAULT_VENDOR_LOGO || ''}
+              src={product?.vendorlogo || DEFAULT_VENDOR_LOGO || ''}
               alt={product?.vendorName || ''}
-              width={20}
-              height={20}
+              width={60}
+              height={40}
             />
             <p className="ml-2.5 text-gray-1000 md:text-base text-s font-medium mt-1 md:mt-0">
               {product?.vendorName}

@@ -45,7 +45,9 @@ const ProductDetailInfo: FC<IProductDetailInfoProps> = ({ product, user }) => {
   useEffect(() => {
     if (quotesSnippets) {
       setIsQuoteRequestedLoading(true);
-      const quoteRequested = quotesSnippets?.some((item) => item?.product_id === product?.id);
+      const quoteRequested = quotesSnippets?.some(
+        (item) => item?.product_id === product?.product_id,
+      );
       if (quoteRequested) {
         setIsQuoteRequested((prevData) => ({ ...prevData, [product?.id as number]: true }));
       }
@@ -169,7 +171,7 @@ const ProductDetailInfo: FC<IProductDetailInfoProps> = ({ product, user }) => {
           <RequestQuoteButton product={product} requestQuoteHandler={handleRequestQuote} />
         </div>
       </div>
-      {isShowAlert && <QuoteRequestedAlert />}
+      {isShowAlert && <QuoteRequestedAlert quote_id={quoteId as number} />}
       <RequestQuoteModal
         ref={requestQuoteModalRef}
         product={product}

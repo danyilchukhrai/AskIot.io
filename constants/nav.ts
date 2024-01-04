@@ -26,18 +26,6 @@ export const USER_NAV_ITEMS: IMenuItem[] = [
     label: 'Quotes',
     href: RESTRICTED_APP_ROUTES.QUOTES,
   },
-  {
-    icon: '/assets/icons/quotes-icon.svg',
-    activeIcon: '/assets/icons/vendors-active-icon.svg',
-    label: 'Vendors',
-    href: RESTRICTED_APP_ROUTES.VENDORS,
-  },
-  {
-    icon: '/assets/icons/quotes-icon.svg',
-    activeIcon: '/assets/icons/vendors-active-icon.svg',
-    label: 'Bots',
-    href: RESTRICTED_APP_ROUTES.BOT,
-  },
 ];
 
 export const PROVIDER_NAV_ITEMS = [
@@ -58,5 +46,11 @@ export const PROVIDER_NAV_ITEMS = [
     activeIcon: '/assets/icons/quotes-active-icon.svg',
     label: 'Quotes',
     href: RESTRICTED_APP_ROUTES.QUOTES,
+  },
+  {
+    icon: '/assets/icons/quotes-icon.svg',
+    activeIcon: '/assets/icons/vendors-active-icon.svg',
+    label: 'Bots',
+    href: RESTRICTED_APP_ROUTES.BOT,
   },
 ];

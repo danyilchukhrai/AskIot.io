@@ -122,7 +122,7 @@ const SaveForm: FC<ISaveFormProps> = ({ product, onClose }) => {
           {!selectedProject || inputProject ? 'Create' : 'Save'}
         </Button>
       </form>
-      {(creatingProject || addingProduct) && <LoadingIndicator />}
+      <LoadingIndicator isLoading={creatingProject || addingProduct} />
     </div>
   );
 };

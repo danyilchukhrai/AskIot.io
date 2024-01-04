@@ -14,7 +14,9 @@ import AskAboutProvider from './components/AskAboutProvider';
 import VendorInfo from './components/VendorInfor';
 import VendorTabs from './components/VendorTabs';
 
-interface IVendorDetailProps {}
+export interface IVendorDetailProps {
+  isVendor?: boolean;
+}
 
 const VendorDetail: FC<IVendorDetailProps> = (props) => {
   const params = useParams();
@@ -43,7 +45,7 @@ const VendorDetail: FC<IVendorDetailProps> = (props) => {
           </div>
         )}
         <VendorInfo vendor={vendor} />
-        <VendorTabs vendor={vendor} />
+        <VendorTabs {...props} vendor={vendor} />
       </div>
       {isOpenChat && (
         <div

@@ -76,7 +76,9 @@ export interface ICreateVendorBody {
 }
 
 export interface IProductByVendor extends IRecommendationInfo {
-  key_features: string;
+  key_features: {
+    description: string;
+  };
 }
 
 export interface IProductsByVendorResponse {

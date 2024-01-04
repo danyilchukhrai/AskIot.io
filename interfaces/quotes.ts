@@ -18,6 +18,7 @@ export interface IProductDetails {
   device_type: string;
   id: number;
   product_image: string;
+  product_name: string;
   industries: string;
   lte: string;
   name: string;
@@ -50,6 +51,7 @@ export interface IQuoteDetails {
   message_content: string;
   user_to_vendor_message: string | null;
   vendor_to_user_message: string | null;
+  user: { first_name: string; last_name: string; website: string };
   productDetails: {
     Product: IProductDetails[];
     alternate_products: any[];

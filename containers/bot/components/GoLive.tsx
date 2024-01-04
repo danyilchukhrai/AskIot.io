@@ -1,9 +1,10 @@
 import Button from '@/components/Button';
-import { ChangeEvent, FC, useCallback, useState } from 'react';
+import { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
 import Input from '@/components/Input';
 import { useRouter } from 'next/navigation';
 import {RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import BotAlert from '@/components/BotAlert';
+import { getVendorId } from "@/modules/bots/services"
 
 interface IGoLiveProps {
   onBackStep: () => void;
@@ -31,6 +32,15 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
     localStorage.setItem('uri', uri);
     router.push(`${RESTRICTED_APP_ROUTES.BOT_LIVE}`);
   }
+
+  const init = async () => {
+    const vendorId = await getVendorId();
+    setUri(`<script type="text/javascript">(function () { d = document; s = d.createElement("script"); s.src = "https://www.askiot.ai//api/${vendorId}.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>`);
+  }
+
+  useEffect(() => {
+    init();
+  }, [])
 
   return (
     <>

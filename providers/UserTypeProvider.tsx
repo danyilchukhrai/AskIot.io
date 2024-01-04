@@ -15,8 +15,8 @@ import {
 import { useAuthContext } from './AuthProvider';
 
 const UserTypeContext = createContext<{
-  currentUserType: USER_TYPE;
-  setCurrentUserType: Dispatch<SetStateAction<USER_TYPE>>;
+  currentUserType?: USER_TYPE;
+  setCurrentUserType: Dispatch<SetStateAction<USER_TYPE | undefined>>;
   allowedUserTypes: USER_TYPE[];
   vendorId?: string | number;
   isCheckingProviderStatus: boolean;
@@ -42,7 +42,7 @@ interface IUserTypeProvider {
 
 const UserTypeProvider: FC<IUserTypeProvider> = ({ children }) => {
   const pathname = usePathname();
-  const [currentUserType, setCurrentUserType] = useState(USER_TYPE.USER);
+  const [currentUserType, setCurrentUserType] = useState<USER_TYPE>();
   const [allowedUserTypes, setAllowedUserTypes] = useState([
     USER_TYPE.USER,
     USER_TYPE.PROVIDER_ONBOARDING,

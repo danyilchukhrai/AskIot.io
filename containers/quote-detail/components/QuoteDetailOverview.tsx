@@ -8,12 +8,20 @@ import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { IQuoteDetails, IProductDetails, IProviderFormData } from '@/interfaces/quotes';
 import { useUserTypeContext } from '@/providers/UserTypeProvider';
+import FormInput from '@/components/FormComponents/FormInput';
+import FormTextarea from '@/components/FormComponents/FormTextarea';
+import clsx from 'clsx';
+import Avatar from '@/components/Avatar';
 
 interface IQuoteDetailOverviewProps {
   onOpenChatDrawer: () => void;
   quoteDetails: IQuoteDetails;
   providerFormData: IProviderFormData;
   setProviderFormData: Dispatch<SetStateAction<IProviderFormData>>;
+  vendorNotesIsValid: boolean;
+  offeredPriceIsValid: boolean;
+  setVendorNotesIsValid: Dispatch<SetStateAction<boolean>>;
+  setOfferedPriceIsValid: Dispatch<SetStateAction<boolean>>;
 }
 
 const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
@@ -21,6 +29,10 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
   quoteDetails,
   providerFormData,
   setProviderFormData,
+  vendorNotesIsValid,
+  offeredPriceIsValid,
+  setVendorNotesIsValid,
+  setOfferedPriceIsValid,
 }) => {
   const { currentUserType } = useUserTypeContext();
   const IS_USER = currentUserType === USER_TYPE.USER;
@@ -79,16 +91,27 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
             {IS_USER ? (
               <p className="text-s md:text-base w-20">{`${row?.quantity} `}</p>
             ) : (
+              // <FormInput name="offeredPrice" className="w-20 h-10" />
               <input
                 type="text"
                 value={providerFormData?.offeredPrice || 0}
-                onChange={(evt) =>
+                onChange={(evt) => {
+                  if (evt?.target?.value) {
+                    setOfferedPriceIsValid(true);
+                  } else {
+                    setOfferedPriceIsValid(false);
+                  }
                   setProviderFormData((prevData) => ({
                     ...prevData,
                     offeredPrice: Number(evt?.target?.value),
-                  }))
-                }
-                className="w-20 h-10 rounded-lg px-3 py-2.5 shadow-s text-gray-1000 text-base text-right"
+                  }));
+                }}
+                className={clsx(
+                  'w-20 h-10 rounded-lg px-3 py-2.5 text-gray-1000 text-base text-right focus:ring-[1px] focus:ring-transparent ',
+                  offeredPriceIsValid
+                    ? 'border-[1px] '
+                    : 'border-[1px] border-red-500 focus:border-red-500',
+                )}
               />
             )}
           </>
@@ -114,6 +137,7 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
       },
     },
   ];
+
   return (
     <div className="mt-5 rounded-xl bg-white">
       {/* <div className="p-6 rounded-xl bg-primary-100">
@@ -132,23 +156,63 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
           </span>
         </div>
       </div> */}
-      {IS_PROVIDER && (
+      {IS_PROVIDER && quoteDetails?.user?.first_name && (
+        <div className="shadow rounded-xl mt-5 p-3 sm:p-4 md:p-6">
+          <p className="text-l font-medium">Customer</p>
+          <div className="flex items-center mt-3 md:mt-5">
+            <Avatar
+              src="/assets/images/avatar-default.png"
+              firstName={quoteDetails?.user?.first_name}
+              lastName={quoteDetails?.user?.last_name || ''}
+            />
+            <div className="ml-3">
+              <p className="capitalize font-medium text-[14px]">
+                {quoteDetails?.user?.first_name} {quoteDetails?.user?.last_name || ''}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {(IS_PROVIDER || (quoteDetails?.vendor_to_user_message && IS_USER)) && (
         <div className="shadow rounded-xl mt-5">
           <div className="px-4 md:px-5 py-2 md:py-3">
-            <p className="text-gray-1000 text-l font-medium">Your Response</p>
+            <p className="text-gray-1000 text-l font-medium">
+              {IS_PROVIDER ? 'Your Response' : 'Vendor Response'}
+            </p>
             <div className="mt-3">
-              <textarea
-                rows={3}
-                className="rounded-lg w-full px-3 py-2.5 shadow-s text-gray-1000 text-base resize-none"
-                placeholder="Type your response..."
-                value={providerFormData?.vendorNotes}
-                onChange={(evt) =>
-                  setProviderFormData((prevData) => ({
-                    ...prevData,
-                    vendorNotes: evt?.target?.value,
-                  }))
-                }
-              />
+              {IS_PROVIDER ? (
+                // <FormTextarea
+                //   rows={3}
+                //   name="vendorNotes"
+                //   value={quoteDetails?.vendor_to_user_message || ''}
+                // />
+                <textarea
+                  rows={3}
+                  className={clsx(
+                    'rounded-lg w-full px-3 py-2.5 shadow-s text-gray-1000 text-base resize-none',
+                    vendorNotesIsValid
+                      ? 'border-[1px]'
+                      : 'border-[1px] border-red-500 focus:border-red-500',
+                  )}
+                  placeholder="Type your response..."
+                  value={providerFormData?.vendorNotes}
+                  onChange={(evt) => {
+                    if (evt?.target?.value) {
+                      setVendorNotesIsValid(true);
+                    } else {
+                      setVendorNotesIsValid(false);
+                    }
+                    setProviderFormData((prevData) => ({
+                      ...prevData,
+                      vendorNotes: evt?.target?.value,
+                    }));
+                  }}
+                />
+              ) : (
+                <>
+                  <Textarea rows={3} value={quoteDetails?.vendor_to_user_message || ''} disabled />
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -217,30 +281,25 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
           </div>
         </div>
         <div className="h-[1px] w-full bg-gray-100" />
-        {IS_PROVIDER && (
-          <div className="additional-info flex p-6 md:flex-row flex-col">
-            <div className="md:w-1/5 w-full mr-6">
-              <p className="text-gray-1000 text-l font-medium">Additional information</p>
-              <p className="text-gray-500 text-s mt-0.5">Further instructions in one line</p>
-            </div>
-
-            <div className="md:flex-1 w-full md:w-auto">
-              {/* <div className="flex flex-col w-full">
-                <p className="text-gray-700 text-s mb-2">Quote by Date</p>
-              </div> */}
-              <Input
-                label="Quote by Date"
-                value={new Date(quoteDetails?.requested_by_date).toDateString()}
-                disabled
-              />
-
-              <div className="flex flex-col w-full md:mt-6 mt-4">
-                <p className="text-gray-700 text-s mb-2">Note</p>
-              </div>
-              <Textarea rows={3} value={quoteDetails?.user_to_vendor_message || ''} disabled />
-            </div>
+        <div className="additional-info flex p-6 md:flex-row flex-col">
+          <div className="md:w-1/5 w-full mr-6">
+            <p className="text-gray-1000 text-l font-medium">Additional information</p>
+            <p className="text-gray-500 text-s mt-0.5">Further instructions in one line</p>
           </div>
-        )}
+
+          <div className="md:flex-1 w-full md:w-auto">
+            <Input
+              label="Quote by Date"
+              value={new Date(quoteDetails?.requested_by_date).toDateString()}
+              disabled
+            />
+
+            <div className="flex flex-col w-full md:mt-6 mt-4">
+              <p className="text-gray-700 text-s mb-2">Note</p>
+            </div>
+            <Textarea rows={3} value={quoteDetails?.user_to_vendor_message || 'N/A'} disabled />
+          </div>
+        </div>
       </div>
     </div>
   );

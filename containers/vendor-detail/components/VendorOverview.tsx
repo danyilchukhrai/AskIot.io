@@ -1,115 +1,188 @@
-import DropdownButton from '@/components/DropdownButton';
-import { ColumnsProps } from '@/components/Table';
-import { IProduct } from '@/interfaces/products';
+import Button from '@/components/Button';
+import FormInput from '@/components/FormComponents/FormInput';
+import FormTextarea from '@/components/FormComponents/FormTextarea';
+import LoadingIndicator from '@/components/LoadingIndicator';
+import { getArrayValueFromTags, handleShowError } from '@/helpers/common';
+import { useUpdateVendor } from '@/modules/vendors/hooks';
 import { IVendorDetails } from '@/modules/vendors/type';
-import Image from 'next/image';
-import { FC } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import clsx from 'clsx';
+import { FC, useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { IVendorDetailProps } from '..';
 
-interface IVendorOverviewProps {
+interface IVendorOverviewProps extends IVendorDetailProps {
   vendor?: IVendorDetails;
 }
 
-const rows = [
-  {
-    id: uuidv4(),
-    name: 'TankMon1',
-    ref: 'Ref 76D87YD',
-    description: 'Lorem ipsum dolor sit amet sit.',
-    image: '/assets/images/tank-mon-1.jpeg',
-  },
-  {
-    id: uuidv4(),
-    name: 'TankMon2',
-    ref: 'Ref 76D87YD',
-    description: 'Lorem ipsum dolor sit amet sit.',
-
-    image: '/assets/images/tank-mon-2.jpeg',
-  },
-];
-
-const VendorOverview: FC<IVendorOverviewProps> = ({ vendor }) => {
+const VendorOverview: FC<IVendorOverviewProps> = ({ vendor, isVendor }) => {
+  const [isEditInfo, setIsEditInfo] = useState(false);
   const orgDetail = vendor?.orgDetails?.[0];
+  const { mutate: updateVendor, isPending: updatingVendor } = useUpdateVendor();
 
-  const columns: ColumnsProps[] = [
-    {
-      title: 'Name',
-      key: 'name',
-      styles: 'w-[28%] !pr-8',
-      renderNode: (row: IProduct) => {
-        return (
-          <div className="flex items-center md:flex-row flex-col w-23 md:w-auto">
-            <Image src={row.image} width={60} height={40} alt={row.name} />
-            <p className="flex flex-col md:ml-4 ml-2 items-center md:items-start mt-1 md:mt-0">
-              <span className="text-gray-1000 text-base font-medium">{row.name}</span>
-              <span className="text-gray-600 text-s mt-1">{row.ref}</span>
-            </p>
-          </div>
-        );
-      },
+  const vendorInfoForm = useForm({
+    defaultValues: {
+      overview: '',
+      linkedin: '',
+      specialities: '',
+      industry: '',
+      twitter: '',
     },
-    {
-      title: 'Features',
-      key: 'features',
-      styles: '!pr-8',
-      renderNode: (row: IProduct) => <p className="text-gray-600 text-base">{row.description}</p>,
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      hiddenTitle: true,
-      renderNode: (row: IProduct) => (
-        <div className="flex justify-end items-center">
-          <DropdownButton className="invisible group-hover:visible" dropdownMenu={[]} />
-        </div>
-      ),
-    },
-  ];
+  });
+
+  useEffect(() => {
+    if (vendor) {
+      handleFillFormData();
+    }
+  }, [vendor, isVendor]);
+
+  const handleFillFormData = () => {
+    if (!isVendor) return;
+
+    vendorInfoForm.reset({
+      overview: vendor?.snippet,
+      linkedin: orgDetail?.organization_linkedin_url,
+      specialities: getVendorSpecialities(),
+      industry: getVendorIndustries(),
+      twitter: orgDetail?.organization_twitter_url,
+    });
+  };
+
+  const onSaveVendorInfo = (data: any) => {
+    const body = {
+      ...data,
+      specialities: getArrayValueFromTags(data.specialities),
+      industry: getArrayValueFromTags(data.industry),
+    };
+    if (vendor?.vendorid) {
+      updateVendor(
+        { data: body, id: vendor?.vendorid },
+        {
+          onError: handleShowError,
+          onSuccess: () => {
+            toast.success('Vendor updated successfully');
+            setIsEditInfo(false);
+          },
+        },
+      );
+    }
+  };
+
+  const getVendorIndustries = () =>
+    Array.isArray(vendor?.industries) ? vendor?.industries.join(', ') : vendor?.industries || '';
+
+  const getVendorSpecialities = () =>
+    Array.isArray(vendor?.specialities) ? vendor?.specialities?.join(', ') : vendor?.specialities;
+
+  const showTags = (value: string) => {
+    try {
+      const parseValue = JSON.parse(value);
+      return Array.isArray(parseValue)
+        ? parseValue?.map((it: any) => it?.value)?.join(', ')
+        : parseValue;
+    } catch (error) {
+      return value;
+    }
+  };
 
   return (
     <>
-      <div className="rounded-xl shadow p-6 mt-5">
-        <div className="mb-6">
-          <p className="text-primary-500 text-base font-medium md:mb-6 mb-3">Details</p>
-          <div className="flex md:flex-row flex-col">
-            <p className="text-gray-1000 text-base font-semibold w-[15%] mr-2 md:mb-0 mb-1">
-              Overview
-            </p>
-            <p className="flex-1 text-base text-gray-1000">{vendor?.snippet}</p>
+      <FormProvider {...vendorInfoForm}>
+        <div className="rounded-xl shadow p-6 mt-5">
+          <div className="mb-6">
+            <p className="text-primary-500 text-base font-medium md:mb-6 mb-3">Details</p>
+            <div className="flex md:flex-row flex-col">
+              <p className="text-gray-1000 text-base font-semibold w-[15%] mr-2 md:mb-0 mb-1">
+                Overview
+              </p>
+              {isEditInfo ? (
+                <FormTextarea
+                  name="overview"
+                  containerClassName="w-full"
+                  defaultValue={vendor?.snippet}
+                  placeholder="Overview"
+                  rows={4}
+                />
+              ) : (
+                <p className="flex-1 text-base text-gray-1000">
+                  {isVendor ? vendorInfoForm.getValues('overview') : vendor?.snippet}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 grid-cols-1 gap-6">
+            <div>
+              <div className="text-gray-1000 text-base flex mb-6">
+                <p className=" font-semibold w-[30%] mr-2">Linkedin</p>
+                {isEditInfo ? (
+                  <FormInput name="linkedin" placeholder="Linkedin" />
+                ) : (
+                  <p className="flex-1 text-end md:text-start word-break">
+                    {isVendor
+                      ? vendorInfoForm.getValues('linkedin')
+                      : orgDetail?.organization_linkedin_url}
+                  </p>
+                )}
+              </div>
+              <div className="text-gray-1000 text-base flex">
+                <p className=" font-semibold w-[30%] mr-2">Specialities</p>
+                {isEditInfo ? (
+                  <FormInput name="specialities" placeholder="Specialities" isShowTags />
+                ) : (
+                  <p className="flex-1 text-end md:text-start">
+                    {isVendor
+                      ? showTags(vendorInfoForm.getValues('specialities'))
+                      : getVendorSpecialities()}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div>
+              <div className="text-gray-1000 text-base flex mb-6">
+                <p className=" font-semibold w-[30%] mr-2">Industry</p>
+                {isEditInfo ? (
+                  <FormInput name="industry" placeholder="Industry" isShowTags />
+                ) : (
+                  <p className="flex-1 text-end md:text-start">
+                    {isVendor
+                      ? showTags(vendorInfoForm.getValues('industry'))
+                      : getVendorIndustries()}
+                  </p>
+                )}
+              </div>
+              <div className="text-gray-1000 text-base flex mb-6">
+                <p className=" font-semibold w-[30%] mr-2">Twitter</p>
+                {isEditInfo ? (
+                  <FormInput name="twitter" placeholder="Twitter" />
+                ) : (
+                  <p className="flex-1 text-end md:text-start word-break">
+                    {isVendor
+                      ? vendorInfoForm.getValues('twitter')
+                      : orgDetail?.organization_twitter_url}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-6">
-          <div>
-            <div className="text-gray-1000 text-base flex items-center mb-6">
-              <p className=" font-semibold w-[30%] mr-2">Linkedin</p>
-              <p className="flex-1 text-end md:text-start word-break">
-                {orgDetail?.organization_linkedin_url}
-              </p>
-            </div>
-            <div className="text-gray-1000 text-base flex items-center">
-              <p className=" font-semibold w-[30%] mr-2">Specialties</p>
-              <p className="flex-1 text-end md:text-start">{'Specialties'}</p>
-            </div>
+        {isVendor && (
+          <div
+            className={clsx('buttons mt-10 flex', isEditInfo ? 'justify-between' : 'justify-end')}
+          >
+            {isEditInfo ? (
+              <>
+                <Button variant="secondary" onClick={() => setIsEditInfo(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={vendorInfoForm.handleSubmit(onSaveVendorInfo)}>Save</Button>
+              </>
+            ) : (
+              <Button onClick={() => setIsEditInfo(true)}>Edit</Button>
+            )}
           </div>
-
-          <div>
-            <div className="text-gray-1000 text-base flex items-center mb-6">
-              <p className=" font-semibold w-[30%] mr-2">Industry</p>
-              <p className="flex-1 text-end md:text-start">{'Industry'}</p>
-            </div>
-            <div className="text-gray-1000 text-base flex items-center mb-6">
-              <p className=" font-semibold w-[30%] mr-2">Twitter</p>
-              <p className="flex-1 text-end md:text-start word-break">
-                {orgDetail?.organization_twitter_url}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* <div className="rounded-xl shadow mt-5">
-        <p className="text-primary-500 font-medium text-base px-6 py-4">Features Products</p>
-        <Table containerClassName="rounded-t-none" rows={rows} columns={columns} />
-      </div> */}
+        )}
+      </FormProvider>
+      <LoadingIndicator isLoading={updatingVendor} />
     </>
   );
 };

@@ -24,7 +24,7 @@ const AppLayout: FC<IAppLayoutProps> = ({ children }) => {
           <Sidebar />
         </div>
         <div className="ml:0 mt-[79px] md:mt-0 md:ml-65">
-          <main className="bg-gray md:bg-inherit w-full min-h-screen relative">{children}</main>
+          <main className="bg-gray md:bg-inherit">{children}</main>
         </div>
       </div>
     </SavedProductsProvider>

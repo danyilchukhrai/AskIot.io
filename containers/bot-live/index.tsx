@@ -1,9 +1,10 @@
-import { useRef, FC, ChangeEvent, useState } from 'react';
+import { useRef, FC, ChangeEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import BotAlert from '@/components/BotAlert';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
+import { getBotData } from '@/modules/bots/services';
 
 interface ICustomLivePageProps {
 }
@@ -85,6 +86,59 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
         setAlertMessage('The configuration information has been successfully saved!');
         setAlert(true);
     }
+
+    const init = async () => {
+        const data = await getBotData();
+
+        console.log('data', data)
+
+        if (data.data.status === true) {
+            if (data.data.customizationdata
+                .hasOwnProperty("name")) {
+                setName(data.data.customizationdata.name);
+            }
+
+            if (data.data.customizationdata
+                .hasOwnProperty("welcomeMessage")) {
+                setWelcomeMessage(data.data.customizationdata.welcomeMessage);
+            }
+
+            if (data.data.customizationdata
+                .hasOwnProperty("primaryColor")) {
+                setPrimaryColor(data.data.customizationdata.primaryColor);
+            }
+
+
+            if (data.data.customizationdata
+                .hasOwnProperty("backgroundColor")) {
+                setBackgroundColor(data.data.customizationdata.backgroundColor);
+            }
+
+            if (data.data.customizationdata
+                .hasOwnProperty("chatHeight")) {
+                setChatHeight(data.data.customizationdata.chatHeight);
+            }
+
+            if (data.data.customizationdata
+                .hasOwnProperty("fontSize")) {
+                setFontSize(data.data.customizationdata.fontSize);
+            }
+
+            if (data.data.customizationdata
+                .hasOwnProperty("botIcon")) {
+                setBotIconSrc(data.data.customizationdata.botIcon);
+            }
+
+            if (data.data.customizationdata
+                .hasOwnProperty("userIcon")) {
+                setUserIconSrc(data.data.customizationdata.userIcon);
+            }
+        }
+    }
+
+    useEffect(() => {
+        init();
+    }, [])
 
     return (
         <>
@@ -204,7 +258,7 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                                     <p className="text-[13px] text-[#495057] font-inter text-base font-normal leading-4">
                                         Chat Height (in %)
                                     </p>
-                                    <Input name="chat_height" placeholder="46" type="number" onChange={(e: any) => {
+                                    <Input name="chat_height" placeholder="46" type="number" value={chatHeight} onChange={(e: any) => {
                                         setChatHeight(e.target.value);
                                     }} />
                                 </div>
@@ -212,7 +266,7 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                                     <p className="text-[13px] text-[#495057] font-inter text-base font-normal leading-4">
                                         Font size
                                     </p>
-                                    <Input name="font_size" placeholder="16px" type="number" onChange={(e: any) => {
+                                    <Input name="font_size" placeholder="16px" type="number" value={fontSize} onChange={(e: any) => {
                                         setFontSize(e.target.value);
                                     }} />
                                 </div>

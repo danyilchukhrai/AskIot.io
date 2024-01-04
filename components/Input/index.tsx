@@ -1,14 +1,26 @@
+import Tagify from '@yaireo/tagify';
+import '@yaireo/tagify/dist/tagify.css';
 import clsx from 'clsx';
-import { FC, HTMLProps, ReactNode, forwardRef, useRef } from 'react';
+import { HTMLProps, ReactNode, forwardRef, useEffect } from 'react';
 
 export interface IInputProps extends HTMLProps<HTMLInputElement> {
   label?: string;
   inputClassName?: string;
   endAdornment?: ReactNode;
+  isShowTags?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement, IInputProps>((props, ref) => {
-  const { label, endAdornment, inputClassName = '' } = props;
+  const { label, endAdornment, inputClassName = '', isShowTags = false } = props;
+
+  useEffect(() => {
+    if (!isShowTags) return;
+    const element: any = document?.querySelector(`input[name=${props.name}]`);
+
+    if (element && isShowTags) {
+      new Tagify(element);
+    }
+  }, [isShowTags]);
 
   return (
     <div className={clsx('flex flex-col', props.className)}>

@@ -1,6 +1,7 @@
 import { supabaseClient } from '@/configs/supabase';
 import { COOKIES_STORAGE_KEYS, ERROR_CODE } from '@/constants/common';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { handleShowError } from './common';
 import * as CookiesStorageService from './storage';
 
 interface ApiConfig {
@@ -60,6 +61,7 @@ const createApi = (config: ApiConfig): AxiosInstance => {
           break;
 
         case ERROR_CODE.UNPROCESSABLE_ENTITY:
+          handleShowError(error?.response);
           break;
 
         case ERROR_CODE.INTERNAL_SERVER_ERROR:

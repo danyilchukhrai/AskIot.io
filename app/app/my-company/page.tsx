@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 const VendorDetail = dynamic(() => import('@/containers/vendor-detail'));
 
 const VendorsPage = () => {
-  return <VendorDetail />;
+  return <VendorDetail isVendor />;
 };
 
 export default withAuth(VendorsPage)([USER_TYPE.PROVIDER]);

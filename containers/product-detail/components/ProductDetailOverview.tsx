@@ -2,6 +2,8 @@ import Button from '@/components/Button';
 import Modal, { IModalElement } from '@/components/Modal';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { ISpecification } from '@/modules/iot-gpt/type';
+import clsx from 'clsx';
+import Image from 'next/image';
 import { FC, useEffect, useRef, useState } from 'react';
 import CommonListSection from './CommonListSection';
 import DeviceOffers from './DeviceOffers';
@@ -32,7 +34,10 @@ const ProductDetailOverview: FC<IProductDetailOverviewProps> = ({
     SEE_ALL_MODAL.SPECIFICATIONS,
   );
   const isMobileMatches = useMediaQuery('(max-width: 767px)');
-  const industries = (product?.industries || '')?.split(',').filter((it: string) => it);
+  const industries =
+    typeof product?.industries === 'string'
+      ? (product?.industries || '')?.split(',').filter((it: string) => it)
+      : product?.industries;
 
   useEffect(() => {
     if (isMobileMatches) {
@@ -98,6 +103,39 @@ const ProductDetailOverview: FC<IProductDetailOverviewProps> = ({
             <p className="text-gray-1000 text-base mt-2">{product?.product_description}</p>
           </div>
         )}
+        {!!product?.product_details?.length && (
+          <>
+            <p className="text-primary-500 text-s mt-8 mb-3">Product details</p>
+            <table className="mb-2">
+              {product?.product_details?.map((productDetails: any, index: any) => (
+                <tr key={`PD-${index}`}>
+                  <td
+                    className={clsx('w-[35%] tex-gray-1000 text-base px-3 py-2.5 shadow-s', {
+                      'rounded-tl-lg': !index,
+                    })}
+                  >
+                    <p>{productDetails?.name}</p>
+                  </td>
+                  <td className={clsx('tex-gray-1000 text-base px-3 py-2.5 shadow-s')}>
+                    {productDetails?.description}
+                  </td>
+                </tr>
+              ))}
+            </table>
+          </>
+        )}
+        {!!product?.usecase?.length && (
+          <>
+            <p className="text-primary-500 text-s mt-8 mb-3">Use cases</p>
+            <ol className="mb-2 pl-3 list-disc">
+              {product?.usecase?.map((item: string, index: any) => (
+                <li key={`PD-${index}`} className="tex-gray-1000 text-base  py-1">
+                  {item}
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
         {!!specifications?.length && (
           <Specifications
             specifications={specifications}
@@ -134,7 +172,7 @@ const ProductDetailOverview: FC<IProductDetailOverviewProps> = ({
           variant="info"
           onClick={onAskAnything}
         >
-          <img
+          <Image
             className="md:hidden"
             src="/assets/icons/ask-anything-icon.svg"
             alt="ask anything"

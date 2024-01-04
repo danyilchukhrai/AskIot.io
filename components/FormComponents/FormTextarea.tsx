@@ -1,3 +1,4 @@
+'use client';
 import { FC } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import Textarea, { ITextareaProps } from '../Textarea';
@@ -6,7 +7,7 @@ interface IFormTextareaProps extends ITextareaProps {}
 
 const FormTextarea: FC<IFormTextareaProps> = (props) => {
   const { name = '' } = props;
-  const { control } = useFormContext();
+  const { control, watch } = useFormContext();
   const {
     field: { ref, ...inputProps },
     fieldState: { invalid, error },
@@ -17,7 +18,7 @@ const FormTextarea: FC<IFormTextareaProps> = (props) => {
 
   return (
     <div className="flex flex-col w-full">
-      <Textarea {...props} {...inputProps} ref={ref} />
+      <Textarea {...inputProps} {...props} ref={ref} />
       {invalid && <p className="text-red-500 mt-2 text-s">{error?.message}</p>}
     </div>
   );

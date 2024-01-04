@@ -1,12 +1,13 @@
-import { VENDORS_TAB_KEY } from '@/constants/vendors';
-import { FC } from 'react';
-import VendorOverview from './VendorOverview';
 import Tabs from '@/components/Tabs';
-import FeaturesProducts from './FeaturesProducts';
-import { IVendorDetails } from '@/modules/vendors/type';
+import { VENDORS_TAB_KEY } from '@/constants/vendors';
 import { useGetProductsByVendor } from '@/modules/vendors/hooks';
+import { IVendorDetails } from '@/modules/vendors/type';
+import { FC } from 'react';
+import { IVendorDetailProps } from '..';
+import FeaturesProducts from './FeaturesProducts';
+import VendorOverview from './VendorOverview';
 
-interface IVendorTabsProps {
+interface IVendorTabsProps extends IVendorDetailProps {
   vendor?: IVendorDetails;
 }
 

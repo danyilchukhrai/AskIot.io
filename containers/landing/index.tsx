@@ -19,7 +19,6 @@ const Landing: FC<ILandingProps> = (props) => {
       <FeaturesSection />
       <TestimonialsSection />
       <JoinWaitlist />
-      <iframe src="http://localhost:3000"/>
     </PublicLayout>
   );
 };

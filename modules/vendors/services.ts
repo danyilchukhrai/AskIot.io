@@ -74,3 +74,51 @@ export const chatVendorQuery = async (
 
   return result.data;
 };
+
+export const createEditDevice = async ({ data, id }: { data: any; id?: number }) => {
+  const result = await apiInstance({
+    method: id ? REQUEST_METHOD.PUT : REQUEST_METHOD.POST,
+    data,
+    url: VENDOR_API.createEditDevice.api(id),
+  });
+
+  return result.data;
+};
+
+export const createEditProduct = async ({ data, id }: { data: any; id?: number }) => {
+  const result = await apiInstance({
+    method: id ? REQUEST_METHOD.PUT : REQUEST_METHOD.POST,
+    data,
+    url: VENDOR_API.createEditProduct.api(id),
+  });
+
+  return result.data;
+};
+
+export const deleteProduct = async (id: number) => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.DELETE,
+    url: VENDOR_API.deleteProduct.api(id),
+  });
+
+  return result.data;
+};
+
+export const updateVendor = async ({ data, id }: { data: any; id: number }) => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.PUT,
+    data,
+    url: VENDOR_API.updateVendor.api(id),
+  });
+
+  return result.data;
+};
+
+export const getProductById = async (id: number, isDevice: boolean) => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.GET,
+    url: VENDOR_API.getProductById.api(id, isDevice),
+  });
+
+  return result.data;
+};

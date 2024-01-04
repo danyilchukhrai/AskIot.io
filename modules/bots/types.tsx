@@ -8,3 +8,7 @@ export interface ITrainData {
     result: boolean;
   }
   
+export interface IFile {
+  name: string;
+  url: string;
+}
