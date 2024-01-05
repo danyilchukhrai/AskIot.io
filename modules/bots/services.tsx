@@ -83,28 +83,28 @@ export const processUploads = async (files: IFile[]) => {
 
 
 const uploadMultipleToAzureStorage = async (uri: string, sasToken: string, file: File) => {
-
     const apiUrl = `${uri}?${sasToken}`;
-
-    // Create FormData object to send the File
-    const formData = new FormData();
-    formData.append('file', file);
 
     // Make a PUT request using Axios
     try {
-        await axios.put(apiUrl, formData, {
+        const response = await axios.put(apiUrl, file, {
             headers: {
-                'Content-Type': 'multipart/form-data', // Set the content type for FormData
+                'Content-Type': file.type, // Set the content type to the file's MIME type
                 'x-ms-blob-type': 'BlockBlob', // Specify the blob type
             },
         });
 
-        return uri;
-    } catch (error: any) {
+        // If the response is successful, return the URI
+        if (response.status === 201) {
+            return uri;
+        } else {
+            throw new Error(`Failed to upload file. Status code: ${response.status}`);
+        }
+    } catch (error : any) {
         console.error(`Error uploading file "${file.name}":`, error.message);
+        throw error; // Rethrow the error to handle it outside this function if needed
     }
 }
-
 
 export const createBot = async (botName: string) => {
     try {

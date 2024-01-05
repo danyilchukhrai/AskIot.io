@@ -5,6 +5,8 @@ import Input from '@/components/Input';
 import BotAlert from '@/components/BotAlert';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import { getBotData, getVendorId } from '@/modules/bots/services';
+import { uploadFile, updateBot } from '@/modules/bots/services';
+import Spinner from '@/components/Spinner';
 
 interface ICustomLivePageProps {
 }
@@ -29,6 +31,8 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
 
     const [alert, setAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleCopyClick = async () => {
         try {
@@ -76,15 +80,46 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
         }
     };
 
-    const onHandleSave = () => {
-        console.log('name', name);
-        console.log('welcomeMessage', welcomeMessage);
-        console.log('primaryColor', primaryColor);
-        console.log('backgroundColor', backgroundColor);
-        console.log('chatHeight', chatHeight);
-        console.log('fontSize', fontSize);
-        setAlertMessage('The configuration information has been successfully saved!');
-        setAlert(true);
+    const onHandleSave = async () => {
+        setIsLoading(true)
+        try {
+
+            console.log('name', name);
+            console.log('welcomeMessage', welcomeMessage);
+            console.log('primaryColor', primaryColor);
+            console.log('backgroundColor', backgroundColor);
+            console.log('chatHeight', chatHeight);
+            console.log('fontSize', fontSize);
+
+            let data = {
+                name,
+                welcomeMessage,
+                primaryColor,
+                backgroundColor,
+                chatHeight,
+                fontSize,
+                botIcon: '',
+                userIcon: ''
+            }
+
+            if (botIconFile !== null || botIconFile !== undefined) {
+                const botIconFileObj: any = await uploadFile(botIconFile === null ? new File([], '') : botIconFile, "icon");
+                data.botIcon = botIconFileObj.url;
+            }
+
+            if (userIconFile !== null || userIconFile !== undefined) {
+                const userIconFileObj: any = await uploadFile(userIconFile === null ? new File([], '') : userIconFile, "icon");
+                data.userIcon = userIconFileObj.url;
+            }
+
+            await updateBot(data);
+            setIsLoading(false)
+            setAlertMessage('The configuration information has been successfully saved!');
+            setAlert(true);
+        } catch (e) {
+            console.log('e', e)
+            setIsLoading(false)
+        }
     }
 
     const init = async () => {
@@ -394,7 +429,8 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                         </section>
                     </div>
                     <div className='flex justify-between items-start w-full mt-5'>
-                        <Button onClick={onHandleSave}>Save Changes</Button>
+                        {!isLoading && <Button onClick={onHandleSave}>Save Changes</Button>}
+                        {isLoading && <Spinner />}
                     </div>
                     <BotAlert message={alertMessage} show={alert} setShow={setAlert} />
                 </div>
