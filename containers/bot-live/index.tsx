@@ -7,6 +7,8 @@ import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import { getBotData, getVendorId } from '@/modules/bots/services';
 import { uploadFile, updateBot } from '@/modules/bots/services';
 import Spinner from '@/components/Spinner';
+import { COOKIES_STORAGE_KEYS } from '@/constants/common';
+import * as CookiesStorageService from '@/helpers/storage';
 
 interface ICustomLivePageProps {
 }
@@ -27,10 +29,12 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
     const [userIconFile, setUserIconFile] = useState<File | null>(null);
     const [botIcon, setBotIconSrc] = useState('');
     const [userIcon, setUserIconSrc] = useState('');
-    const [uri, setUri] = useState<string>("https://ask-iot-chatbot.vercel.app?api_key=Inljc3NlY2pmbW9heWpob211Z2JpIiwicm9sZSI6ImFub");
+    const [uri, setUri] = useState<string>("");
 
     const [alert, setAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+
+    const [demoUrl, setDemoUrl] = useState('https://ask-iot-chatbot.vercel.app');
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -83,14 +87,6 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
     const onHandleSave = async () => {
         setIsLoading(true)
         try {
-
-            console.log('name', name);
-            console.log('welcomeMessage', welcomeMessage);
-            console.log('primaryColor', primaryColor);
-            console.log('backgroundColor', backgroundColor);
-            console.log('chatHeight', chatHeight);
-            console.log('fontSize', fontSize);
-
             let data = {
                 name,
                 welcomeMessage,
@@ -123,6 +119,9 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
     }
 
     const init = async () => {
+        const accessToken = CookiesStorageService.getValue(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
+        setDemoUrl(`https://ask-iot-chatbot.vercel.app?token=${accessToken}`)
+
         const vendorId = await getVendorId();
         setUri(`<script type="text/javascript">(function () { d = document; s = d.createElement("script"); s.src = "https://www.askiot.ai/api/${vendorId}.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>`);
         const data = await getBotData();
@@ -194,8 +193,7 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                                 on social media, messaging app or via email.
                             </p>
                             <p className="text-[#000] font-inter text-[13px] font-normal leading-[16px] cursor-pointer" onClick={() => {
-                                const url = 'https://ask-iot-chatbot.vercel.app/';
-                                window.open(url, '_blank');
+                                window.open(demoUrl, '_blank');
                             }}>
                                 Try Demo
                             </p>

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import {RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import BotAlert from '@/components/BotAlert';
 import { getVendorId } from "@/modules/bots/services"
+import { COOKIES_STORAGE_KEYS } from '@/constants/common';
+import * as CookiesStorageService from '@/helpers/storage';
 
 interface IGoLiveProps {
   onBackStep: () => void;
@@ -13,7 +15,7 @@ interface IGoLiveProps {
 const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
   const router = useRouter();
 
-  const [uri, setUri] = useState<string>("https://ask-iot-chatbot.vercel.app?api_key=Inljc3NlY2pmbW9heWpob211Z2JpIiwicm9sZSI6ImFub");
+  const [uri, setUri] = useState<string>("");
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
@@ -34,6 +36,9 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
   }
 
   const init = async () => {
+    const accessToken = CookiesStorageService.getValue(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
+    console.log('accessToken', accessToken)
+
     const vendorId = await getVendorId();
     setUri(`<script type="text/javascript">(function () { d = document; s = d.createElement("script"); s.src = "https://www.askiot.ai/api/${vendorId}.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>`);
   }
