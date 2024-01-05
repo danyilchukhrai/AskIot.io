@@ -37,9 +37,9 @@ export const getBotData = async () => {
     }
 };
 
-export const uploadFile = async (file: any) => {
+export const uploadFile = async (file: File, type : string) => {
     try {
-        const { uri, sasToken } = await askIOTApiFetch(`${API_ENDPOINT}/api/private/chatbot/sas-token`, { "name": file.name}, "POST");
+        const { uri, sasToken } = await askIOTApiFetch(`${API_ENDPOINT}/api/private/chatbot/sas-token`, { "name": file.name, type}, "POST");
         const uploadedUri = await uploadMultipleToAzureStorage(
             uri, sasToken, file
         );
@@ -50,11 +50,11 @@ export const uploadFile = async (file: any) => {
     }
 };
 
-export const uploadFiles = async (files: File[]) => {
+export const uploadFiles = async (files: File[], type : string) => {
     try {
         const response: any[] = [];
         for (const file of files) {
-            const { uri, sasToken } = await askIOTApiFetch(`${API_ENDPOINT}/api/private/chatbot/sas-token`, { "name": file.name}, "POST");
+            const { uri, sasToken } = await askIOTApiFetch(`${API_ENDPOINT}/api/private/chatbot/sas-token`, { "name": file.name, type}, "POST");
             const uploadedUri = await uploadMultipleToAzureStorage(
                 uri, sasToken, file
             );

@@ -39,7 +39,7 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
     setIsLoading(true);
     if (childStep === CHILD_STEP.UPLOAD_FILES) {
       if (files.length > 0) {
-        const data: IFile[] = await uploadFiles(files);
+        const data: IFile[] = await uploadFiles(files, "vendor");
         // setTrainedResult(response.data);
         // setChildStep(CHILD_STEP.REVIEW_TRAIN);
 

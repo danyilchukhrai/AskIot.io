@@ -91,16 +91,14 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
       }
 
       if (botIconFile !== null || botIconFile !== undefined) {
-        const botIconFileObj: any = await uploadFile(botIconFile);
+        const botIconFileObj: any = await uploadFile(botIconFile === null ? new File([], '') : botIconFile, "icon");
         data.botIcon = botIconFileObj.url;
       }
 
       if (userIconFile !== null || userIconFile !== undefined) {
-        const userIconFileObj: any = await uploadFile(userIconFile);
+        const userIconFileObj: any = await uploadFile(userIconFile === null ? new File([], '') : userIconFile, "icon");
         data.userIcon = userIconFileObj.url;
       }
-
-      console.log('data', data)
 
       await updateBot(data);
       setIsLoading(false)
