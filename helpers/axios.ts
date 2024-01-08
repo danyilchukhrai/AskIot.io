@@ -65,6 +65,13 @@ const createApi = (config: ApiConfig): AxiosInstance => {
           break;
 
         case ERROR_CODE.INTERNAL_SERVER_ERROR:
+          if (error?.config?.method === 'get') {
+            handleShowError(error?.response);
+          }
+          break;
+
+        case ERROR_CODE.NOT_FOUND:
+          handleShowError(error?.response);
           break;
 
         default:

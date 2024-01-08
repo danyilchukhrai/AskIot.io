@@ -1,5 +1,4 @@
 import FormInput from '@/components/FormComponents/FormInput';
-import FormTextarea from '@/components/FormComponents/FormTextarea';
 import { useAuthContext } from '@/providers/AuthProvider';
 import { FC } from 'react';
 
@@ -33,6 +32,9 @@ const QuoteVerificationFormDesktop: FC = () => {
           placeholder="Phone number"
           disabled={user?.phone ? true : false}
         />
+      </div>
+      <div className="mb-5">
+        <FormInput name="website" label="Website" placeholder="Phone website" />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { withRestricted } from '@/helpers/withRestricted';
+import { withRestricted } from '@/HOC/withRestricted';
 import dynamic from 'next/dynamic';
 
 const SignIn = dynamic(() => import('@/containers/sign-in'), { ssr: false });

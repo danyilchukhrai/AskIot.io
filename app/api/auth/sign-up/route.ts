@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   const { email, password } = body;
   const supabase = createRouteHandlerClient({ cookies });
 
-  const { data, error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -19,26 +19,9 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    console.error("Supabase Error:", error.message);
     return NextResponse.json(
       {
         error: 'Could not authenticate user',
-        details: error.message // logging error from server , front end dev thinks this is caused by supabase
-      },
-      {
-        status: 500,
-      },
-    );
-  }
-  
-
-  const { user } = data;
-
-  if (!user) {
-    return NextResponse.json(
-      {
-        error: 'User creation failed',
-        details: 'No user data returned from Supabase'
       },
       {
         status: 500,
@@ -53,4 +36,3 @@ export async function POST(request: NextRequest) {
     { status: 200 },
   );
 }
-

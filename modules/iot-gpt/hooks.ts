@@ -2,6 +2,7 @@ import { IOT_GPT_API } from '@/constants/api-endpoints';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   chatQuery,
+  chatQueryDev,
   getRecommendationProductDetail,
   getThreadDetails,
   getUserThreads,
@@ -11,6 +12,16 @@ import { IChatQueryBody } from './type';
 export const useChatQuery = () => {
   const fn = async (data: IChatQueryBody) => {
     return await chatQuery(data);
+  };
+
+  return useMutation({
+    mutationFn: fn,
+  });
+};
+
+export const useChatQueryDev = () => {
+  const fn = async (data: IChatQueryBody) => {
+    return await chatQueryDev(data);
   };
 
   return useMutation({

@@ -1,16 +1,22 @@
 import Stepper from '@/components/Steppter';
-import { FC, useEffect, useRef, useState } from 'react';
-import BusinessInformation from './components/BusinessInformation';
-import ConfirmDetails from './components/ConfimDetails';
-import ClaimBusiness from './components/ClaimBusiness';
-import { FormProvider, useForm } from 'react-hook-form';
-import clsx from 'clsx';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { LOCAL_STORAGE_KEYS } from '@/constants/localStorage';
+import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
+import { getValue } from '@/helpers/storage';
 import { vendorOnboardingSchema } from '@/validations/vendors';
-import { IModalElement } from '@/components/Modal';
-import SwitchToProviderOTPVerification from '@/components/SwitchToProviderOPTVerfication';
+import { yupResolver } from '@hookform/resolvers/yup';
+import clsx from 'clsx';
+import { isEmpty } from 'lodash';
+import { useRouter } from 'next/navigation';
+import { FC, useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import BusinessInformation from './components/BusinessInformation';
+import ClaimBusiness from './components/ClaimBusiness';
+import ConfirmDetails from './components/ConfimDetails';
 
-interface IVendorOnboardingProps {}
+interface IVendorOnboardingProps {
+  paymentSuccess?: boolean;
+  paymentCancel?: boolean;
+}
 
 export enum VENDOR_ONBOARDING_STEPS {
   BUSINESS_INFORMATION,
@@ -33,24 +39,51 @@ const steps = [
   },
 ];
 
-const VendorOnboarding: FC<IVendorOnboardingProps> = (props) => {
+const VendorOnboarding: FC<IVendorOnboardingProps> = ({
+  paymentSuccess = false,
+  paymentCancel = false,
+}) => {
+  const router = useRouter();
   const [active, setActive] = useState(VENDOR_ONBOARDING_STEPS.BUSINESS_INFORMATION);
-  const quoteVerificationRef = useRef<IModalElement>(null);
   const vendorOnboardingForm = useForm({
     defaultValues: {
       vendorname: '',
       vendorurl: '',
       notes: '',
-      email_associated_with_business: '',
+      email_associated_with_business: undefined,
       phone_number: '',
       claim_reason: '',
       vendorid: undefined,
       step: VENDOR_ONBOARDING_STEPS.BUSINESS_INFORMATION,
       first_name: '',
       last_name: '',
+      emails: [
+        {
+          value: '',
+        },
+      ],
     },
     resolver: yupResolver(vendorOnboardingSchema),
   });
+
+  useEffect(() => {
+    if (paymentSuccess || paymentCancel) {
+      handleFillFormFromStorage();
+    }
+  }, [paymentSuccess, paymentCancel]);
+
+  const handleFillFormFromStorage = () => {
+    const vendorOnboardingDataFromStorage: any = JSON.parse(
+      getValue(LOCAL_STORAGE_KEYS.VENDOR_ONBOARDING_DATA) || '{}',
+    );
+
+    if (isEmpty(vendorOnboardingDataFromStorage)) {
+      router.push(RESTRICTED_APP_ROUTES.VENDOR_ONBOARDING);
+    } else {
+      setActive(VENDOR_ONBOARDING_STEPS.CLAIM_BUSINESS);
+      vendorOnboardingForm.reset(vendorOnboardingDataFromStorage);
+    }
+  };
 
   const handleNextStep = () => {
     setActive((prev) => prev + 1);
@@ -64,10 +97,6 @@ const VendorOnboarding: FC<IVendorOnboardingProps> = (props) => {
     vendorOnboardingForm.setValue('step', active);
   }, [active]); //eslint-disable-line
 
-  const closeOTPModal = () => {
-    quoteVerificationRef?.current?.close();
-  };
-
   const renderSteps = () => {
     switch (active) {
       case VENDOR_ONBOARDING_STEPS.BUSINESS_INFORMATION:
@@ -75,9 +104,7 @@ const VendorOnboarding: FC<IVendorOnboardingProps> = (props) => {
       case VENDOR_ONBOARDING_STEPS.CONFIRM_DETAILS:
         return <ConfirmDetails onNextStep={handleNextStep} onBackStep={handleBackStep} />;
       case VENDOR_ONBOARDING_STEPS.CLAIM_BUSINESS:
-        return (
-          <ClaimBusiness quoteVerificationHandler={() => quoteVerificationRef?.current?.open()} />
-        );
+        return <ClaimBusiness paymentSuccess={paymentSuccess} paymentCancel={paymentCancel} />;
     }
   };
 
@@ -104,7 +131,6 @@ const VendorOnboarding: FC<IVendorOnboardingProps> = (props) => {
             </>
           )}
         </section>
-        <SwitchToProviderOTPVerification ref={quoteVerificationRef} onSuccess={closeOTPModal} />
       </FormProvider>
     </>
   );

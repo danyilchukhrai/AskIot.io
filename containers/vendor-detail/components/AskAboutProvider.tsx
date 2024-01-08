@@ -5,6 +5,7 @@ import { IThreadInteraction } from '@/modules/iot-gpt/type';
 import { useChatVendorQuery } from '@/modules/vendors/hooks';
 import Image from 'next/image';
 import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IVendorChatProps {
   setIsOpenChat: Dispatch<SetStateAction<boolean>>;
@@ -18,6 +19,8 @@ const SUGGESTION = [
   'Recommended contact',
   'Recommended platform',
 ];
+
+const threadId = uuidv4();
 
 const VendorChat: FC<IVendorChatProps> = ({ setIsOpenChat, vendorId, vendorLogo }) => {
   const [messageData, setMessageData] = useState<IThreadInteraction[]>([]);
@@ -39,13 +42,13 @@ const VendorChat: FC<IVendorChatProps> = ({ setIsOpenChat, vendorId, vendorLogo 
       {
         vendorId,
         query: value,
-        conversationHistory: getConversationHistory(),
+        threadId,
       },
       {
         onSuccess: (data) => {
           // Update message data with aiResponse after query successfully
           const latestMessage = newMessageData[newMessageData.length - 1];
-          latestMessage.ai = data.response;
+          latestMessage.ai = data?.response || data?.greeting || '';
           setMessageData(newMessageData);
         },
         onError: handleShowError,

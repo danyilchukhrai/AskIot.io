@@ -4,7 +4,6 @@ import { IVendorDetails } from '@/modules/vendors/type';
 import { FC } from 'react';
 import InfoItem from './InfoItem';
 import MemberItem from './MemberItem';
-import StatisticalItem from './StatisticalItem';
 
 interface IVendorInfoProps {
   vendor?: IVendorDetails;
@@ -60,9 +59,9 @@ const VendorInfo: FC<IVendorInfoProps> = ({ vendor }) => {
         </div>
       </div>
       <div className="vendor-statistical border-t border-gray-100 flex justify-between flex-wrap">
-        <div className="flex items-center md:w-auto w-full">
+        {/* <div className="flex items-center md:w-auto w-full">
           <StatisticalItem isLastEl label="Use Case" value="Fleet Management" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

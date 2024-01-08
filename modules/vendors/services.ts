@@ -65,7 +65,7 @@ export const getProductsByVendor = async (
 
 export const chatVendorQuery = async (
   data: IChatVendorQueryBody,
-): Promise<{ response: string }> => {
+): Promise<{ response?: string; greeting?: string }> => {
   const result = await apiInstance({
     method: REQUEST_METHOD.POST,
     data,
@@ -95,10 +95,10 @@ export const createEditProduct = async ({ data, id }: { data: any; id?: number }
   return result.data;
 };
 
-export const deleteProduct = async (id: number) => {
+export const deleteProduct = async (id: number, isDevice: boolean) => {
   const result = await apiInstance({
     method: REQUEST_METHOD.DELETE,
-    url: VENDOR_API.deleteProduct.api(id),
+    url: VENDOR_API.deleteProduct.api(id, isDevice),
   });
 
   return result.data;

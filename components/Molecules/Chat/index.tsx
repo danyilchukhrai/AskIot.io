@@ -3,7 +3,6 @@ import { IThreadInteraction } from '@/modules/iot-gpt/type';
 import { FC, useEffect, useRef, useState } from 'react';
 import MessagesContainer from './MessagesContainer';
 import Suggestions from './Suggestions';
-import UserProvider from '@/providers/UserProvider';
 
 interface IChatProps {
   messageData?: IThreadInteraction[];
@@ -44,9 +43,7 @@ const Chat: FC<IChatProps> = ({
   return (
     <>
       <div ref={messageContainerRef} className="flex-1 overflow-auto md:px-8 md:pt-8 px-4 pt-4">
-        <UserProvider>
-          <MessagesContainer data={messageData} isLoading={isLoading} />
-        </UserProvider>
+        <MessagesContainer data={messageData} isLoading={isLoading} />
       </div>
       {!messageData?.length && !!suggestionList?.length && (
         <div className="md:px-8 px-4">

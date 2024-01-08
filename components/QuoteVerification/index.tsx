@@ -43,6 +43,7 @@ const QuoteVerification = forwardRef<IQuoteVerificationElement, IQuoteVerificati
         lastName: '',
         email: '',
         phone: '',
+        website: '',
       },
       resolver: yupResolver(quoteVerificationSchema),
     });
@@ -91,6 +92,7 @@ const QuoteVerification = forwardRef<IQuoteVerificationElement, IQuoteVerificati
             firstName: data?.firstName,
             lastName: data?.lastName,
             phoneNumber: data?.phone,
+            website: data?.website || '',
           },
           'PUT',
         );

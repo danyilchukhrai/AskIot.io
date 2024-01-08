@@ -50,10 +50,6 @@ const MessageContextProvider: FC<IMessageContextProviderProps> = ({ children }) 
     }
   }, [firstPanel.length]);
 
-  // useEffect(() => {
-  //   setMessageData(initMessageData);
-  // }, [initMessageData]);
-
   const getChannelsByUserType = (sortedChannels: IFirstPanelMessage[]) => {
     if (currentUserType === USER_TYPE.USER) {
       // Only get channels which have the senderId is the current user

@@ -40,7 +40,8 @@ export const generateProductsFromRecommendations = (recommendations?: IChatQuery
   Object.entries(recommendations).forEach(([key, value]) => {
     const products = value?.map((it) => ({
       ...it,
-      recommendationType: key,
+      // recommendationType: key,
+      recommendationType: it.type,
     }));
 
     result = [...result, ...products];
@@ -69,7 +70,7 @@ export const serializeObject = (object: any) => {
 };
 
 export const handleShowError = (error: any) => {
-  toast.error(error?.data?.error || 'Please try again.');
+  toast.error(error?.data?.details || error?.data?.error || 'Please try again.');
 };
 
 export const formatPhoneNumber = (value: string): string => {
@@ -99,16 +100,17 @@ export const getArrayValueFromTags = (value: string) => {
 };
 
 export const getMultipleValue = (array: any) => {
-  return array?.map((it: any) => it?.value);
+  return array?.map((it: any) => it?.value || it);
 };
 
-export const toBase64 = (file: File) =>
+export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
       const result = (reader?.result as string) || '';
-      return resolve(result?.replace('data:', '')?.replace(/^.+,/, ''));
+      return resolve(result);
+      // return resolve(result?.replace('data:', '')?.replace(/^.+,/, ''));
     };
 
     reader.onerror = reject;

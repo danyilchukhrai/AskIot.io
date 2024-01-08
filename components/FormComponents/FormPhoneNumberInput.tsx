@@ -11,7 +11,7 @@ interface IFormPhoneNumberInputProps extends IInputProps {
 
 const FormPhoneNumberInput: FC<IFormPhoneNumberInputProps> = (props) => {
   const { name = '', inputClassName = '', className, label, ...rest } = props;
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
   const {
     field,
     fieldState: { invalid, error },

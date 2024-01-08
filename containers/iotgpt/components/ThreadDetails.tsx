@@ -1,12 +1,13 @@
+import Chat from '@/components/Molecules/Chat';
+import Spinner from '@/components/Spinner';
+import { handleShowError } from '@/helpers/common';
+import { useChatQueryDev, useGetThreadDetails } from '@/modules/iot-gpt/hooks';
+import { IChatQueryResponse, IThreadInteraction } from '@/modules/iot-gpt/type';
+import { cloneDeep, get } from 'lodash';
 import { FC, useContext, useEffect } from 'react';
 import { ProductsContext } from '../context';
-import Chat from '@/components/Molecules/Chat';
-import { useChatQuery, useGetThreadDetails } from '@/modules/iot-gpt/hooks';
-import { cloneDeep, get } from 'lodash';
-import { IChatQueryResponse, IThreadInteraction } from '@/modules/iot-gpt/type';
 import ThreadDetailsHeader from './ThreadDetailsHeader';
 import { DEFAULT_SEARCH } from './ThreadList';
-import Spinner from '@/components/Spinner';
 
 interface IThreadDetailsProps {
   isOpenSearchList: boolean;
@@ -23,7 +24,9 @@ const SUGGESTIONS = [
 const ThreadDetails: FC<IThreadDetailsProps> = ({ isOpenSearchList, onOpenSearchList }) => {
   const { activeThread, threadInteractions, setThreadInteractions, threads, setThreads } =
     useContext(ProductsContext);
-  const { mutate: chatQuery, isPending: querying } = useChatQuery();
+  // const { mutate: chatQuery, isPending: querying } = useChatQuery();
+  const { mutate: chatQueryDev, isPending: querying } = useChatQueryDev();
+
   const { data: threadDetails, isLoading: gettingThreadDetails } = useGetThreadDetails(
     activeThread?.thread_id || '',
   );
@@ -74,14 +77,14 @@ const ThreadDetails: FC<IThreadDetailsProps> = ({ isOpenSearchList, onOpenSearch
     const lastInteraction = threadInteractions[threadInteractions.length - 1];
     if (lastInteraction.ai) return;
 
-    chatQuery(
+    chatQueryDev(
       {
         threadId: activeThread?.thread_id || '',
         query: lastInteraction.user,
       },
       {
         onSuccess: handleChatQuerySuccess,
-        onError: (error) => console.log(error),
+        onError: handleShowError,
       },
     );
   };

@@ -71,14 +71,6 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
   const onHandleSave = async () => {
     setIsLoading(true)
     try {
-
-      console.log('name', name);
-      console.log('welcomeMessage', welcomeMessage);
-      console.log('primaryColor', primaryColor);
-      console.log('backgroundColor', backgroundColor);
-      console.log('chatHeight', chatHeight);
-      console.log('fontSize', fontSize);
-
       let data = {
         name,
         welcomeMessage,
@@ -124,7 +116,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
                 Content
               </p>
               <p className="text-[14px] text-gray-500 font-inter text-base font-normal leading-6">
-                Change the text related things in the chatbot
+                Customize your chatbot
               </p>
             </div>
             <div className="section-input flex flex-col items-start gap-[8px]">
@@ -232,19 +224,11 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
             </div>
           </div>
           <section className='chatbot'>
-            <div className="flex w-[335px] py-[17.131px] px-[28.551px] justify-center items-center gap-[56.626px] rounded-t-[8.565px]" style={{ backgroundColor: primaryColor }}>
+            <div className="flex w-[335px] py-[17.131px] px-[28.551px] justify-between items-center gap-[56.626px] rounded-t-[8.565px]" style={{ backgroundColor: primaryColor }}>
               <div className="flex items-start gap-[8.089px]">
                 <div className="flex flex-col items-start gap-[10.469px]">
-                  <p className="text-white text-center w-[76px] font-inter text-[13.324px] font-semibold leading-[13.324px]">
-                    AskIoT GPT
-                  </p>
                   <p className="text-white text-center font-inter text-[13.324px] font-semibold leading-[13.324px]">
                     {name}
-                  </p>
-                </div>
-                <div className="flex py-[1.903px] px-[4.759px] items-start rounded-[8.565px] border border-solid border-green-400 bg-green-50">
-                  <p className="text-[#37B24D] font-inter text-[7.614px] font-normal leading-[7.614px]">
-                    Connected
                   </p>
                 </div>
               </div>
@@ -259,7 +243,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               <div className="flex items-start gap-[11.42px] self-stretch">
                 <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
                 <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
-                  <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
+                  <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     {welcomeMessage}
                   </p>
                 </div>
@@ -267,7 +251,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               <div className="flex items-start justify-end gap-[11.42px] self-stretch">
                 <img src={`${userIcon === '' ? '/assets/images/user-icon.png' : userIcon}`} className="w-[11px] h-[11px]" />
                 <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-[#06F] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
-                  <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
+                  <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     What devices support tank monitoring?
                   </p>
                 </div>
@@ -275,7 +259,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               <div className="flex items-start gap-[11.42px] self-stretch">
                 <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
                 <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
-                  <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
+                  <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     Sure, here’s a list of devices that are best suited for tank monitoring
                   </p>
                 </div>
@@ -283,19 +267,15 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               <div className="flex items-start justify-end gap-[11.42px] self-stretch">
                 <img src={`${userIcon === '' ? '/assets/images/user-icon.png' : userIcon}`} className="w-[11px] h-[11px]" />
                 <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-[#06F] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
-                  <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
+                  <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     What devices support tank monitoring?
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-[11.42px] self-stretch">
-                <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
-                <img src='/assets/images/sample.png' className='w-full' />
-              </div>
               <div className="flex h-[23.793px] py-[4.759px] px-[5.71px] justify-between items-center self-stretch rounded-[5.71px] bg-white shadow-box backdrop-blur-[7.930870532989502px] w-[289px] absolute bottom-[17px]">
                 <div className="flex w-[166.786px] items-center gap-[5.71px]">
                   <img src='/assets/images/bot-icon.png' className="w-[9.51px] h-[9.51px]" />
-                  <p className="text-[#ADB5BD] font-inter font-normal leading-[9.517px]" style={{ fontSize: fontSize / 16 * 6.662 + 'px' }}>
+                  <p className="text-[#ADB5BD] font-inter font-normal leading-[9.517px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     Type
                   </p>
                 </div>

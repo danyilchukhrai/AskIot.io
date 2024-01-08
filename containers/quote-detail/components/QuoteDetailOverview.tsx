@@ -1,17 +1,13 @@
-import Button from '@/components/Button';
+import Avatar from '@/components/Avatar';
 import Input from '@/components/Input';
 import Table, { ColumnsProps } from '@/components/Table';
 import Textarea from '@/components/Textarea';
-import { USER_TYPE, routeConfig } from '@/configs/routeConfig';
-import Image from 'next/image';
-import { Dispatch, FC, SetStateAction, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { IQuoteDetails, IProductDetails, IProviderFormData } from '@/interfaces/quotes';
+import { USER_TYPE } from '@/configs/routeConfig';
+import { IProductDetails, IProviderFormData, IQuoteDetails } from '@/interfaces/quotes';
 import { useUserTypeContext } from '@/providers/UserTypeProvider';
-import FormInput from '@/components/FormComponents/FormInput';
-import FormTextarea from '@/components/FormComponents/FormTextarea';
 import clsx from 'clsx';
-import Avatar from '@/components/Avatar';
+import Image from 'next/image';
+import { Dispatch, FC, SetStateAction } from 'react';
 
 interface IQuoteDetailOverviewProps {
   onOpenChatDrawer: () => void;
@@ -232,7 +228,7 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
               <Table
                 rows={[
                   {
-                    ...quoteDetails?.productDetails?.Product[0],
+                    ...(quoteDetails?.productDetails?.Product?.[0] || quoteDetails?.productDetails),
                     offered_price: quoteDetails?.offered_price,
                     quantity: quoteDetails?.quantity,
                   },

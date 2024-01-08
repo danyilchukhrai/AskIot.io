@@ -1,15 +1,12 @@
 import Button from '@/components/Button';
-import { ChangeEvent, FC, useContext, useState } from 'react';
-import Image from 'next/image';
-import { ProductsContext } from '../context';
-import { v4 as uuidv4 } from 'uuid';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import Image from 'next/image';
+import { FC, useContext } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { ProductsContext } from '../context';
 import ThreadItem from './ThreadItem';
-import Input from '@/components/Input';
-import { ENTER_KEY } from '@/constants/common';
-import { IThreadInteraction } from '@/modules/iot-gpt/type';
 
 interface IThreadListProps {
   onCloseSearchList: () => void;

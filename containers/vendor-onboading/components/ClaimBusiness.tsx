@@ -6,7 +6,8 @@ import { FC, useEffect, useState } from 'react';
 import ClaimOwnershipForm from './ClaimOwnershipForm';
 
 interface IClaimBusinessProps {
-  quoteVerificationHandler: () => void;
+  paymentSuccess?: boolean;
+  paymentCancel?: boolean;
 }
 
 enum CHILD_STEP {
@@ -14,7 +15,7 @@ enum CHILD_STEP {
   THANK_YOU,
 }
 
-const ClaimBusiness: FC<IClaimBusinessProps> = ({ quoteVerificationHandler }) => {
+const ClaimBusiness: FC<IClaimBusinessProps> = ({ paymentSuccess, paymentCancel }) => {
   const [childStep, setChildStep] = useState(CHILD_STEP.CLAIM_OWNERSHIP);
   const { setCurrentUserType } = useUserTypeContext();
   const router = useRouter();
@@ -33,7 +34,8 @@ const ClaimBusiness: FC<IClaimBusinessProps> = ({ quoteVerificationHandler }) =>
     <>
       {childStep === CHILD_STEP.CLAIM_OWNERSHIP && (
         <ClaimOwnershipForm
-          quoteVerificationHandler={quoteVerificationHandler}
+          paymentSuccess={paymentSuccess}
+          paymentCancel={paymentCancel}
           onNextStep={() => setChildStep(CHILD_STEP.THANK_YOU)}
         />
       )}

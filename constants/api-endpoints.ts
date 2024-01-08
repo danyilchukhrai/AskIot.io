@@ -10,6 +10,9 @@ export const IOT_GPT_API = {
   chatQuery: {
     api: '/private/chats/process-query',
   },
+  chatQueryDev: {
+    api: '/private/chats/process-query-dev',
+  },
   getUserThreads: {
     api: '/private/chats/get-user-threads',
   },
@@ -53,7 +56,8 @@ export const VENDOR_API = {
     api: (id?: number) => (id ? `/private/products/product/${id}` : '/private/products/product'),
   },
   deleteProduct: {
-    api: (id: number) => `/private/products/product/${id}`,
+    api: (id: number, isDevice: boolean) =>
+      isDevice ? `/private/devices/${id}` : `/private/products/product/${id}`,
   },
   updateVendor: {
     api: (id: number) => `/private/vendors/${id}`,
@@ -72,10 +76,16 @@ export const QUOTES_API = {
 
 export const USER_API = {
   getProviderStatus: {
-    api: '/api/private/users/provider-status',
+    api: '/private/users/provider-status',
   },
   createUser: {
-    api: '/api/private/users/',
+    api: '/private/users/',
+  },
+  getAskIotUserDetails: {
+    api: '/private/users/api/',
+  },
+  createAskIotUser: {
+    api: '/private/users/',
   },
 };
 
@@ -125,5 +135,15 @@ export const PRODUCT_API = {
 export const COMMON_API = {
   getSASToken: {
     api: '/private/azure-storage/get-sas-token',
+  },
+};
+
+export const SUBSCRIPTION_API = {
+  createCheckoutSession: {
+    // api: '/public/stripe/create-checkout-session',
+    api: '/checkout/create-checkout-session',
+  },
+  createPortalSession: {
+    api: '/checkout/create-portal-session',
   },
 };

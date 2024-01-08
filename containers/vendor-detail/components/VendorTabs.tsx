@@ -31,7 +31,7 @@ const VendorTabs: FC<IVendorTabsProps> = (props) => {
 
   return (
     <div className="mt-5">
-      <Tabs tabs={tabs} disabledSpaceBetween />
+      <Tabs tabs={tabs} disabledSpaceBetween showTabOnUrl />
     </div>
   );
 };

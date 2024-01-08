@@ -1,13 +1,12 @@
 import { COMMON_API } from '@/constants/api-endpoints';
 import { REQUEST_METHOD } from '@/constants/common';
 import { apiInstance } from '@/helpers/axios';
-import { toBase64 } from '@/helpers/common';
 
 export const uploadFile = async ({ file, type }: { file: File; type: string }) => {
   const sasResponse = await getSASToken(type);
   const { uri, sasToken } = sasResponse || {};
   const url = `${uri}?${sasToken}`;
-  const base64File: any = await toBase64(file);
+  // const base64File: any = await toBase64(file);
 
   const response = await fetch(url, {
     method: 'PUT',
@@ -15,7 +14,7 @@ export const uploadFile = async ({ file, type }: { file: File; type: string }) =
       'x-ms-blob-type': 'BlockBlob',
       'Content-Type': file.type,
     },
-    body: base64File,
+    body: file,
   });
 
   // Temp

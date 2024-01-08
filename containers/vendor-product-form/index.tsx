@@ -7,6 +7,7 @@ import {
   createVendorDeviceDefaultValue,
   createVendorProductDefaultValue,
 } from '@/constants/vendor-product-form';
+import { VENDORS_TAB_KEY } from '@/constants/vendors';
 import { getArrayValueFromTags, getMultipleValue, handleShowError } from '@/helpers/common';
 import { useUploadFile } from '@/modules/common/hooks';
 import {
@@ -18,7 +19,7 @@ import { vendorDeviceSchema, vendorProductSchema } from '@/validations/vendors';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useParams, useRouter } from 'next/navigation';
 import { FC, useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, UseFormReturn, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import DeviceForm from './components/DeviceForm';
 import ProductForm from './components/ProductForm';
@@ -71,6 +72,7 @@ const VendorProductForm: FC<IVendorProductFormProps> = (props) => {
         })),
         usecase: productDetail?.usecase?.join(', '),
         product_url: productDetail?.product_url,
+        product_image: productDetail?.product_image,
       });
     }
   };
@@ -84,7 +86,7 @@ const VendorProductForm: FC<IVendorProductFormProps> = (props) => {
 
   const handleCreateEditProductSuccess = () => {
     toast.success(isEditMode ? 'Product updated successfully' : 'Product created successfully');
-    router.push(RESTRICTED_APP_ROUTES.MY_COMPANY);
+    router.push(`${RESTRICTED_APP_ROUTES.MY_COMPANY}?tab=${VENDORS_TAB_KEY.Products}`);
   };
 
   const onSubmitDevice = ({ file, vendorid, ...data }: any) => {
@@ -105,7 +107,7 @@ const VendorProductForm: FC<IVendorProductFormProps> = (props) => {
       uploadFile(
         {
           file,
-          type: isDevice ? RECOMMENDATION_TYPE.DEVICES : RECOMMENDATION_TYPE.PRODUCTS,
+          type: type as string,
         },
         {
           onError: handleShowError,
@@ -147,7 +149,7 @@ const VendorProductForm: FC<IVendorProductFormProps> = (props) => {
       uploadFile(
         {
           file,
-          type: isDevice ? RECOMMENDATION_TYPE.DEVICES : RECOMMENDATION_TYPE.PRODUCTS,
+          type: type as string,
         },
         {
           onError: handleShowError,
@@ -192,12 +194,23 @@ const VendorProductForm: FC<IVendorProductFormProps> = (props) => {
         });
   };
 
+  const handleRemoveImage = () => {
+    const form: UseFormReturn<any> = isDevice ? deviceForm : productForm;
+    form.setValue('product_image', '');
+    form.setValue('file', undefined);
+  };
+
   const getTitle = () => {
     if (isEditMode) {
       return isDevice ? `Edit device` : `Edit product`;
     }
 
     return isDevice ? `Add a new device` : `Add a new product`;
+  };
+
+  const commonFormsProps = {
+    onSelectFile: handleSelectFile,
+    onRemoveImage: handleRemoveImage,
   };
 
   if (gettingProductInfo) return <LoadingIndicator />;
@@ -212,11 +225,11 @@ const VendorProductForm: FC<IVendorProductFormProps> = (props) => {
         <div className="section-body pt-7 pb-8">
           {isDevice ? (
             <FormProvider {...deviceForm}>
-              <DeviceForm onSelectFile={handleSelectFile} />
+              <DeviceForm {...commonFormsProps} />
             </FormProvider>
           ) : (
             <FormProvider {...productForm}>
-              <ProductForm onSelectFile={handleSelectFile} />
+              <ProductForm {...commonFormsProps} />
             </FormProvider>
           )}
         </div>

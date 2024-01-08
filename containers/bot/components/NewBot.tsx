@@ -80,12 +80,19 @@ const NewBot: FC<INewBotProps> = (props) => {
         <section
           className='vendor-onboarding-section relative min-h-screen p-8 flex justify-center items-center'
         >
-          {(active !== BOT_CREATE_STEPS.CUSTOMIZE && active !== BOT_CREATE_STEPS.TRAIN_BOT )? (
+          {(active === BOT_CREATE_STEPS.BOT_CREATE || active === BOT_CREATE_STEPS.GO_LIVE ) && (
             <div className="md:w-[795px] w-full md:py-12 md:px-9 py-8 px-6 rounded-xl border border-gray-500">
               <Stepper active={active} steps={steps} />
               {renderSteps()}
             </div>
-          ) : (
+          )}
+          {(active === BOT_CREATE_STEPS.TRAIN_BOT) && (
+            <div className="md:w-[1265px] w-full md:py-12 md:px-9 py-8 px-6 rounded-xl border border-gray-500">
+              <Stepper active={active} steps={steps} />
+              {renderSteps()}
+            </div>
+          )}
+          {(active === BOT_CREATE_STEPS.CUSTOMIZE) && (
             <div className="md:w-[965px] w-full md:py-12 md:px-9 py-8 px-6 rounded-xl border border-gray-500">
               <Stepper active={active} steps={steps} />
               {renderSteps()}

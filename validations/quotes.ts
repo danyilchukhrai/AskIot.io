@@ -1,5 +1,6 @@
-import * as Yup from 'yup';
 import { REQUIRED_MESSAGE } from '@/constants/validation';
+import * as Yup from 'yup';
+import { BASE_VALIDATION } from './base';
 
 export const requestQuoteSchema = Yup.object().shape({
   quantity: Yup.number()
@@ -15,6 +16,7 @@ export const quoteVerificationSchema = Yup.object().shape({
   lastName: Yup.string().required(REQUIRED_MESSAGE),
   email: Yup.string().required(REQUIRED_MESSAGE).email(),
   phone: Yup.string().required(REQUIRED_MESSAGE),
+  website: BASE_VALIDATION.url,
 });
 
 export const submitQuoteSchema = Yup.object().shape({

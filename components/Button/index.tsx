@@ -1,14 +1,15 @@
 import clsx from 'clsx';
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { ButtonHTMLAttributes, SVGProps, forwardRef } from 'react';
 import Spinner from '../Spinner';
 
-type ButtonVariant = 'primary' | 'secondary' | 'inline' | 'info' | 'error';
+type ButtonVariant = 'primary' | 'secondary' | 'inline' | 'info' | 'error' | 'success';
 
 export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   disabledPadding?: boolean;
   fullWidth?: boolean;
   isLoading?: boolean;
+  loadingIconProps?: SVGProps<SVGSVGElement>;
 }
 
 const Button = forwardRef<HTMLButtonElement, IButtonProps>(
@@ -21,6 +22,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
       fullWidth = false,
       isLoading = false,
       disabled,
+      loadingIconProps,
       ...rest
     },
     ref,
@@ -40,8 +42,10 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
               variant === 'inline',
             'text-white bg-primary-500 disabled:bg-primary-400 disabled:text-gray-200':
               variant === 'info',
+            'text-white bg-green-500 disabled:bg-green-400 disabled:text-gray-200':
+              variant === 'success',
             'text-white bg-red-500': variant === 'error',
-            'flex items-center gap-2': isLoading,
+            'flex items-center gap-1 justify-center': isLoading,
           },
           disabledPadding ? 'p-0' : 'px-3 py-2.5',
           fullWidth ? 'w-full' : 'w-fit',
@@ -49,7 +53,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
         )}
         disabled={disabled || isLoading}
       >
-        {isLoading && <Spinner width={22} height={22} />}
+        {isLoading && <Spinner width={22} height={22} {...loadingIconProps} />}
         {children}
       </button>
     );

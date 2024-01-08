@@ -68,7 +68,6 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
           </div>
 
           <div className='section-embeded w-full'>
-            <p className='text-[#000] text-[16px] font-inter font-normal leading-6 w-full'>Embed your chatbot on website</p>
             <p className='text-[#ADB5BD] text-[14px] font-inter font-normal leading-6 mb-[6px] w-full'>Embed your chatbot on website</p>
             <div className='mt-[11px] flex'>
               <Input

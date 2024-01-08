@@ -1,4 +1,3 @@
-import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import { copyToClipboard } from '@/helpers/common';
 import { IRecommendationInfo } from '@/modules/iot-gpt/type';
 import { FC, ReactNode, useState } from 'react';
@@ -14,7 +13,7 @@ interface IShareFormProps {
   product?: IRecommendationInfo;
 }
 
-const PRODUCTION_DOMAIN_URL = ' https://askiot.vercel.app';
+const PRODUCTION_DOMAIN_URL = 'https://askiot.vercel.app';
 
 interface IShareButton {
   children: ReactNode;
@@ -55,7 +54,7 @@ const CopyLinkButton = (props: IShareButton) => {
 };
 
 const ShareForm: FC<IShareFormProps> = ({ product }) => {
-  const productLink = `${PRODUCTION_DOMAIN_URL}${RESTRICTED_APP_ROUTES.PRODUCTS}/${product?.type}/${product?.slug}`;
+  const productLink = `${PRODUCTION_DOMAIN_URL}/app/${product?.type}/${product?.slug}`;
 
   const PLATFORMS = [
     {

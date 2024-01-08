@@ -1,9 +1,13 @@
 'use client';
 
+import { withAuth } from '@/HOC/withAuth';
+import { USER_TYPE } from '@/configs/routeConfig';
 import dynamic from 'next/dynamic';
 
 const CustomLivePage = dynamic(() => import('@/containers/bot-live'));
 
-export default function LivePage() {
+const LivePage = () => {
   return <CustomLivePage />;
-}
+};
+
+export default withAuth(LivePage)([USER_TYPE.PROVIDER]);

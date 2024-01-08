@@ -98,7 +98,7 @@ const SignIn: FC<ISignInProps> = (props) => {
   };
 
   return (
-    <div className="login-form-container w-full md:w-[48%]">
+    <div className="login-form-container w-full md:w-[48%] md:min-w-[325px]">
       <div className="login-header flex flex-col justify-center md:items-center mb-11">
         <div className="flex items-center">
           <Image
@@ -127,7 +127,7 @@ const SignIn: FC<ISignInProps> = (props) => {
             onClick={form.handleSubmit(handleSignIn)}
             fullWidth
             variant="info"
-            disabled={isLoading}
+            isLoading={isLoading}
           >
             Sign In
           </Button>

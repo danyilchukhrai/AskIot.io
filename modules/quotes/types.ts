@@ -12,6 +12,7 @@ export interface IQuoteVerificationForm {
   lastName: string;
   email: string;
   phone: string;
+  website?: string;
 }
 
 export interface ICreateQuotesBody {

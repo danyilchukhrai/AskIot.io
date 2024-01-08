@@ -17,7 +17,7 @@ interface IMessageItemProps {
 }
 
 const MessageItem: FC<IMessageItemProps> = ({
-  content,
+  content = '',
   isCurrentUser = false,
   recommendations,
   isLoading,
@@ -59,9 +59,8 @@ const MessageItem: FC<IMessageItemProps> = ({
                   ? 'text-white bg-primary-500 shadow-s'
                   : 'text-black bg-white shadow-s',
               )}
-            >
-              {content}
-            </p>
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
             {!isEmpty(products) && (
               <div className="mt-3">
                 <ProductList products={products} />

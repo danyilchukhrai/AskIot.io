@@ -1,6 +1,6 @@
+import { USER_API } from '@/constants/api-endpoints';
 import { REQUEST_METHOD } from '@/constants/common';
 import { apiInstance } from '@/helpers/axios';
-import { USER_API } from '@/constants/api-endpoints';
 import { IProviderStatusResponse } from './types';
 
 export const getProviderStatus = async (fakeParam: string): Promise<IProviderStatusResponse> => {

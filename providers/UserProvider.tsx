@@ -1,6 +1,6 @@
 'use client';
 
-import { COOKIES_STORAGE_KEYS } from '@/constants/common';
+import { COOKIES_STORAGE_KEYS, PAYMENT_STATUS } from '@/constants/common';
 import { getValue } from '@/helpers/storage';
 import { createAskIotUser, getAskIotUserDetails } from '@/services/user';
 import { IAskIOTUserDetails } from '@/types/user';
@@ -12,6 +12,7 @@ interface IUserProviderProps {
 interface IUserContext {
   askIOTUserDetails: IAskIOTUserDetails | null;
   setAskIOTUserIsValid: React.Dispatch<React.SetStateAction<boolean>>;
+  isNoPaymentStatus?: boolean;
 }
 
 const UserContext = React.createContext<IUserContext>({} as IUserContext);
@@ -27,6 +28,10 @@ export const useUserContext = () => {
 const UserProvider: React.FunctionComponent<IUserProviderProps> = (props) => {
   const [askIOTUserDetails, setAskIOTUserDetails] = React.useState<IAskIOTUserDetails | null>(null);
   const [getAskIOTUserIsValid, setAskIOTUserIsValid] = React.useState(true);
+  const isNoPaymentStatus = askIOTUserDetails
+    ? askIOTUserDetails?.paymentstatus === PAYMENT_STATUS.NO_PAYMENT ||
+      !askIOTUserDetails?.paymentstatus
+    : undefined;
 
   const userFlow = async () => {
     const accessToken = getValue(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
@@ -51,7 +56,13 @@ const UserProvider: React.FunctionComponent<IUserProviderProps> = (props) => {
   }, [getAskIOTUserIsValid]); //eslint-disable-line
 
   return (
-    <UserContext.Provider value={{ askIOTUserDetails, setAskIOTUserIsValid }}>
+    <UserContext.Provider
+      value={{
+        askIOTUserDetails,
+        setAskIOTUserIsValid,
+        isNoPaymentStatus,
+      }}
+    >
       {props.children}
     </UserContext.Provider>
   );

@@ -1,32 +1,14 @@
-import Tagify from '@yaireo/tagify';
 import '@yaireo/tagify/dist/tagify.css';
 import clsx from 'clsx';
-import { HTMLProps, forwardRef, useEffect } from 'react';
+import { HTMLProps, forwardRef } from 'react';
 
 export interface ITextareaProps extends HTMLProps<HTMLTextAreaElement> {
   label?: string;
   containerClassName?: string;
-  isShowTags?: boolean;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, ITextareaProps>((props, ref) => {
-  const {
-    label = '',
-    className,
-    containerClassName,
-    isShowTags = false,
-    name = '',
-    ...rest
-  } = props;
-
-  useEffect(() => {
-    if (!isShowTags) return;
-    const element: any = document?.querySelector(`textarea[name=${name}]`);
-
-    if (element && isShowTags) {
-      new Tagify(element);
-    }
-  }, [isShowTags]);
+  const { label = '', className, containerClassName, name = '', ...rest } = props;
 
   return (
     <div className={clsx('flex flex-col textarea', containerClassName)}>

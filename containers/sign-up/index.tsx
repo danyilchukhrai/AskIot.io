@@ -49,7 +49,7 @@ const SignUp: FC<ISignUpProps> = (props) => {
 
   return (
     <>
-      <div className="login-form-container w-full md:w-[48%]">
+      <div className="login-form-container w-full md:w-[48%] md:min-w-[325px]">
         <div className="login-header flex flex-col justify-center md:items-center mb-11">
           <div className="flex items-center">
             <Image
@@ -70,7 +70,7 @@ const SignUp: FC<ISignUpProps> = (props) => {
             <FormInput name="email" placeholder="you@example.com" label="Email" />
             <FormPasswordInput name="password" label="Password" />
             <FormPasswordInput name="confirmPassword" label="Confirm Password" />
-            <Button fullWidth variant="info">
+            <Button fullWidth variant="info" isLoading={isLoading}>
               Sign Up
             </Button>
           </form>

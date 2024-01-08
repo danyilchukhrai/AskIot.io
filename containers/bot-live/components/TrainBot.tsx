@@ -1,12 +1,12 @@
 import Button from '@/components/Button';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { FC, useEffect, useState } from 'react';
-import { trainBot } from '@/modules/bots/services';
 import FileUpload from '@/containers/bot/components/FileUpload';
 import Table from './Table';
-import { getTrainedData, removeTrainedData } from '@/modules/bots/services';
+import { getTrainedData, removeTrainedData, uploadFiles, processUploads } from '@/modules/bots/services';
 import BackButton from '@/components/BackButton';
 import { ITrainData } from '@/modules/bots/types';
+import { IFile } from '@/modules/bots/types';
 
 interface ITrainBotProps {
 }
@@ -17,16 +17,10 @@ const TrainBot: FC<ITrainBotProps> = ({ }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [trainedList, setTrainedList] = useState<ITrainData[]>([]);
 
-  const onHandleNext = async () => {
-    setIsLoading(true);
-    const response: any = await trainBot(files);
-    setTrainedList(response.data);
-    setIsLoading(false);
-  }
 
   const initialize = async () => {
     setIsLoading(true);
-    const response: any = await getTrainedData('accsesToken');
+    const response: any = await getTrainedData();
     setTrainedList(response);
     setIsLoading(false);
   }
@@ -34,32 +28,32 @@ const TrainBot: FC<ITrainBotProps> = ({ }) => {
   const removeFile = async (data: ITrainData) => {
     setIsLoading(true);
 
-    const newTrainData: ITrainData[] = [];
-    for (const trainData of trainedList) {
-      if (data.uri !== trainData.uri) {
-        newTrainData.push(trainData);
-        // Back-end call to remove the train data.
-        await removeTrainedData('accessToken', data.uri);
-        // ********* //
-      }
+    try {
+      await removeTrainedData(data.file_id);
+
+      const response: any = await getTrainedData();
+      setTrainedList(response);
+    } catch (e) {
+      console.log('removeFile error : ', e)
     }
-    setTrainedList(newTrainData);
-  
+
     setIsLoading(false);
   }
 
   const onUpload = async () => {
     setIsLoading(true);
 
-    const result: any = await trainBot(files);
-    console.log('onUpload', result)
+    try {
+      const data: IFile[] = await uploadFiles(files);
+      await processUploads(data);
 
-    for(const data of result.data) {
-      trainedList.push(data);
+      const response: any = await getTrainedData();
+      setTrainedList(response);
+
+      setFiles([]);
+    } catch (e) {
+      console.log('onUpload error', e);
     }
-
-    setFiles([]);
-
     setIsLoading(false)
   }
 

@@ -14,6 +14,7 @@ interface IProductListProps {
   hideActionButtons?: boolean;
   products?: IRecommendationInfo[];
   disabledOnClickProductEvent?: boolean;
+  onClickProduct?: (product: any) => void;
 }
 
 const ProductList: FC<IProductListProps> = ({
@@ -21,6 +22,7 @@ const ProductList: FC<IProductListProps> = ({
   hideActionButtons = false,
   products = [],
   disabledOnClickProductEvent = false,
+  onClickProduct,
 }) => {
   const productDrawerRef = useRef<IDrawerElement>(null);
   const saveModalRef = useRef<IModalElement>(null);
@@ -31,8 +33,12 @@ const ProductList: FC<IProductListProps> = ({
 
   const handleClickProduct = (product?: IRecommendationInfo) => {
     if (disabledOnClickProductEvent) return;
-    setSelectedProduct(product);
-    productDrawerRef?.current?.open();
+    if (onClickProduct) {
+      onClickProduct(product);
+    } else {
+      setSelectedProduct(product);
+      productDrawerRef?.current?.open();
+    }
   };
 
   const handleCloseDrawer = () => {

@@ -19,6 +19,16 @@ export const chatQuery = async (data: IChatQueryBody): Promise<IChatQueryRespons
   return result.data;
 };
 
+export const chatQueryDev = async (data: IChatQueryBody): Promise<IChatQueryResponse> => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.POST,
+    data,
+    url: IOT_GPT_API.chatQueryDev.api,
+  });
+
+  return result.data;
+};
+
 export const getUserThreads = async (): Promise<{ threads: IThread[] }> => {
   const result = await apiInstance({
     method: REQUEST_METHOD.GET,

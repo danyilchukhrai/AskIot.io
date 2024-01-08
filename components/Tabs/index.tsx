@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { FC, ReactNode, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { FC, ReactNode, useEffect, useState } from 'react';
 
 export interface ITab {
   key: number;
@@ -15,6 +16,7 @@ interface ITabsProps {
   disabledSpaceBetween?: boolean;
   tabItemStyles?: string;
   variant?: TabsVariant;
+  showTabOnUrl?: boolean;
 }
 
 const Tabs: FC<ITabsProps> = ({
@@ -22,13 +24,30 @@ const Tabs: FC<ITabsProps> = ({
   disabledSpaceBetween = false,
   tabItemStyles = '',
   variant = 'primary',
+  showTabOnUrl = false,
 }) => {
   const [activeTab, setActiveTab] = useState(tabs[0]?.key || 0);
   const isPrimary = variant === 'primary';
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tab = searchParams.get('tab');
 
   const handleTabChange = (key: number) => {
     setActiveTab(key);
+    if (showTabOnUrl) {
+      router.push(`${pathname}?tab=${key}`);
+    }
   };
+
+  useEffect(() => {
+    if (!tab) return;
+    const numberTab = Number(tab);
+
+    if (Number.isInteger(numberTab) && tabs.map((it) => it.key).includes(numberTab)) {
+      setActiveTab(numberTab);
+    }
+  }, [tab, tabs]);
 
   return (
     <div className="tab-container">

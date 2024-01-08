@@ -1,7 +1,7 @@
 import { IThreadInteraction } from '@/modules/iot-gpt/type';
+import { useUserContext } from '@/providers/UserProvider';
 import { FC, Fragment } from 'react';
 import MessageItem from './MessageItem';
-import { useUserContext } from '@/providers/UserProvider';
 
 interface IMessagesContainerProps {
   data?: IThreadInteraction[];
@@ -10,6 +10,7 @@ interface IMessagesContainerProps {
 
 const MessagesContainer: FC<IMessagesContainerProps> = ({ data = [], isLoading }) => {
   const { askIOTUserDetails } = useUserContext();
+
   return (
     <div className="h-full">
       {data.map((item, index) => (

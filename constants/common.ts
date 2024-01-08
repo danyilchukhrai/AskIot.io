@@ -6,7 +6,7 @@ export const ERROR_CODE = {
   INTERNAL_SERVER_ERROR: 500,
   FORBIDDEN: 403,
   UNPROCESSABLE_ENTITY: 422,
-  NOT_FOUND: 'NotFound',
+  NOT_FOUND: 404,
 };
 export const COOKIES_STORAGE_KEYS = {
   ACCESS_TOKEN: 'accessToken',
@@ -27,3 +27,7 @@ export const DEFAULT_PAGINATION = {
 };
 
 export const IMAGE_ACCEPT_INPUT = 'image/*';
+
+export enum PAYMENT_STATUS {
+  NO_PAYMENT = 'no_payment',
+}

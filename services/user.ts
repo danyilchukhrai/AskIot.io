@@ -1,10 +1,14 @@
-import { API_ENDPOINT } from '@/configs/appConfig';
-import { askIOTApiFetch } from '@/helpers/fetchAPI';
+import { USER_API } from '@/constants/api-endpoints';
+import { REQUEST_METHOD } from '@/constants/common';
+import { apiInstance } from '@/helpers/axios';
 
 export const getAskIotUserDetails = async () => {
   try {
-    const userData = await askIOTApiFetch(`${API_ENDPOINT}/private/users/api/`);
-    return userData;
+    const resp = await apiInstance({
+      method: REQUEST_METHOD.GET,
+      url: USER_API.getAskIotUserDetails.api,
+    });
+    return resp.data;
   } catch (_error) {
     return null;
   }
@@ -12,8 +16,11 @@ export const getAskIotUserDetails = async () => {
 
 export const createAskIotUser = async () => {
   try {
-    const userData = await askIOTApiFetch(`${API_ENDPOINT}/private/users`, {}, 'POST');
-    return userData;
+    const resp = await apiInstance({
+      method: REQUEST_METHOD.POST,
+      url: USER_API.createAskIotUser.api,
+    });
+    return resp.data;
   } catch (_error) {
     return null;
   }

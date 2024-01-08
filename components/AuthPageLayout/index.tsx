@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuthContext } from '@/providers/AuthProvider';
 import Image from 'next/image';
 import * as React from 'react';
 
@@ -8,10 +9,13 @@ interface IAuthPageLayoutProps {
 }
 
 const AuthPageLayout: React.FunctionComponent<IAuthPageLayoutProps> = (props) => {
+  const { user, isFetching } = useAuthContext();
+  if (isFetching || user) return props.children;
+
   return (
     <section className="auth flex md:flex-row flex-col">
-      <div className='section-left md:flex md:justify-center md:items-center h-[260px] md:h-screen md:w-[764px] bg-[url("/assets/images/login-image.svg")] bg-no-repeat bg-cover'>
-        <div className="content-wrapper py-13.5 px-6 md:py-0 md:px-0">
+      <div className='section-left md:flex md:justify-center md:items-center h-[260px] md:h-screen md:w-[53%] bg-[url("/assets/images/login-image.svg")] bg-no-repeat bg-cover'>
+        <div className="content-wrapper py-13.5 px-6 md:py-0 md:px-4">
           <p className="md:max-w-[464px] max-w-[284px] md:text-[2.5rem] text-3xl md:leading-[60px] font-semibold text-white">
             Replace Adventure start here with “AI Co-pilot for IoT”
           </p>

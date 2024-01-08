@@ -8,6 +8,7 @@ export interface IAskIOTUserDetails {
   first_name: string;
   last_name: string;
   is_mobile_verified: boolean;
+  paymentstatus: string;
 }
 
 export interface IUserQuoteSnippets {

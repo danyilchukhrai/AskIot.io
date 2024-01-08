@@ -1,6 +1,7 @@
 export enum RECOMMENDATION_TYPE {
   DEVICES = 'devices',
   CONNECTIVITY = 'connectivity',
-  PLATFORMS = 'platforms',
-  PRODUCTS = 'products',
+  PLATFORM = 'platform',
+  HARDWARE = 'hardware',
+  SERVICES = 'services',
 }

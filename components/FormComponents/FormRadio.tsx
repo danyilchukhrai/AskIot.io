@@ -1,10 +1,12 @@
 import clsx from 'clsx';
 import { HTMLProps, ReactNode } from 'react';
-import { Controller, useController, useFormContext } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
 
 interface IFormRadioProps extends HTMLProps<HTMLInputElement> {
   inputClassName?: string;
   controlLabel?: ReactNode;
+  hideErrorMsg?: boolean;
+  isBooleanValue?: boolean;
 }
 
 const FormRadio: React.FC<IFormRadioProps> = ({
@@ -13,6 +15,8 @@ const FormRadio: React.FC<IFormRadioProps> = ({
   label,
   inputClassName = '',
   controlLabel = '',
+  hideErrorMsg = false,
+  isBooleanValue,
   ...rest
 }) => {
   const { control } = useFormContext();
@@ -25,6 +29,8 @@ const FormRadio: React.FC<IFormRadioProps> = ({
     control,
   });
 
+  console.log(inputProps.value);
+
   return (
     <div className="w-full">
       <input
@@ -34,12 +40,16 @@ const FormRadio: React.FC<IFormRadioProps> = ({
         className={clsx('radio-input', inputClassName)}
         type="radio"
         onChange={(e) => {
-          onChange(e);
+          const value = e.target.value;
+          const formattedValue = isBooleanValue ? value === 'true' : value;
+          onChange(formattedValue);
           handleChange && handleChange(e);
         }}
       />
       {controlLabel && controlLabel}
-      {invalid && <p className="text-red-500 text-s mt-2 error-msg">{error?.message}</p>}
+      {invalid && !hideErrorMsg && (
+        <p className="text-red-500 text-s mt-2 error-msg">{error?.message}</p>
+      )}
     </div>
   );
 };

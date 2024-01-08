@@ -1,5 +1,6 @@
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
+import FormTags from '@/components/FormComponents/FormTags';
 import FormTextarea from '@/components/FormComponents/FormTextarea';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { getArrayValueFromTags, handleShowError } from '@/helpers/common';
@@ -22,7 +23,7 @@ const VendorOverview: FC<IVendorOverviewProps> = ({ vendor, isVendor }) => {
 
   const vendorInfoForm = useForm({
     defaultValues: {
-      overview: '',
+      companyinfo: '',
       linkedin: '',
       specialities: '',
       industry: '',
@@ -40,7 +41,7 @@ const VendorOverview: FC<IVendorOverviewProps> = ({ vendor, isVendor }) => {
     if (!isVendor) return;
 
     vendorInfoForm.reset({
-      overview: vendor?.snippet,
+      companyinfo: vendor?.companyinfo,
       linkedin: orgDetail?.organization_linkedin_url,
       specialities: getVendorSpecialities(),
       industry: getVendorIndustries(),
@@ -97,15 +98,14 @@ const VendorOverview: FC<IVendorOverviewProps> = ({ vendor, isVendor }) => {
               </p>
               {isEditInfo ? (
                 <FormTextarea
-                  name="overview"
+                  name="companyinfo"
                   containerClassName="w-full"
-                  defaultValue={vendor?.snippet}
                   placeholder="Overview"
                   rows={4}
                 />
               ) : (
                 <p className="flex-1 text-base text-gray-1000">
-                  {isVendor ? vendorInfoForm.getValues('overview') : vendor?.snippet}
+                  {isVendor ? vendorInfoForm.getValues('companyinfo') : vendor?.companyinfo}
                 </p>
               )}
             </div>
@@ -127,7 +127,7 @@ const VendorOverview: FC<IVendorOverviewProps> = ({ vendor, isVendor }) => {
               <div className="text-gray-1000 text-base flex">
                 <p className=" font-semibold w-[30%] mr-2">Specialities</p>
                 {isEditInfo ? (
-                  <FormInput name="specialities" placeholder="Specialities" isShowTags />
+                  <FormTags name="specialities" placeholder="Specialities" />
                 ) : (
                   <p className="flex-1 text-end md:text-start">
                     {isVendor
@@ -141,7 +141,7 @@ const VendorOverview: FC<IVendorOverviewProps> = ({ vendor, isVendor }) => {
               <div className="text-gray-1000 text-base flex mb-6">
                 <p className=" font-semibold w-[30%] mr-2">Industry</p>
                 {isEditInfo ? (
-                  <FormInput name="industry" placeholder="Industry" isShowTags />
+                  <FormTags name="industry" placeholder="Industry" />
                 ) : (
                   <p className="flex-1 text-end md:text-start">
                     {isVendor

@@ -2,7 +2,6 @@
 import Button from '@/components/Button';
 import { CustomImg, CustomNextImage } from '@/components/CustomImage';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
-import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import { generateSpecificationIconPath } from '@/helpers/common';
 import clsx from 'clsx';
 import Image from 'next/image';
@@ -19,10 +18,8 @@ const ProductInfo: FC<IProductInfoProps> = ({ onClose }) => {
   const { productData, selectedChannel } = useContext(MessageContext);
   const product: any = productData?.productDetails?.Product?.[0] || productData?.productDetails;
 
-  console.log('selectedChannel', selectedChannel);
-
   const handleLearnMore = () => {
-    router.push(`${RESTRICTED_APP_ROUTES.PRODUCTS}/${productData?.type}/${product?.slug}`);
+    router.push(`/app/${productData?.type}/${product?.slug}`);
   };
 
   return (

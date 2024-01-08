@@ -25,11 +25,21 @@ const FormMultipleSelect: FC<IFormMultipleSelectProps> = (props) => {
   const { name = '', className, label, options = [], ...rest } = props;
   const { control } = useFormContext();
   const {
-    field,
+    field: { value, ...inputProps },
     fieldState: { invalid, error },
   } = useController({
     name,
     control,
+  });
+
+  const formattedValue = value?.map((it: any) => {
+    if (typeof it !== 'object') {
+      return {
+        label: it,
+        value: it,
+      };
+    }
+    return it;
   });
 
   return (
@@ -37,7 +47,8 @@ const FormMultipleSelect: FC<IFormMultipleSelectProps> = (props) => {
       {label && <p className="text-gray-700 text-s mb-2">{label}</p>}
       <Select
         {...rest}
-        {...field}
+        {...inputProps}
+        value={formattedValue}
         className="[&>div]:border-0 [&>div]:shadow-s [&>div]:rounded-lg [&>div]:text-base [&>div]:text-gray-1000"
         options={options}
         isMulti

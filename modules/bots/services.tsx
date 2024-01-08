@@ -1,19 +1,25 @@
 import { API_ENDPOINT } from '@/configs/appConfig';
 import { askIOTApiFetch } from '@/helpers/fetchAPI';
 import axios from 'axios';
+import { getLocalStorageWithoutParsing } from '@/services/local-storage';
+
 import { IFile } from './types';
+const access_token = getLocalStorageWithoutParsing('accessToken');
 
 function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function replaceSpaceWithHyphen(inputString: string) {
+    // Use the replace method with a regular expression to replace spaces with hyphens
+    const resultString = inputString.replace(/ /g, '-');
+    return resultString;
+}
+
 export const checkBotStatus = async () => {
     try {
-        // const trainedData = await askIOTApiFetch(`${API_ENDPOINT}/bot/get/id`, {}, 'POST');
-
-        // Fake API
         const res = askIOTApiFetch(
-            `${API_ENDPOINT}/api/private/chatbot/duplicate`
+            `${API_ENDPOINT}/private/chatbot/duplicate`
         );
         // ********** // 
         return res;
@@ -24,22 +30,18 @@ export const checkBotStatus = async () => {
 
 export const getBotData = async () => {
     try {
-        // const trainedData = await askIOTApiFetch(`${API_ENDPOINT}/bot/get/id`, {}, 'POST');
-
-        // Fake API
         const res = askIOTApiFetch(
-            `${API_ENDPOINT}/api/private/chatbot/get`
+            `${API_ENDPOINT}/private/chatbot/get`
         );
-        // ********** // 
         return res;
     } catch (_error) {
         return null;
     }
 };
 
-export const uploadFile = async (file: File, type : string) => {
+export const uploadFile = async (file: File, type: string) => {
     try {
-        const { uri, sasToken } = await askIOTApiFetch(`${API_ENDPOINT}/api/private/chatbot/sas-token`, { "name": file.name, type}, "POST");
+        const { uri, sasToken } = await askIOTApiFetch(`${API_ENDPOINT}/private/chatbot/sas-token`, { "name": replaceSpaceWithHyphen(file.name), type }, "POST");
         const uploadedUri = await uploadMultipleToAzureStorage(
             uri, sasToken, file
         );
@@ -50,11 +52,11 @@ export const uploadFile = async (file: File, type : string) => {
     }
 };
 
-export const uploadFiles = async (files: File[], type : string) => {
+export const uploadFiles = async (files: File[]) => {
     try {
         const response: any[] = [];
         for (const file of files) {
-            const { uri, sasToken } = await askIOTApiFetch(`${API_ENDPOINT}/api/private/chatbot/sas-token`, { "name": file.name, type}, "POST");
+            const { uri, sasToken } = await askIOTApiFetch(`${API_ENDPOINT}/private/chatbot/sas-token`, { "name": replaceSpaceWithHyphen(file.name), type: 'vendor' }, "POST");
             const uploadedUri = await uploadMultipleToAzureStorage(
                 uri, sasToken, file
             );
@@ -70,17 +72,16 @@ export const uploadFiles = async (files: File[], type : string) => {
 
 export const processUploads = async (files: IFile[]) => {
     try {
-        const response = await askIOTApiFetch(`${API_ENDPOINT}/api/private/training/process-uploads`, {
+        console.log('processUploads files',files)
+        await askIOTApiFetch(`${API_ENDPOINT}/private/training/process-uploads`, {
             files: files
         }, "POST");
 
-        console.log('response', response)
         return true;
     } catch (_error) {
         return false;
     }
 };
-
 
 const uploadMultipleToAzureStorage = async (uri: string, sasToken: string, file: File) => {
     const apiUrl = `${uri}?${sasToken}`;
@@ -100,7 +101,7 @@ const uploadMultipleToAzureStorage = async (uri: string, sasToken: string, file:
         } else {
             throw new Error(`Failed to upload file. Status code: ${response.status}`);
         }
-    } catch (error : any) {
+    } catch (error: any) {
         console.error(`Error uploading file "${file.name}":`, error.message);
         throw error; // Rethrow the error to handle it outside this function if needed
     }
@@ -109,7 +110,7 @@ const uploadMultipleToAzureStorage = async (uri: string, sasToken: string, file:
 export const createBot = async (botName: string) => {
     try {
         const res = askIOTApiFetch(
-            `${API_ENDPOINT}/api/private/chatbot/create`,
+            `${API_ENDPOINT}/private/chatbot/create`,
             {
                 name: botName
             },
@@ -126,7 +127,7 @@ export const createBot = async (botName: string) => {
 export const updateBot = async (data: any) => {
     try {
         const res = askIOTApiFetch(
-            `${API_ENDPOINT}/api/private/chatbot/update`,
+            `${API_ENDPOINT}/private/chatbot/update`,
             {
                 data: data
             },
@@ -139,98 +140,25 @@ export const updateBot = async (data: any) => {
     }
 };
 
-export const trainBot = async (files: File[]) => {
+export const getTrainedData = async () => {
     try {
-        // const trainData = await askIOTApiFetch(`${API_ENDPOINT}/bot/train`, body);
+        const trainedData = await askIOTApiFetch(`${API_ENDPOINT}/private/training/get`);
 
-        // Fake API
-        const trainData: any[] = [];
-        for (const file of files) {
-            trainData.push({
-                uri: URL.createObjectURL(file),
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                uploadTime: 21600,
-                trainedTime: 21600,
-                result: true
-            });
-        }
-        await delay(2000);
-        // *********** //
-        return { data: trainData };
+        return trainedData.data;
     } catch (_error) {
         return null;
     }
 };
 
-export const getAccessTokenFromId = async (id: number) => {
+export const removeTrainedData = async (file_id: number) => {
     try {
-        // const trainedData = await askIOTApiFetch(`${API_ENDPOINT}/bot/get/id`, {}, 'POST');
-
-        // Fake API
-        await delay(2000);
-
-        switch (id) {
-            case 1:
-                return 'accessToken1';
-            case 2:
-                return 'accessToken2';
-            case 3:
-                return 'accessToken3';
-        }
-        // ********** // 
-        return null;
-    } catch (_error) {
-        return null;
-    }
-};
-
-export const getTrainedData = async (accessToken: string) => {
-    try {
-        // const trainedData = await askIOTApiFetch(`${API_ENDPOINT}/bot/get/id`, {}, 'POST');
-
-        // Fake API
-        await delay(2000);
-
-        const trainedData = [{
-            uri: '/assets/dummy/train-1.txt',
-            name: 'train-1.txt',
-            size: 100,
-            type: 'Raw Text',
-            uploadTime: 5 * 3600,
-            trainedTime: 5 * 3600,
-            result: true
-        }, {
-            uri: '/assets/dummy/train-2.txt',
-            name: 'train-2.txt',
-            size: 100, type: 'Raw Text',
-            uploadTime: 5 * 3600,
-            trainedTime: 5 * 3600,
-            result: true
-        }, {
-            uri: '/assets/dummy/train-3.txt',
-            name: 'train-3.txt',
-            size: 100, type: 'Raw Text',
-            uploadTime: 5 * 3600,
-            trainedTime: 5 * 3600,
-            result: true
-        }];
-        // ********** // 
-        return trainedData;
-    } catch (_error) {
-        return null;
-    }
-};
-
-export const removeTrainedData = async (accessToken: string, uri: string) => {
-    try {
-        // const trainedData = await askIOTApiFetch(`${API_ENDPOINT}/bot/get/id`, {}, 'POST');
-
-        // Fake API
-        await delay(500);
-        // ********** // 
-        return 'success';
+        await axios.delete(`${API_ENDPOINT}/private/chatbot/delete-file/${file_id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${access_token}`,
+            },
+        });
+        return true;
     } catch (_error) {
         return null;
     }
@@ -238,8 +166,8 @@ export const removeTrainedData = async (accessToken: string, uri: string) => {
 
 export const getVendorId = async () => {
     try {
-        await askIOTApiFetch(`${API_ENDPOINT}/api/private/chatbot/js`);
-        const vendorId = await askIOTApiFetch(`${API_ENDPOINT}/api/private/chatbot/vendor-id`);
+        await askIOTApiFetch(`${API_ENDPOINT}/private/chatbot/js`);
+        const vendorId = await askIOTApiFetch(`${API_ENDPOINT}/private/chatbot/vendor-id`);
         return vendorId;
     } catch (_error) {
         return null;

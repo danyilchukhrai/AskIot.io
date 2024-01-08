@@ -1,6 +1,7 @@
 'use client';
 
 import { USER_TYPE, routeConfig } from '@/configs/routeConfig';
+import { handleShowError } from '@/helpers/common';
 import { useGetProviderStatus } from '@/modules/user/hooks';
 import { usePathname } from 'next/navigation';
 import {
@@ -19,13 +20,13 @@ const UserTypeContext = createContext<{
   setCurrentUserType: Dispatch<SetStateAction<USER_TYPE | undefined>>;
   allowedUserTypes: USER_TYPE[];
   vendorId?: string | number;
-  isCheckingProviderStatus: boolean;
+  isVendor: boolean;
 }>({
   currentUserType: USER_TYPE.USER,
   setCurrentUserType: () => {},
   allowedUserTypes: [USER_TYPE.USER],
   vendorId: undefined,
-  isCheckingProviderStatus: true,
+  isVendor: false,
 });
 
 export const useUserTypeContext = () => {
@@ -43,42 +44,43 @@ interface IUserTypeProvider {
 const UserTypeProvider: FC<IUserTypeProvider> = ({ children }) => {
   const pathname = usePathname();
   const [currentUserType, setCurrentUserType] = useState<USER_TYPE>();
-  const [allowedUserTypes, setAllowedUserTypes] = useState([
-    USER_TYPE.USER,
-    USER_TYPE.PROVIDER_ONBOARDING,
-  ]);
+  const [allowedUserTypes, setAllowedUserTypes] = useState<USER_TYPE[]>([]);
   const [vendorId, setVendorId] = useState<string | number>();
-  const [isCheckingProviderStatus, setIsCheckingProviderStatus] = useState(true);
   const { mutateAsync: getProviderStatus } = useGetProviderStatus();
-  const { user } = useAuthContext();
+  const { user, isFetching } = useAuthContext();
 
   useEffect(() => {
+    if (isFetching) return;
     if (user) {
       handleSetAllowedUserTypes();
     } else {
-      setIsCheckingProviderStatus(false);
+      setCurrentUserType(USER_TYPE.USER);
+      setAllowedUserTypes([USER_TYPE.USER]);
     }
-  }, [user]);
+  }, [user, isFetching]);
 
-  const handleSetAllowedUserTypes = async () => {
-    setIsCheckingProviderStatus(true);
-    await getProviderStatus('', {
+  useEffect(() => {
+    // Set user type when route change
+    handleSetUserTypeByPathname(pathname, allowedUserTypes);
+  }, [pathname, allowedUserTypes]);
+
+  const handleSetAllowedUserTypes = () => {
+    getProviderStatus('', {
       onSuccess: (data) => {
         const { status, vendorid } = data || {};
         if (status) {
           vendorid && setVendorId(vendorid);
           setAllowedUserTypes([USER_TYPE.USER, USER_TYPE.PROVIDER]);
-          handleSetUserTypeByPathname(pathname, [USER_TYPE.USER, USER_TYPE.PROVIDER]);
         } else if (status === null) {
           setAllowedUserTypes([USER_TYPE.USER, USER_TYPE.PROVIDER_ONBOARDING]);
-          handleSetUserTypeByPathname(pathname, [USER_TYPE.USER, USER_TYPE.PROVIDER_ONBOARDING]);
         } else {
           setAllowedUserTypes([USER_TYPE.USER]);
-          handleSetUserTypeByPathname(pathname, [USER_TYPE.USER]);
         }
       },
-      onSettled: () => {
-        setIsCheckingProviderStatus(false);
+      onError: (data) => {
+        handleShowError(data);
+        setAllowedUserTypes([USER_TYPE.USER]);
+        handleSetUserTypeByPathname(pathname, [USER_TYPE.USER]);
       },
     });
   };
@@ -89,7 +91,13 @@ const UserTypeProvider: FC<IUserTypeProvider> = ({ children }) => {
       Object.values(value).includes(pathname),
     )?.[0] as USER_TYPE;
 
-    if (allowedUserTypes.includes(userType)) setCurrentUserType(userType);
+    if (userType && allowedUserTypes.includes(userType)) {
+      setCurrentUserType(userType);
+    } else if (!userType && !currentUserType) {
+      setCurrentUserType(USER_TYPE.USER);
+    } else if (!allowedUserTypes.includes(userType)) {
+      setCurrentUserType(USER_TYPE.USER);
+    }
   };
 
   return (
@@ -99,7 +107,7 @@ const UserTypeProvider: FC<IUserTypeProvider> = ({ children }) => {
         setCurrentUserType,
         allowedUserTypes,
         vendorId,
-        isCheckingProviderStatus,
+        isVendor: currentUserType === USER_TYPE.PROVIDER,
       }}
     >
       {children}

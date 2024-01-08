@@ -14,6 +14,11 @@ const ProjectListings: FC<IProjectListingProps> = ({ projectDetails }) => {
   const handleBack = () => {
     router.back();
   };
+
+  const handleClickProduct = (product: any) => {
+    router.push(`/app/${product?.type}/${product?.slug}`);
+  };
+
   return (
     <div className="request-quote-container md:p-8 p-4 min-h-screen flex flex-col">
       <div className="header flex items-center gap-5 mb-6">
@@ -27,7 +32,7 @@ const ProjectListings: FC<IProjectListingProps> = ({ projectDetails }) => {
         <ProductList
           products={projectDetails?.products}
           hideActionButtons
-          disabledOnClickProductEvent
+          onClickProduct={handleClickProduct}
         />
       ) : (
         <p className="w-full h-full flex-1 flex justify-center items-center self-center">

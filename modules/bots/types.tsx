@@ -1,11 +1,10 @@
 export interface ITrainData {
-    uri: string;
-    name: string;
-    size: number;
-    type: string;
-    uploadTime: number;
-    trainedTime: number;
-    result: boolean;
+    blob_url: string;
+    original_file_name: string;
+    upload_timestamp: string;
+    updated_date: string;
+    processed: boolean;
+    file_id: number;
   }
   
 export interface IFile {

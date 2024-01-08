@@ -2,9 +2,9 @@ import Button from '@/components/Button';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { FC, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { trainBot, uploadFiles, processUploads } from '@/modules/bots/services';
 import FileUpload from '@/containers/bot/components/FileUpload';
 import Table from '@/containers/bot/components/Table';
+import { uploadFiles, processUploads, getTrainedData } from '@/modules/bots/services'
 import { IFile } from '@/modules/bots/types';
 
 interface ITrainBotProps {
@@ -23,28 +23,16 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [trainedResult, setTrainedResult] = useState<any[]>([]);
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   const form = useFormContext();
-
-  const vendorName = form.getValues('vendorname');
-
-  useEffect(() => {
-    if(isDisabled == false && childStep === CHILD_STEP.UPLOAD_FILES) {
-      onNextStep();
-    }
-  }, [isDisabled])
 
   const onHandleNext = async () => {
     setIsLoading(true);
     if (childStep === CHILD_STEP.UPLOAD_FILES) {
       if (files.length > 0) {
-        const data: IFile[] = await uploadFiles(files, "vendor");
-        // setTrainedResult(response.data);
-        // setChildStep(CHILD_STEP.REVIEW_TRAIN);
-
-        const result = await processUploads(data);
-        setIsDisabled(false);
+        const data: IFile[] = await uploadFiles(files);
+        await processUploads(data);
+        setChildStep(CHILD_STEP.REVIEW_TRAIN);
       }
     } else if (childStep === CHILD_STEP.REVIEW_TRAIN) {
       onNextStep();
@@ -56,10 +44,27 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
     if (childStep === CHILD_STEP.UPLOAD_FILES) {
       onBackStep();
     } else {
-      setFiles([]);
+      setFiles([])
       setChildStep(CHILD_STEP.UPLOAD_FILES);
     }
   }
+
+  const fetchTrainedData = async () => {
+    const trainedData: any = await getTrainedData();
+    setTrainedResult(trainedData);
+  };
+
+  useEffect(() => {
+    // Set up interval to fetch data every 5 seconds
+    const intervalId = setInterval(() => {
+      if (childStep === CHILD_STEP.REVIEW_TRAIN) {
+        fetchTrainedData();
+      }
+    }, 5000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [childStep]); // Empty dependency array ensures useEffect runs only on mount and unmount
 
   if (isLoading) return <LoadingIndicator />;
 
@@ -78,7 +83,7 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
           <Button className="bg-gray" variant="secondary" onClick={onHandleBack}>
             Previous
           </Button>
-          <Button onClick={onHandleNext} >{childStep === CHILD_STEP.UPLOAD_FILES ? "Upload" : "Next"}</Button>
+          <Button onClick={onHandleNext}>Next</Button>
         </div>
       </div>
     </>

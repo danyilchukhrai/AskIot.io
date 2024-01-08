@@ -39,13 +39,13 @@ export const PROVIDER_NAV_ITEMS = [
     icon: '/assets/icons/messages-icon.svg',
     activeIcon: '/assets/icons/messages-active-icon.svg',
     label: 'Messages',
-    href: RESTRICTED_APP_ROUTES.MESSAGES,
+    href: RESTRICTED_APP_ROUTES.VENDOR_MESSAGES,
   },
   {
     icon: '/assets/icons/quotes-icon.svg',
     activeIcon: '/assets/icons/quotes-active-icon.svg',
     label: 'Quotes',
-    href: RESTRICTED_APP_ROUTES.QUOTES,
+    href: RESTRICTED_APP_ROUTES.VENDOR_QUOTES,
   },
   {
     icon: '/assets/icons/quotes-icon.svg',

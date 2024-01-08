@@ -82,29 +82,31 @@ const Sidebar: FC<ISidebarProps> = (props) => {
               </div>
               <CloseButtonMobile onClick={onCloseSidebar} />
             </div>
-            <div className="md:pt-12 md:pl-12 pt-6 pl-6">
-              <Menu {...props} />
-              {currentUserType === USER_TYPE.USER ? (
-                <Button className="flex items-center md:text-s !px-0 !py-0 mt-6" variant="inline">
-                  <img src="/assets/icons/ep-right-icon.svg" alt="icon" />
-                  <span className="inline-block ml-3" onClick={handleSwitchToProvider}>
-                    Switch to Provider
-                  </span>
-                </Button>
-              ) : (
-                <Button
-                  className="flex items-center md:text-s !px-0 !py-0 mt-6"
-                  variant="inline"
-                  onClick={() => {
-                    setCurrentUserType(USER_TYPE.USER);
-                    router.push(RESTRICTED_APP_ROUTES.IOTGPT);
-                  }}
-                >
-                  <img src="/assets/icons/ep-right-icon.svg" alt="icon" />
-                  <span className="inline-block ml-3 break-all">Switch to Builders</span>
-                </Button>
-              )}
-            </div>
+            {currentUserType && (
+              <div className="md:pt-12 md:pl-12 pt-6 pl-6">
+                <Menu {...props} />
+                {currentUserType === USER_TYPE.USER ? (
+                  <Button className="flex items-center md:text-s !px-0 !py-0 mt-6" variant="inline">
+                    <img src="/assets/icons/ep-right-icon.svg" alt="icon" />
+                    <span className="inline-block ml-3" onClick={handleSwitchToProvider}>
+                      Switch to Provider
+                    </span>
+                  </Button>
+                ) : (
+                  <Button
+                    className="flex items-center md:text-s !px-0 !py-0 mt-6"
+                    variant="inline"
+                    onClick={() => {
+                      setCurrentUserType(USER_TYPE.USER);
+                      router.push(RESTRICTED_APP_ROUTES.IOTGPT);
+                    }}
+                  >
+                    <img src="/assets/icons/ep-right-icon.svg" alt="icon" />
+                    <span className="inline-block ml-3 break-all">Switch to Builders</span>
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
           <div className="px-4 py-6 md:px-10 md:py-8 flex items-center justify-between border-t border-gray-100">
             <div className="user-info flex flex-col items-end">

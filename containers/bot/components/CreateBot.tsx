@@ -1,9 +1,8 @@
 import Button from '@/components/Button';
+import { CustomNextImage } from '@/components/CustomImage';
 import FormInput from '@/components/FormComponents/FormInput';
 import { ChangeEvent, FC, useCallback, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { createBot } from '@/modules/bots/services';
-import Spinner from '@/components/Spinner';
 
 interface ICreateBotProps {
   onNextStep: () => void;
@@ -12,7 +11,6 @@ interface ICreateBotProps {
 const CreateBot: FC<ICreateBotProps> = ({ onNextStep }) => {
   const form = useFormContext();
   const [name, setName] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
     <>
@@ -33,17 +31,11 @@ const CreateBot: FC<ICreateBotProps> = ({ onNextStep }) => {
           />
         </div>
 
-        {isLoading == false && <Button onClick={async () => {
+        <Button onClick={() => {
           if (name !== '') {
-            setIsLoading(true);
-            try {
-              await createBot(name);
-              onNextStep();
-            } catch (e) {}
-            setIsLoading(false);
+            onNextStep();
           }
-        }}>Next</Button>}
-        {isLoading == true && <Spinner />}
+        }}>Next</Button>
       </div>
     </>
   );

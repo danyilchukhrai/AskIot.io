@@ -89,11 +89,20 @@ export const useCreateEditProduct = () => {
 
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
-  const fn = async ({ id, vendorId }: { id: number; vendorId: number }) => {
-    await deleteProduct(id);
-    queryClient.invalidateQueries({
+  const fn = async ({
+    id,
+    vendorId,
+    isDevice,
+  }: {
+    id: number;
+    vendorId: number;
+    isDevice: boolean;
+  }) => {
+    const resp = await deleteProduct(id, isDevice);
+    await queryClient.invalidateQueries({
       queryKey: [VENDOR_API.getProductsByVendor.api(vendorId), vendorId],
     });
+    return resp;
   };
   return useMutation({
     mutationFn: fn,

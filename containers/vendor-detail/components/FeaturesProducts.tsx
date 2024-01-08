@@ -4,10 +4,13 @@ import FormSelect from '@/components/FormComponents/FormSelect';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import Modal, { IModalElement } from '@/components/Modal';
 import Table from '@/components/Table';
+import { USER_TYPE } from '@/configs/routeConfig';
+import { RECOMMENDATION_TYPE } from '@/constants/iot-gpt';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
-import { CREATE_VENDOR_PRODUCT_TYPE } from '@/constants/vendor-product-form';
+import { handleShowError } from '@/helpers/common';
 import { useDeleteProduct } from '@/modules/vendors/hooks';
 import { IProductByVendor } from '@/modules/vendors/type';
+import { useUserTypeContext } from '@/providers/UserTypeProvider';
 import { useRouter } from 'next/navigation';
 import { FC, MouseEvent, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -24,13 +27,8 @@ const FeaturesProducts: FC<IFeaturesProductsProps> = ({ products }) => {
   const form = useForm();
   const { mutate: deleteProduct, isPending: deletingProduct } = useDeleteProduct();
   const [selectedProduct, setSelectedProduct] = useState<IProductByVendor>();
-
-  const handleClickRow = (row: IProductByVendor) => {
-    if (!row?.slug) return;
-    router.push(
-      `${RESTRICTED_APP_ROUTES.PRODUCTS}/${row?.recommendationType || row?.type}/${row?.slug}`,
-    );
-  };
+  const { currentUserType } = useUserTypeContext();
+  const isVendor = currentUserType === USER_TYPE.PROVIDER;
 
   const handleRedirectToCreateForm = (data: any) => {
     if (data?.type) {
@@ -44,14 +42,22 @@ const FeaturesProducts: FC<IFeaturesProductsProps> = ({ products }) => {
   };
 
   const handleDeleteProduct = (product?: IProductByVendor) => {
+    const isDevice = selectedProduct?.type === RECOMMENDATION_TYPE.DEVICES;
     if (product?.product_id) {
       deleteProduct(
-        { id: product.product_id, vendorId: product.vendorid },
+        {
+          id: product.product_id,
+          vendorId: product.vendorid,
+          isDevice,
+        },
         {
           onSuccess: () => {
-            toast.success('Product deleted successfully');
+            toast.success(
+              isDevice ? 'Device deleted successfully' : 'Product deleted successfully',
+            );
             confirmModalRef.current?.close();
           },
+          onError: handleShowError,
         },
       );
     }
@@ -110,8 +116,10 @@ const FeaturesProducts: FC<IFeaturesProductsProps> = ({ products }) => {
           </Button>
         </div>
       ),
+      hidden: !isVendor,
     },
   ];
+
   return (
     <>
       <div className="mt-5">
@@ -119,14 +127,11 @@ const FeaturesProducts: FC<IFeaturesProductsProps> = ({ products }) => {
           <>
             <div className="rounded-t-xl border border-gray-100 border-b-0 px-6 py-4 flex justify-between items-center">
               <p className="text-primary-500 text-base font-medium">Features Products</p>
-              <Button onClick={() => productTypeModalRef.current?.open()}>Create</Button>
+              {isVendor && (
+                <Button onClick={() => productTypeModalRef.current?.open()}>Create</Button>
+              )}
             </div>
-            <Table
-              containerClassName="rounded-t-none"
-              rows={products || []}
-              columns={columns}
-              onClickRow={handleClickRow}
-            />
+            <Table containerClassName="rounded-t-none" rows={products || []} columns={columns} />
           </>
         ) : (
           <p className="text-center">Empty</p>
@@ -143,7 +148,13 @@ const FeaturesProducts: FC<IFeaturesProductsProps> = ({ products }) => {
             name="type"
             label="Type"
             placeholder="Please select"
-            options={[CREATE_VENDOR_PRODUCT_TYPE.DEVICES, CREATE_VENDOR_PRODUCT_TYPE.PRODUCTS]}
+            options={[
+              RECOMMENDATION_TYPE.DEVICES,
+              RECOMMENDATION_TYPE.PLATFORM,
+              RECOMMENDATION_TYPE.CONNECTIVITY,
+              RECOMMENDATION_TYPE.SERVICES,
+              RECOMMENDATION_TYPE.HARDWARE,
+            ]}
           />
         </FormProvider>
       </Modal>

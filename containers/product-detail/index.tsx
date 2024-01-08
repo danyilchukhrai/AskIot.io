@@ -12,11 +12,11 @@ import { useQueryDevice } from '@/modules/product/hooks';
 import { useChatVendorQuery } from '@/modules/vendors/hooks';
 import { useAuthContext } from '@/providers/AuthProvider';
 import QuoteSnippetProvider from '@/providers/QuotesSnippetsProvider';
-import UserProvider from '@/providers/UserProvider';
 import clsx from 'clsx';
 import Image from 'next/image';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import ProductList from '../iotgpt/components/ProductList';
 import ProductDetailInfo from './components/ProductDetailInfo';
 import ProductDetailOverview from './components/ProductDetailOverview';
@@ -30,11 +30,13 @@ const SUGGESTIONS = [
   'Recommended platform',
 ];
 
+const threadId = uuidv4();
+
 const ProductDetail: FC<IProductDetailProps> = ({}) => {
   const params = useParams();
   const pathName = usePathname();
-  const { slug = [] } = params || {};
-  const [type, productSlug] = slug as string[];
+  const { products = [] } = params || {};
+  const [type, productSlug] = products as string[];
   const [messageData, setMessageData] = useState<IThreadInteraction[]>([]);
   const [isOpenAskAnything, setIsOpenAskAnything] = useState(false);
   const { user } = useAuthContext();
@@ -67,7 +69,7 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
         {
           deviceId: productData?.id,
           query: value,
-          conversationHistory: getConversationHistory(true),
+          threadId,
         },
         {
           onSuccess: (data) => updateMessageDataAfterQuery(data.aiResponse, newMessageData),
@@ -79,10 +81,11 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
         {
           vendorId: productData?.vendorid,
           query: value,
-          conversationHistory: getConversationHistory(false),
+          threadId,
         },
         {
-          onSuccess: (data) => updateMessageDataAfterQuery(data.response, newMessageData),
+          onSuccess: (data) =>
+            updateMessageDataAfterQuery(data?.response || data?.greeting || '', newMessageData),
           onError: handleShowError,
         },
       );
@@ -119,6 +122,10 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
     }
   };
 
+  const handleClickProduct = (product: any) => {
+    router.push(`/app/${product?.type}/${product?.slug}`);
+  };
+
   const tabs = [
     {
       key: PRODUCT_TAB_KEY.Overview,
@@ -140,7 +147,7 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
             <ProductList
               products={alternateDevices}
               hideActionButtons
-              disabledOnClickProductEvent
+              onClickProduct={handleClickProduct}
             />
           ) : (
             <p className="text-center text-gray-600">Empty</p>
@@ -154,120 +161,112 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
 
   return (
     <QuoteSnippetProvider>
-      <UserProvider>
-        <div className="flex">
+      <div className="flex">
+        <div
+          className={clsx(
+            'product-detail md:p-8 p-4 h-screen relative overflow-auto',
+            isOpenAskAnything ? 'w-3/5' : 'w-full',
+          )}
+        >
           <div
             className={clsx(
-              'product-detail md:p-8 p-4 h-screen relative overflow-auto',
-              isOpenAskAnything ? 'w-3/5' : 'w-full',
+              'detail-header flex items-center',
+              user ? 'justify-between' : 'justify-end',
             )}
           >
-            <div
-              className={clsx(
-                'detail-header flex items-center',
-                user ? 'justify-between' : 'justify-end',
-              )}
-            >
-              {user && (
-                <div className="flex items-center w-full md:w-auto">
-                  <Button className="hidden md:flex" variant="secondary" onClick={handleBack}>
-                    <Image
-                      src="/assets/icons/arrow-left-icon.svg"
-                      alt="arrow left"
-                      width={20}
-                      height={20}
-                    />
-                    <span className="md:ml-2.5 md:inline hidden">Back</span>
-                  </Button>
-                </div>
-              )}
-              {!isOpenAskAnything && (
-                <Button
-                  className="md:flex hidden items-center ml-4 w-28 md:w-fit md:!px-2.5 !px-1"
-                  variant="info"
-                  onClick={handleAskAnything}
-                >
+            {user && (
+              <div className="flex items-center w-full md:w-auto">
+                <Button className="hidden md:flex" variant="secondary" onClick={handleBack}>
                   <Image
-                    className="hidden md:block"
-                    src="/assets/icons/ask-anything-icon.svg"
-                    alt="ask anything"
+                    src="/assets/icons/arrow-left-icon.svg"
+                    alt="arrow left"
                     width={20}
                     height={20}
                   />
-                  <span className="md:ml-2.5 text-s md:text-base">Ask anything</span>
+                  <span className="md:ml-2.5 md:inline hidden">Back</span>
                 </Button>
-              )}
-            </div>
-            <div className="detail-body mt-4 md:mt-5 rounded-xl">
-              <ProductDetailInfo product={productData} user={user} />
-              <div className="pt-5">
-                <Tabs
-                  tabItemStyles={clsx(isOpenAskAnything ? 'flex-1' : '')}
-                  tabs={tabs}
-                  disabledSpaceBetween
-                />
               </div>
-            </div>
-          </div>
-          <div
-            className={clsx(
-              'ask-anything border-l border-gray-200 bg-gray flex flex-col',
-              isOpenAskAnything
-                ? 'md:w-2/5 md:static fixed top-[79px] right-0 left-0 bottom-0 md:h-screen h-[calc(100vh-79px)]'
-                : 'hidden',
             )}
-          >
-            <div className="md:p-8 p-4 flex items-center md:justify-between border-b border-gray-200 ">
+            {!isOpenAskAnything && (
               <Button
-                className="inline-block md:hidden"
-                variant="secondary"
-                onClick={() => setIsOpenAskAnything(false)}
+                className="md:flex hidden items-center ml-4 w-28 md:w-fit md:!px-2.5 !px-1"
+                variant="info"
+                onClick={handleAskAnything}
               >
                 <Image
-                  src="/assets/icons/x-mark-icon.svg"
-                  alt="X mark icon"
-                  width={24}
-                  height={24}
-                />
-              </Button>
-              <div className="flex items-center pl-5 md:pl-0">
-                <Image
-                  className="block md:hidden"
-                  src="/assets/logo/logo.svg"
-                  alt="AskIoT"
+                  className="hidden md:block"
+                  src="/assets/icons/ask-anything-icon.svg"
+                  alt="ask anything"
                   width={20}
                   height={20}
                 />
-                <p className="text-gray-1000 text-base md:text-l font-medium pl-3 md:pl-0">
-                  Ask anything about this device
-                </p>
-              </div>
-              <Button
-                className="absolute hidden md:inline-block md:top-8 md:right-8 top-4 right-4"
-                variant="inline"
-                disabledPadding
-                onClick={() => setIsOpenAskAnything(false)}
-              >
-                <Image
-                  src="/assets/icons/x-mark-icon.svg"
-                  alt="X mark icon"
-                  width={24}
-                  height={24}
-                />
+                <span className="md:ml-2.5 text-s md:text-base">Ask anything</span>
               </Button>
-            </div>
-            <div className="flex-1 flex flex-col overflow-auto">
-              <Chat
-                messageData={messageData}
-                onSend={handleSendMessage}
-                isLoading={querying || vendorQuerying}
-                placeholder="Ask anything about this product..."
-                suggestionList={SUGGESTIONS}
+            )}
+          </div>
+          <div className="detail-body mt-4 md:mt-5 rounded-xl">
+            <ProductDetailInfo
+              alternateDevices={alternateDevices}
+              product={productData}
+              user={user}
+            />
+            <div className="pt-5">
+              <Tabs
+                tabItemStyles={clsx(isOpenAskAnything ? 'flex-1' : '')}
+                tabs={tabs}
+                disabledSpaceBetween
               />
             </div>
           </div>
         </div>
-      </UserProvider>
+        <div
+          className={clsx(
+            'ask-anything border-l border-gray-200 bg-gray flex flex-col',
+            isOpenAskAnything
+              ? 'md:w-2/5 md:static fixed top-[79px] right-0 left-0 bottom-0 md:h-screen h-[calc(100vh-79px)]'
+              : 'hidden',
+          )}
+        >
+          <div className="md:p-8 p-4 flex items-center md:justify-between border-b border-gray-200 ">
+            <Button
+              className="inline-block md:hidden"
+              variant="secondary"
+              onClick={() => setIsOpenAskAnything(false)}
+            >
+              <Image src="/assets/icons/x-mark-icon.svg" alt="X mark icon" width={24} height={24} />
+            </Button>
+            <div className="flex items-center pl-5 md:pl-0">
+              <Image
+                className="block md:hidden"
+                src="/assets/logo/logo.svg"
+                alt="AskIoT"
+                width={20}
+                height={20}
+              />
+              <p className="text-gray-1000 text-base md:text-l font-medium pl-3 md:pl-0">
+                Ask anything about this device
+              </p>
+            </div>
+            <Button
+              className="absolute hidden md:inline-block md:top-8 md:right-8 top-4 right-4"
+              variant="inline"
+              disabledPadding
+              onClick={() => setIsOpenAskAnything(false)}
+            >
+              <Image src="/assets/icons/x-mark-icon.svg" alt="X mark icon" width={24} height={24} />
+            </Button>
+          </div>
+          <div className="flex-1 flex flex-col overflow-auto">
+            <Chat
+              messageData={messageData}
+              onSend={handleSendMessage}
+              isLoading={querying || vendorQuerying}
+              placeholder="Ask anything about this product..."
+              suggestionList={SUGGESTIONS}
+            />
+          </div>
+        </div>
+      </div>
     </QuoteSnippetProvider>
   );
 };

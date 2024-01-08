@@ -29,7 +29,7 @@ export const vendorOnboardingSchema = Yup.object().shape({
     },
     then: (schema) => BASE_VALIDATION.phoneNumber.required(REQUIRED_MESSAGE),
   }),
-  email_associated_with_business: Yup.string().when('step', {
+  email_associated_with_business: Yup.boolean().when('step', {
     is: (step: number) => {
       return step === VENDOR_ONBOARDING_STEPS.CLAIM_BUSINESS;
     },
@@ -50,6 +50,23 @@ export const vendorOnboardingSchema = Yup.object().shape({
   claim_reason: Yup.string().when(['step', 'vendorid'], {
     is: (step: number, vendorid: number) => {
       return step === VENDOR_ONBOARDING_STEPS.CLAIM_BUSINESS && !vendorid;
+    },
+    then: (schema) => schema.required(REQUIRED_MESSAGE),
+  }),
+  emails: Yup.array().when(['step', 'isSentEmail'], {
+    is: (step: number, isSentEmail: string) => {
+      return step === VENDOR_ONBOARDING_STEPS.CLAIM_BUSINESS && isSentEmail === 'false';
+    },
+    then: (schema) =>
+      schema.of(
+        Yup.object({
+          value: BASE_VALIDATION.email,
+        }),
+      ),
+  }),
+  isSentEmail: Yup.boolean().when('step', {
+    is: (step: number) => {
+      return step === VENDOR_ONBOARDING_STEPS.CLAIM_BUSINESS;
     },
     then: (schema) => schema.required(REQUIRED_MESSAGE),
   }),

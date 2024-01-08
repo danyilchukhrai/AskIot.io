@@ -1,7 +1,7 @@
 'use client';
 
 import { USER_TYPE } from '@/configs/routeConfig';
-import { withAuth } from '@/helpers/withAuth';
+import { withAuth } from '@/HOC/withAuth';
 import dynamic from 'next/dynamic';
 
 const VendorDetail = dynamic(() => import('@/containers/vendor-detail'));

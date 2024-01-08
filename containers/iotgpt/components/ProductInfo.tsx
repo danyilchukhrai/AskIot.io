@@ -4,6 +4,7 @@ import CloseButtonMobile from '@/components/CloseButtonMobile';
 import { CustomImg } from '@/components/CustomImage';
 import { IModalElement } from '@/components/Modal';
 import RequestQuoteModal from '@/components/Molecules/RequestQuoteModal';
+import VerifiedQuotesAlternativeModal from '@/components/Molecules/VerifiedQuotesAlternativeModal';
 import QuoteRequestedAlert from '@/components/QuoteRequestedAlert';
 import QuoteVerification from '@/components/QuoteVerification';
 import RequestQuoteButton from '@/components/RequestQuoteButton';
@@ -11,9 +12,9 @@ import Spinner from '@/components/Spinner';
 import Tabs from '@/components/Tabs';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
 import { PRODUCT_TAB_KEY } from '@/constants/products';
-import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import { useGetRecommendationProductDetail } from '@/modules/iot-gpt/hooks';
 import { IRecommendationInfo } from '@/modules/iot-gpt/type';
+import { IRequestQuoteForm } from '@/modules/quotes/types';
 import { useQuoteSnippetContext } from '@/providers/QuotesSnippetsProvider';
 import { useSavedProductsContext } from '@/providers/SavedProductsProvider';
 import { useUserContext } from '@/providers/UserProvider';
@@ -39,9 +40,11 @@ const ProductInfo: FC<IProductInfoProps> = ({
   const router = useRouter();
   const requestQuoteModalRef = useRef<IModalElement>(null);
   const quoteVerificationRef = useRef<IModalElement>(null);
+  const verifiedQuotesAlternativeRef = useRef<IModalElement>(null);
   const [product, setProduct] = useState<IRecommendationInfo>();
   const [isShowAlert, setIsShowAlert] = useState(false);
   const [quoteId, setQuoteId] = useState<number | undefined>();
+  const [requestedQuoteFormData, setRequestedQuoteFormData] = useState<IRequestQuoteForm>();
   const { data, isLoading } = useGetRecommendationProductDetail(
     product?.slug,
     product?.recommendationType,
@@ -49,6 +52,7 @@ const ProductInfo: FC<IProductInfoProps> = ({
   const { Product = [], specifications, alternate_products: alternateDevices } = data || {};
   const allProductIds = (products || []).map((it) => it.slug);
   const productData = Product[0];
+  const productId = product?.product_id || product?.id;
   const { isSavedProduct } = useSavedProductsContext();
   const saved = isSavedProduct(selectedProduct?.id || selectedProduct?.product_id);
   const { askIOTUserDetails } = useUserContext();
@@ -68,32 +72,28 @@ const ProductInfo: FC<IProductInfoProps> = ({
   useEffect(() => {
     if (quotesSnippets) {
       setIsQuoteRequestedLoading(true);
-      const quoteRequested = quotesSnippets?.some(
-        (item) => item?.product_id === product?.product_id,
-      );
+      const quoteRequested = quotesSnippets?.some((item) => item?.product_id === productId);
       if (quoteRequested) {
-        setIsQuoteRequested((prevData) => ({ ...prevData, [product?.id as number]: true }));
+        setIsQuoteRequested((prevData) => ({ ...prevData, [productId as number]: true }));
       }
       setIsQuoteRequestedLoading(false);
     }
   }, [quotesSnippets, product]); //eslint-disable-line
 
   const handleLearnMore = () => {
-    router.push(
-      `${RESTRICTED_APP_ROUTES.PRODUCTS}/${selectedProduct?.recommendationType}/${productData?.slug}`,
-    );
+    router.push(`/app/${selectedProduct?.recommendationType}/${productData?.slug}`);
     onCloseDrawer();
   };
 
   const handleGetNextProduct = () => {
-    const currentProductIdIndex = products.findIndex((it) => it?.id === product?.id);
+    const currentProductIdIndex = products.findIndex((it) => it?.product_id === productId);
     if (currentProductIdIndex === allProductIds.length - 1) return;
 
     setProduct(products[currentProductIdIndex + 1]);
   };
 
   const handleGetPreviousProduct = () => {
-    const currentProductIdIndex = products.findIndex((it) => it?.id === product?.id);
+    const currentProductIdIndex = products.findIndex((it) => it?.product_id === productId);
     if (!currentProductIdIndex) return;
 
     setProduct(products[currentProductIdIndex - 1]);
@@ -103,21 +103,28 @@ const ProductInfo: FC<IProductInfoProps> = ({
     if (askIOTUserDetails?.is_mobile_verified) {
       requestQuoteModalRef.current?.open();
       setIsRequestQuoteModalOpen(true);
+      // verifiedQuotesAlternativeRef.current?.open();
     } else {
       quoteVerificationRef?.current?.open();
       setIsRequestQuoteModalOpen(true);
     }
   };
 
-  const requestQuoteHandler = (quote_id: number | undefined) => {
+  const requestQuoteHandler = (quote_id: number | undefined, formData: IRequestQuoteForm) => {
     setQuoteId(quote_id);
     setIsShowAlert(true);
+    setRequestedQuoteFormData(formData);
     setGetQuotesSnippetsIsValid(true);
+    verifiedQuotesAlternativeRef.current?.open();
   };
 
   const onSuccessQuotesVerification = () => {
     quoteVerificationRef?.current?.close();
     requestQuoteModalRef?.current?.open();
+  };
+
+  const handleClickProduct = (product: any) => {
+    router.push(`/app/${product?.type}/${product?.slug}`);
   };
 
   const tabs = [
@@ -141,7 +148,7 @@ const ProductInfo: FC<IProductInfoProps> = ({
             <ProductList
               products={alternateDevices}
               hideActionButtons
-              disabledOnClickProductEvent
+              onClickProduct={handleClickProduct}
             />
           ) : (
             <p className="text-center text-gray-600">Empty</p>
@@ -251,9 +258,14 @@ const ProductInfo: FC<IProductInfoProps> = ({
         ref={requestQuoteModalRef}
         product={productData}
         onSuccess={requestQuoteHandler}
-        onClose={() => setIsRequestQuoteModalOpen(false)}
       />
       <QuoteVerification ref={quoteVerificationRef} onSuccess={onSuccessQuotesVerification} />
+      <VerifiedQuotesAlternativeModal
+        ref={verifiedQuotesAlternativeRef}
+        products={alternateDevices}
+        requestedQuoteFormData={requestedQuoteFormData}
+        onClose={() => setIsRequestQuoteModalOpen(false)}
+      />
     </>
   );
 };

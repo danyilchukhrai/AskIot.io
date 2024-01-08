@@ -26,12 +26,12 @@ export interface IVendorDetails {
   logo: string;
   snippet: string;
   title: string;
-  companyinfo: null;
   orgDetails: IVendorOrgDetail[];
   personDetails: IVendorPersonDetail[];
   vendorlogo: string;
   industries: string;
   specialities: string;
+  companyinfo?: string;
 }
 
 export interface ISearchVendorItem {
@@ -61,6 +61,7 @@ export interface IClaimVendorBody {
     email_associated_with_business: string;
     first_name: string;
     last_name: string;
+    country_code: string;
   };
 }
 
@@ -73,6 +74,7 @@ export interface ICreateVendorBody {
   claim_reason?: string;
   first_name: string;
   last_name: string;
+  country_code: string;
 }
 
 export interface IProductByVendor extends IRecommendationInfo {
@@ -89,5 +91,5 @@ export interface IProductsByVendorResponse {
 export interface IChatVendorQueryBody {
   vendorId?: number;
   query: string;
-  conversationHistory: string[];
+  threadId: string;
 }

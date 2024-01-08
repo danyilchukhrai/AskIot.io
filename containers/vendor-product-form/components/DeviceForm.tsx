@@ -2,6 +2,7 @@ import FormCheckBox from '@/components/FormComponents/FormCheckbox';
 import FormInput from '@/components/FormComponents/FormInput';
 import FormMultipleSelect from '@/components/FormComponents/FormMultipleSelect';
 import FormSelect from '@/components/FormComponents/FormSelect';
+import FormTags from '@/components/FormComponents/FormTags';
 import FormTextarea from '@/components/FormComponents/FormTextarea';
 import UploadFileBox from '@/components/UploadFileBox';
 import { IMAGE_ACCEPT_INPUT } from '@/constants/common';
@@ -29,9 +30,10 @@ import { useFormContext } from 'react-hook-form';
 
 interface IDeviceFormProps {
   onSelectFile: (file: File) => void;
+  onRemoveImage: () => void;
 }
 
-const DeviceForm: FC<IDeviceFormProps> = ({ onSelectFile }) => {
+const DeviceForm: FC<IDeviceFormProps> = ({ onSelectFile, onRemoveImage }) => {
   const form = useFormContext();
   const generateGroupData = (array: any[]) =>
     array?.map((it: any) => ({
@@ -52,12 +54,10 @@ const DeviceForm: FC<IDeviceFormProps> = ({ onSelectFile }) => {
         <FormInput name="product_url" label="Url" placeholder="Enter url" />
         <FormInput name="product_name" label="Name" placeholder="Enter name" />
       </div>
-      <FormTextarea
+      <FormTags
         name="key_features"
         label="Key Features (Please add a comma for multiple values)"
         placeholder="Enter key features"
-        isShowTags
-        rows={3}
       />
       <div className="flex items-center gap-3">
         <p className="text-black text-l font-semibold">Device Details</p>
@@ -226,7 +226,8 @@ const DeviceForm: FC<IDeviceFormProps> = ({ onSelectFile }) => {
           accept={IMAGE_ACCEPT_INPUT}
           onSelectFile={onSelectFile}
           errorMessage={form.formState.errors?.file?.message as string}
-          url={form.getValues('product_image')}
+          url={form.watch('product_image')}
+          onRemoveImage={onRemoveImage}
         />
       </div>
     </div>

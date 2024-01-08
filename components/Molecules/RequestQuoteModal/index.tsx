@@ -14,7 +14,7 @@ import AddToQuoteMobile from './AddToQuoteMobile';
 
 interface IRequestQuoteModalProps {
   product?: any;
-  onSuccess?: (quoteId?: number) => void;
+  onSuccess?: (quoteId: number, formData: IRequestQuoteForm) => void;
   onClose?: () => void;
 }
 
@@ -68,7 +68,7 @@ const RequestQuoteModal = forwardRef<IRequestQuoteModalElement, IRequestQuoteMod
         {
           onSuccess: ({ message, quoteId }) => {
             if (onSuccess) {
-              onSuccess(quoteId);
+              onSuccess(quoteId, data);
             } else {
               toast.success(message);
             }

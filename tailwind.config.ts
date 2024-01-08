@@ -89,6 +89,7 @@ const config: Config = {
           1300: '#4C4448',
           1400: '#EDEDED',
           1500: '#D9D9D9',
+          1600: '#AAAAAA',
         },
         blueGray: {
           700: '#62585D',
@@ -126,7 +127,7 @@ const config: Config = {
       '3xl': '0px 25px 25px 0px rgba(0, 0, 0, 0.15), 0px 0px 1px 0px rgba(0, 0, 0, 0.20)',
       'search-box':
         '0px 16.66666603088379px 29.16666603088379px 0px rgba(0, 0, 0, 0.08), 0px 4.166666507720947px 8.333333015441895px 0px rgba(0, 0, 0, 0.08)',
-        'box': '0px 16.667px 29.167px 0px rgba(0, 0, 0, 0.08), 0px 4.167px 8.333px 0px rgba(0, 0, 0, 0.08)',
+      box: '0px 16.667px 29.167px 0px rgba(0, 0, 0, 0.08), 0px 4.167px 8.333px 0px rgba(0, 0, 0, 0.08)',
     },
     spacing,
     container: {

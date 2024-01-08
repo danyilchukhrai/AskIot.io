@@ -1,8 +1,8 @@
 'use client';
-import { FC } from 'react';
 import Button from '@/components/Button';
 import { useQuoteSnippetContext } from '@/providers/QuotesSnippetsProvider';
 import { useUserContext } from '@/providers/UserProvider';
+import { FC } from 'react';
 
 interface IRequestQuoteButton {
   requestQuoteHandler: () => void;
@@ -13,9 +13,11 @@ const RequestQuoteButton: FC<IRequestQuoteButton> = ({ requestQuoteHandler, prod
   const { isQuoteRequested, quotesSnippetsLoading, isQuoteRequestedLoading } =
     useQuoteSnippetContext();
   const { askIOTUserDetails } = useUserContext();
+  const productId = product?.product_id || product?.id;
+
   return (
     <>
-      {isQuoteRequested?.[product?.id] ? (
+      {isQuoteRequested?.[productId] ? (
         <Button disabled>Quote Requested</Button>
       ) : (
         <>

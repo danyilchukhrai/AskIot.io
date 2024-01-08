@@ -8,6 +8,7 @@ export interface ColumnsProps {
   key: string | number;
   styles?: string;
   hiddenTitle?: boolean;
+  hidden?: boolean;
 }
 
 interface ITableProps {
@@ -38,21 +39,23 @@ const Table: FC<ITableProps> = ({
         <table className="w-full bg-white md:table-fixed">
           <thead>
             <tr className="hover:cursor-pointer">
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  className={clsx(
-                    'md:first:pl-6 md:last:pr-6 py-4 px-4 md:px-0 border-b border-gray-100 text-base text-gray-600 font-normal text-start ',
-                    column?.styles || '',
-                    {
-                      invisible: column?.hiddenTitle,
-                    },
-                  )}
-                  scope="col"
-                >
-                  {column.title}
-                </th>
-              ))}
+              {columns
+                ?.filter((it) => !it?.hidden)
+                .map((column) => (
+                  <th
+                    key={column.key}
+                    className={clsx(
+                      'md:first:pl-6 md:last:pr-6 py-4 px-4 md:px-0 border-b border-gray-100 text-base text-gray-600 font-normal text-start ',
+                      column?.styles || '',
+                      {
+                        invisible: column?.hiddenTitle,
+                      },
+                    )}
+                    scope="col"
+                  >
+                    {column.title}
+                  </th>
+                ))}
             </tr>
           </thead>
           {rows?.length > 0 ? (
@@ -67,20 +70,22 @@ const Table: FC<ITableProps> = ({
                         onClickRow && onClickRow(row);
                       }}
                     >
-                      {columns.map((column) => (
-                        <td
-                          key={column.key}
-                          className={clsx(
-                            'md:first:pl-6 md:last:pr-6 md:py-6 py-4 px-4 md:px-0 border-gray-100 text-start text-gray-1000 text-base font-normal',
-                            column?.styles || '',
-                            {
-                              'border-b': !row?.isFullCol,
-                            },
-                          )}
-                        >
-                          {column.renderNode(row)}
-                        </td>
-                      ))}
+                      {columns
+                        ?.filter((it) => !it?.hidden)
+                        .map((column) => (
+                          <td
+                            key={column.key}
+                            className={clsx(
+                              'md:first:pl-6 md:last:pr-6 md:py-6 py-4 px-4 md:px-0 border-gray-100 text-start text-gray-1000 text-base font-normal',
+                              column?.styles || '',
+                              {
+                                'border-b': !row?.isFullCol,
+                              },
+                            )}
+                          >
+                            {column.renderNode(row)}
+                          </td>
+                        ))}
                     </tr>
                     {row?.isFullCol && (
                       <tr>

@@ -1,5 +1,6 @@
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
+import FormTags from '@/components/FormComponents/FormTags';
 import FormTextarea from '@/components/FormComponents/FormTextarea';
 import UploadFileBox from '@/components/UploadFileBox';
 import { IMAGE_ACCEPT_INPUT } from '@/constants/common';
@@ -9,9 +10,10 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 
 interface IProductFormProps {
   onSelectFile: (file: File) => void;
+  onRemoveImage: () => void;
 }
 
-const ProductForm: FC<IProductFormProps> = ({ onSelectFile }) => {
+const ProductForm: FC<IProductFormProps> = ({ onSelectFile, onRemoveImage }) => {
   const form = useFormContext();
   const { fields: productDetailsArray, append } = useFieldArray({
     control: form.control,
@@ -61,19 +63,18 @@ const ProductForm: FC<IProductFormProps> = ({ onSelectFile }) => {
           <span className="text-primary-500 ml-2.5">Add more</span>
         </Button>
       </div>
-      <FormTextarea
+      <FormTags
         name="usecase"
         label="Use case (Please add a comma for multiple values)"
         placeholder="Enter use case"
-        rows={3}
-        isShowTags
       />
       <div className="grid grid-cols-1">
         <UploadFileBox
           accept={IMAGE_ACCEPT_INPUT}
           onSelectFile={onSelectFile}
           errorMessage={form.formState.errors?.file?.message as string}
-          url={form.getValues('product_image')}
+          url={form.watch('product_image')}
+          onRemoveImage={onRemoveImage}
         />
       </div>
     </div>

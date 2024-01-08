@@ -6,6 +6,7 @@ import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
 import { QUOTE_STATUS, colorByStatus } from '@/constants/quotes';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import { askIOTApiFetch } from '@/helpers/fetchAPI';
+import { useUserTypeContext } from '@/providers/UserTypeProvider';
 import { getQuotesURL } from '@/services/quotes';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -22,6 +23,7 @@ const QuotesTable: FC<IQuotesTableProps> = ({ status, currentUserType }) => {
   const [filteredQuotes, setFilteredQuotes] = useState<any[]>([]);
   const [isQuotesLoading, setIsQuotesLoading] = useState(true);
   const router = useRouter();
+  const { isVendor } = useUserTypeContext();
 
   useEffect(() => {
     getQuotesHandler();
@@ -48,7 +50,11 @@ const QuotesTable: FC<IQuotesTableProps> = ({ status, currentUserType }) => {
   };
 
   const handleClickRow = (row: any) => {
-    router.push(`${RESTRICTED_APP_ROUTES.QUOTES}/${row?.quote_id}`);
+    router.push(
+      isVendor
+        ? `${RESTRICTED_APP_ROUTES.VENDOR_QUOTES}/${row?.quote_id}`
+        : `${RESTRICTED_APP_ROUTES.QUOTES}/${row?.quote_id}`,
+    );
   };
 
   const renderImage = (imageURL: string) => {

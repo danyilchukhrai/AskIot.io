@@ -2,11 +2,13 @@
 import { CustomImg, CustomNextImage } from '@/components/CustomImage';
 import { IModalElement } from '@/components/Modal';
 import RequestQuoteModal from '@/components/Molecules/RequestQuoteModal';
+import VerifiedQuotesAlternativeModal from '@/components/Molecules/VerifiedQuotesAlternativeModal';
 import QuoteRequestedAlert from '@/components/QuoteRequestedAlert';
 import QuoteVerification from '@/components/QuoteVerification';
 import RequestQuoteButton from '@/components/RequestQuoteButton';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
 import { AUTH_ROUTES, RESTRICTED_APP_ROUTES } from '@/constants/routes';
+import { IRequestQuoteForm } from '@/modules/quotes/types';
 import { useQuoteSnippetContext } from '@/providers/QuotesSnippetsProvider';
 import { useSavedProductsContext } from '@/providers/SavedProductsProvider';
 import { useUserContext } from '@/providers/UserProvider';
@@ -18,16 +20,24 @@ import { FC, useEffect, useRef, useState } from 'react';
 interface IProductDetailInfoProps {
   product?: any;
   user?: User;
+  alternateDevices?: any;
 }
 
-const ProductDetailInfo: FC<IProductDetailInfoProps> = ({ product, user }) => {
+const ProductDetailInfo: FC<IProductDetailInfoProps> = ({
+  product,
+  user,
+  alternateDevices = [],
+}) => {
   const router = useRouter();
+  const productId = product?.id || product?.product_id;
   const requestQuoteModalRef = useRef<IModalElement>(null);
   const quoteVerificationRef = useRef<IModalElement>(null);
+  const verifiedQuotesAlternativeRef = useRef<IModalElement>(null);
   const [isShowAlert, setIsShowAlert] = useState(false);
   const [quoteId, setQuoteId] = useState<number>();
+  const [requestedQuoteFormData, setRequestedQuoteFormData] = useState<IRequestQuoteForm>();
   const { isSavedProduct } = useSavedProductsContext();
-  const saved = isSavedProduct(product?.id || product?.product_id);
+  const saved = isSavedProduct(productId);
   const { askIOTUserDetails } = useUserContext();
   const {
     setGetQuotesSnippetsIsValid,
@@ -36,20 +46,20 @@ const ProductDetailInfo: FC<IProductDetailInfoProps> = ({ product, user }) => {
     setIsQuoteRequestedLoading,
   } = useQuoteSnippetContext();
 
-  const addToQuoteSuccess = (quoteId?: number) => {
+  const addToQuoteSuccess = (quoteId: number, formData: IRequestQuoteForm) => {
     setGetQuotesSnippetsIsValid(true);
     setIsShowAlert(true);
     setQuoteId(quoteId);
+    setRequestedQuoteFormData(formData);
+    verifiedQuotesAlternativeRef.current?.open();
   };
 
   useEffect(() => {
     if (quotesSnippets) {
       setIsQuoteRequestedLoading(true);
-      const quoteRequested = quotesSnippets?.some(
-        (item) => item?.product_id === product?.product_id,
-      );
+      const quoteRequested = quotesSnippets?.some((item) => item?.product_id === productId);
       if (quoteRequested) {
-        setIsQuoteRequested((prevData) => ({ ...prevData, [product?.id as number]: true }));
+        setIsQuoteRequested((prevData) => ({ ...prevData, [productId as number]: true }));
       }
       setIsQuoteRequestedLoading(false);
     }
@@ -57,7 +67,7 @@ const ProductDetailInfo: FC<IProductDetailInfoProps> = ({ product, user }) => {
 
   const handleRequestQuote = async () => {
     if (user) {
-      if (askIOTUserDetails?.is_mobile_verified) {
+      if (!askIOTUserDetails?.is_mobile_verified) {
         requestQuoteModalRef.current?.open();
       } else {
         quoteVerificationRef?.current?.open();
@@ -178,6 +188,11 @@ const ProductDetailInfo: FC<IProductDetailInfoProps> = ({ product, user }) => {
         onSuccess={addToQuoteSuccess}
       />
       <QuoteVerification ref={quoteVerificationRef} onSuccess={onSuccessQuotesVerification} />
+      <VerifiedQuotesAlternativeModal
+        ref={verifiedQuotesAlternativeRef}
+        products={alternateDevices}
+        requestedQuoteFormData={requestedQuoteFormData}
+      />
     </>
   );
 };
