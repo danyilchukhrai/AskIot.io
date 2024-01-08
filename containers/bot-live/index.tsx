@@ -120,8 +120,6 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
 
     const init = async () => {
         try {
-
-
             const accessToken = CookiesStorageService.getValue(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
             setDemoUrl(`https://ask-iot-chatbot.vercel.app?token=${accessToken}`)
 
@@ -198,11 +196,13 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                                 Your chatbot is published now and ready to be shared with the world! Copy this link to share your chatbot
                                 on social media, messaging app or via email.
                             </p>
-                            <p className="text-[#000] font-inter text-[13px] font-normal leading-[16px] cursor-pointer" onClick={() => {
-                                window.open(demoUrl, '_blank');
-                            }}>
-                                Try Demo
-                            </p>
+                            <div className='bg-[#eef3ef] px-[8px] py-[8px] rounded-[6px] cursor-pointer'>
+                                <p className="text-[#000] font-inter text-[13px] font-normal leading-[16px] cursor-pointer" onClick={() => {
+                                    window.open(demoUrl, '_blank');
+                                }}>
+                                    Try Demo
+                                </p>
+                            </div>
                         </div>
 
                         <div className='section-embeded w-full'>
@@ -228,9 +228,11 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                             <p className="text-[#37B24D] font-inter text-[13px] font-normal leading-[16px]">
                                 Please click below to add training data or to update your existing training data.
                             </p>
-                            <p className="text-[#000] font-inter text-[13px] font-normal leading-[16px] cursor-pointer" onClick={() => router.push(RESTRICTED_APP_ROUTES.BOT_LIVE_TRAIN)}>
-                                Add training data
-                            </p>
+                            <div className='bg-[#eef3ef] px-[8px] py-[8px] rounded-[6px] cursor-pointer'>
+                                <p className="text-[#000] font-inter text-[13px] font-normal leading-[16px] cursor-pointer" onClick={() => router.push(RESTRICTED_APP_ROUTES.BOT_LIVE_TRAIN)}>
+                                    Add training data
+                                </p>
+                            </div>
                         </div>
                     </div>
 
@@ -363,16 +365,16 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-[11.42px]">
-                                    <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/refresh.png" />
+                                    {/* <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/refresh.png" />
                                     <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/profile.png" />
-                                    <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/sound.png" />
+                                    <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/sound.png" /> */}
                                     <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/close.png" />
                                 </div>
                             </div>
                             <div className='px-[25.22px] py-[20.54px] relative overflow-hidden' style={{ backgroundColor: backgroundColor, height: chatHeight + 'vh' }}>
                                 <div className="flex items-start gap-[11.42px] self-stretch">
                                     <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
-                                    <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
+                                    <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 rounded-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
                                         <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                                             {welcomeMessage}
                                         </p>
@@ -380,7 +382,7 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                                 </div>
                                 <div className="flex items-start justify-end gap-[11.42px] self-stretch">
                                     <img src={`${userIcon === '' ? '/assets/images/user-icon.png' : userIcon}`} className="w-[11px] h-[11px]" />
-                                    <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-[#06F] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
+                                    <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 rounded-[3.807px] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]" style={{ backgroundColor: primaryColor }}>
                                         <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                                             What devices support tank monitoring?
                                         </p>
@@ -388,7 +390,7 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                                 </div>
                                 <div className="flex items-start gap-[11.42px] self-stretch">
                                     <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
-                                    <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
+                                    <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 rounded-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
                                         <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                                             Sure, here’s a list of devices that are best suited for tank monitoring
                                         </p>
@@ -396,7 +398,7 @@ const CustomLivePage: FC<ICustomLivePageProps> = () => {
                                 </div>
                                 <div className="flex items-start justify-end gap-[11.42px] self-stretch">
                                     <img src={`${userIcon === '' ? '/assets/images/user-icon.png' : userIcon}`} className="w-[11px] h-[11px]" />
-                                    <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-[#06F] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
+                                    <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 rounded-[3.807px] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]" style={{ backgroundColor: primaryColor }}>
                                         <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                                             What devices support tank monitoring?
                                         </p>

@@ -1,10 +1,12 @@
-import { useRef, FC, useCallback, useState } from 'react';
+import { useRef, FC, useCallback, useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
 import BotAlert from '@/components/BotAlert';
 import { uploadFile, updateBot } from '@/modules/bots/services';
 import Spinner from '@/components/Spinner';
+import { getBotData, getVendorId } from '@/modules/bots/services';
+
 
 interface ICustomizeProps {
   onNextStep: () => void;
@@ -101,6 +103,64 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
       setIsLoading(false)
     }
   }
+
+  const init = async () => {
+    try {
+      const data = await getBotData();
+
+      console.log('data', data)
+
+      if (data.data.status === true) {
+        if (data.data.customizationdata
+          .hasOwnProperty("name")) {
+          setName(data.data.customizationdata.name);
+        }
+
+        if (data.data.customizationdata
+          .hasOwnProperty("welcomeMessage")) {
+          setWelcomeMessage(data.data.customizationdata.welcomeMessage);
+        }
+
+        if (data.data.customizationdata
+          .hasOwnProperty("primaryColor")) {
+          setPrimaryColor(data.data.customizationdata.primaryColor);
+        }
+
+
+        if (data.data.customizationdata
+          .hasOwnProperty("backgroundColor")) {
+          setBackgroundColor(data.data.customizationdata.backgroundColor);
+        }
+
+        if (data.data.customizationdata
+          .hasOwnProperty("chatHeight")) {
+          setChatHeight(data.data.customizationdata.chatHeight);
+        }
+
+        if (data.data.customizationdata
+          .hasOwnProperty("fontSize")) {
+          setFontSize(data.data.customizationdata.fontSize);
+        }
+
+        if (data.data.customizationdata
+          .hasOwnProperty("botIcon")) {
+          setBotIconSrc(data.data.customizationdata.botIcon);
+        }
+
+        if (data.data.customizationdata
+          .hasOwnProperty("userIcon")) {
+          setUserIconSrc(data.data.customizationdata.userIcon);
+        }
+      }
+    } catch (e) {
+      console.log('bot-live', e)
+    }
+  }
+
+  useEffect(() => {
+    init();
+  }, [])
+
 
   return (
     <>
@@ -233,16 +293,16 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
                 </div>
               </div>
               <div className="flex items-start gap-[11.42px]">
-                <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/refresh.png" />
+                {/* <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/refresh.png" />
                 <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/profile.png" />
-                <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/sound.png" />
+                <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/sound.png" /> */}
                 <img className="w-[15.227px] h-[15.227px] cursor-pointer" src="/assets/images/close.png" />
               </div>
             </div>
             <div className='px-[25.22px] py-[20.54px] relative overflow-hidden' style={{ backgroundColor: backgroundColor, height: chatHeight + 'vh' }}>
               <div className="flex items-start gap-[11.42px] self-stretch">
                 <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
-                <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
+                <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 rounded-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
                   <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     {welcomeMessage}
                   </p>
@@ -250,7 +310,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               </div>
               <div className="flex items-start justify-end gap-[11.42px] self-stretch">
                 <img src={`${userIcon === '' ? '/assets/images/user-icon.png' : userIcon}`} className="w-[11px] h-[11px]" />
-                <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-[#06F] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
+                <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 rounded-[3.807px] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]" style={{ backgroundColor: primaryColor }}>
                   <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     What devices support tank monitoring?
                   </p>
@@ -258,7 +318,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               </div>
               <div className="flex items-start gap-[11.42px] self-stretch">
                 <img src={`${botIcon === '' ? '/assets/images/bot-icon.png' : botIcon}`} className="w-[11px] h-[11px]" />
-                <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
+                <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 rounded-[3.807px] bg-white shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
                   <p className="text-[#000] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     Sure, here’s a list of devices that are best suited for tank monitoring
                   </p>
@@ -266,7 +326,7 @@ const Customize: FC<ICustomizeProps> = ({ onNextStep, onBackStep }) => {
               </div>
               <div className="flex items-start justify-end gap-[11.42px] self-stretch">
                 <img src={`${userIcon === '' ? '/assets/images/user-icon.png' : userIcon}`} className="w-[11px] h-[11px]" />
-                <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 border-radius-[3.807px] bg-[#06F] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]">
+                <div className="flex flex-none py-[4.759px] px-[5.71px] justify-center items-center gap-4.759 rounded-[3.807px] shadow-box max-w-[167.7px] rounded-md border border-solid border-gray-300 mb-[17.59px]" style={{ backgroundColor: primaryColor }}>
                   <p className="text-[#FFF] font-inter font-normal leading-[9px]" style={{ fontSize: fontSize / 16 * 12 + 'px' }}>
                     What devices support tank monitoring?
                   </p>

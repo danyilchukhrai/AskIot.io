@@ -40,7 +40,7 @@ const Table: FC<ITableProps> = ({ rows, removeFile }: ITableProps) => {
                         Uploaded {row.upload_timestamp}
                     </p>
                     <p className="text-14 text-212529 text-right font-inter text-base font-normal leading-5">
-                        Last trained {row.updated_date}
+                        {row.processed == true ? `Last trained ${row.updated_date}` : 'None'}
                     </p>
                     <div className={clsx(
                         'flex py-1 px-[10px] items-start rounded-full border border-solid',

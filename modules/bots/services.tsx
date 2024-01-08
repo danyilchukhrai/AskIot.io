@@ -72,7 +72,7 @@ export const uploadFiles = async (files: File[]) => {
 
 export const processUploads = async (files: IFile[]) => {
     try {
-        console.log('processUploads files',files)
+        console.log('processUploads files', files)
         await askIOTApiFetch(`${API_ENDPOINT}/private/training/process-uploads`, {
             files: files
         }, "POST");
@@ -139,6 +139,21 @@ export const updateBot = async (data: any) => {
         return null;
     }
 };
+
+export const liveBot = async () => {
+    try {
+        const res = askIOTApiFetch(
+            `${API_ENDPOINT}/private/chatbot/live`,
+            {},
+            'POST',
+        );
+        // ********** // 
+        return res;
+    } catch (_error) {
+        return null;
+    }
+};
+
 
 export const getTrainedData = async () => {
     try {

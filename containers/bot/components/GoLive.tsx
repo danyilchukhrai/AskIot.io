@@ -4,7 +4,7 @@ import Input from '@/components/Input';
 import { useRouter } from 'next/navigation';
 import {RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import BotAlert from '@/components/BotAlert';
-import { getVendorId } from "@/modules/bots/services"
+import { getVendorId, liveBot } from "@/modules/bots/services"
 import { COOKIES_STORAGE_KEYS } from '@/constants/common';
 import * as CookiesStorageService from '@/helpers/storage';
 
@@ -30,8 +30,9 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
     }
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     localStorage.setItem('uri', uri);
+    await liveBot();
     router.push(`${RESTRICTED_APP_ROUTES.BOT_LIVE}`);
   }
 

@@ -3,6 +3,7 @@ import { CustomNextImage } from '@/components/CustomImage';
 import FormInput from '@/components/FormComponents/FormInput';
 import { ChangeEvent, FC, useCallback, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { createBot } from '@/modules/bots/services';
 
 interface ICreateBotProps {
   onNextStep: () => void;
@@ -31,8 +32,9 @@ const CreateBot: FC<ICreateBotProps> = ({ onNextStep }) => {
           />
         </div>
 
-        <Button onClick={() => {
+        <Button onClick={async () => {
           if (name !== '') {
+            await createBot(name);
             onNextStep();
           }
         }}>Next</Button>
