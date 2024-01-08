@@ -29,8 +29,6 @@ const FormRadio: React.FC<IFormRadioProps> = ({
     control,
   });
 
-  console.log(inputProps.value);
-
   return (
     <div className="w-full">
       <input

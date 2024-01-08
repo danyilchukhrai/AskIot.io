@@ -62,6 +62,7 @@ export interface IClaimVendorBody {
     first_name: string;
     last_name: string;
     country_code: string;
+    emails?: string[];
   };
 }
 

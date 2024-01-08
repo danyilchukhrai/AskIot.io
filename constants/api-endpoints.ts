@@ -141,9 +141,9 @@ export const COMMON_API = {
 export const SUBSCRIPTION_API = {
   createCheckoutSession: {
     // api: '/public/stripe/create-checkout-session',
-    api: '/checkout/create-checkout-session',
+    api: '/api/checkout/create-checkout-session',
   },
   createPortalSession: {
-    api: '/checkout/create-portal-session',
+    api: '/api/checkout/create-portal-session',
   },
 };

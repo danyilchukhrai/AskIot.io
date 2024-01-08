@@ -42,9 +42,9 @@ const Channels: FC<IChannelsProps> = ({ setIsFullScreen, isFullScreen }) => {
             ))}
           </ul>
         ) : (
-          <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  text-gray-600">
-            No message
-          </p>
+          <div className="h-full flex items-center justify-center">
+            <img src="/assets/images/no-message.png" alt="no message" />
+          </div>
         )}
       </div>
       <div className="channels-footer p-6">

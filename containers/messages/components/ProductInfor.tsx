@@ -4,9 +4,10 @@ import { CustomImg, CustomNextImage } from '@/components/CustomImage';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
 import { generateSpecificationIconPath } from '@/helpers/common';
 import clsx from 'clsx';
+import { isEmpty } from 'lodash';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FC, useContext } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { MessageContext } from '../context';
 
 interface IProductInfoProps {
@@ -17,6 +18,12 @@ const ProductInfo: FC<IProductInfoProps> = ({ onClose }) => {
   const router = useRouter();
   const { productData, selectedChannel } = useContext(MessageContext);
   const product: any = productData?.productDetails?.Product?.[0] || productData?.productDetails;
+
+  useEffect(() => {
+    if (isEmpty(product)) {
+      onClose && onClose();
+    }
+  }, [product]);
 
   const handleLearnMore = () => {
     router.push(`/app/${productData?.type}/${product?.slug}`);

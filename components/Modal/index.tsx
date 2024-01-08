@@ -13,6 +13,7 @@ interface IModalProps {
   hideButtons?: boolean;
   paperClassName?: string;
   onClose?: () => void;
+  hideCloseButton?: boolean;
 }
 
 export interface IModalElement {
@@ -31,6 +32,7 @@ const Modal = forwardRef<IModalElement, IModalProps>(
       onSubmit,
       paperClassName = '',
       onClose,
+      hideCloseButton = false,
     },
     ref,
   ) => {
@@ -66,21 +68,23 @@ const Modal = forwardRef<IModalElement, IModalProps>(
               )}
             >
               {title && <p className="md:text-3xl text-2xl text-gray-1000">{title}</p>}
-              <Button
-                variant="inline"
-                disabledPadding
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCloseModal();
-                }}
-              >
-                <Image
-                  src="/assets/icons/x-mark-icon.svg"
-                  alt="X mark icon"
-                  width={24}
-                  height={24}
-                />
-              </Button>
+              {!hideCloseButton && (
+                <Button
+                  variant="inline"
+                  disabledPadding
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCloseModal();
+                  }}
+                >
+                  <Image
+                    src="/assets/icons/x-mark-icon.svg"
+                    alt="X mark icon"
+                    width={24}
+                    height={24}
+                  />
+                </Button>
+              )}
             </div>
             <div
               className={clsx('flex-1 overflow-auto md:px-8 px-4', hideButtons ? 'mb-0' : 'mb-8')}

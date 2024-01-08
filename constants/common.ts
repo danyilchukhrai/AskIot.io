@@ -30,4 +30,5 @@ export const IMAGE_ACCEPT_INPUT = 'image/*';
 
 export enum PAYMENT_STATUS {
   NO_PAYMENT = 'no_payment',
+  PAID = 'paid',
 }

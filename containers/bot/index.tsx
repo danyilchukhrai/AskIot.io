@@ -7,9 +7,11 @@ import { useRouter } from 'next/navigation';
 import { FC, useEffect, useState } from 'react';
 import NewBot from './components/NewBot';
 
-interface IBotProps {}
+interface IBotProps {
+  paymentSuccess?: boolean;
+}
 
-const Bot: FC<IBotProps> = () => {
+const Bot: FC<IBotProps> = ({ paymentSuccess }) => {
   const [isCreated, setIsCreated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { isNoPaymentStatus } = useUserContext();
@@ -19,8 +21,8 @@ const Bot: FC<IBotProps> = () => {
     setIsLoading(true);
 
     const res = await checkBotStatus();
-
-    if(res.data !== true && res.data !== null) {
+    console.log('res', res);
+    if (res.data !== true && res.data !== null) {
       setIsCreated(true);
     }
 
@@ -32,13 +34,13 @@ const Bot: FC<IBotProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (isNoPaymentStatus) {
+    if (isNoPaymentStatus && !paymentSuccess) {
       router.push(RESTRICTED_APP_ROUTES.BOT_SUBSCRIPTION);
     }
-  }, [isNoPaymentStatus]);
+  }, [isNoPaymentStatus, paymentSuccess]);
 
   if (isLoading) return <LoadingIndicator />;
-  if (typeof isNoPaymentStatus !== 'boolean' || isNoPaymentStatus) return null;
+  if (typeof isNoPaymentStatus !== 'boolean' || (isNoPaymentStatus && !paymentSuccess)) return null;
 
   return (
     <>

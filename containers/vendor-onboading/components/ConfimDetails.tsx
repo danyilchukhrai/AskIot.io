@@ -61,7 +61,7 @@ const ConfirmDetails: FC<IConfirmDetailsProps> = ({ onBackStep, onNextStep }) =>
     <div className="md:mt-25 mt-20">
       {childStep === CHILD_STEP.REVIEW_DETAILS && (
         <>
-          <p className="text-xl text-black">
+          <p className="text-xl text-primary-500">
             Please review business details (You will be able to edit details after ownership
             confirmation)
           </p>

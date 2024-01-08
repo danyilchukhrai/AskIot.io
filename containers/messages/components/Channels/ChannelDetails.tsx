@@ -8,6 +8,7 @@ import { useNewMessage } from '@/modules/message/hooks';
 import { ISecondPanelMessage } from '@/modules/message/types';
 import { useAuthContext } from '@/providers/AuthProvider';
 import { useUserTypeContext } from '@/providers/UserTypeProvider';
+import clsx from 'clsx';
 import { cloneDeep } from 'lodash';
 import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { MessageContext } from '../../context';
@@ -104,9 +105,13 @@ const ChannelDetails: FC<IChannelDetailsProps> = ({
 
   if (!channels.length)
     return (
-      <p className="text-gray-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        No message
-      </p>
+      <div className="h-full flex items-center justify-center bg-white">
+        <img
+          className={clsx(isShowProductInfo ? 'md:w-2/3' : 'md:min-w-[300px] md:w-1/3')}
+          src="/assets/images/no-message.png"
+          alt="no message"
+        />
+      </div>
     );
   if (!selectedChannel) return null;
 

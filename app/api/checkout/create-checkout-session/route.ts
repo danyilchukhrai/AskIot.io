@@ -2,7 +2,7 @@ import { API_ENDPOINT } from '@/configs/appConfig';
 import { REQUEST_METHOD } from '@/constants/common';
 import { NextResponse } from 'next/server';
 
-const stripe = require('stripe')(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(request: Request) {
   const { type, env } = await request.json();

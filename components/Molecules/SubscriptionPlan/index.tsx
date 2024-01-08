@@ -53,7 +53,8 @@ const SubscriptionPlan: FC<ISubscriptionPlanProps> = ({
           </p>
           {isCancel && (
             <p className="text-red-500 text-base mt-4 error-msg text-center">
-              The payment failed please try again
+              Looks like your payment failed, please try again if are interested in the Unlimited
+              plan
             </p>
           )}
         </div>
