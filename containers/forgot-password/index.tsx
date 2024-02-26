@@ -1,28 +1,46 @@
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
-import LoadingIndicator from '@/components/LoadingIndicator';
+import Turnstile, { ITurnstileElement } from '@/components/Turnstile';
+import { supabaseClient } from '@/configs/supabase';
 import { AUTH_ROUTES } from '@/constants/routes';
 import { IForgotPasswordForm } from '@/types/auth';
 import { forgotPasswordSchema } from '@/validations/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 interface IForgotPasswordProps {}
 
 const ForgotPassword: FC<IForgotPasswordProps> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const turnstileRef = useRef<ITurnstileElement>(null);
   const form = useForm<IForgotPasswordForm>({
     defaultValues: {
       email: '',
+      captchaToken: '',
     },
     resolver: yupResolver(forgotPasswordSchema),
     mode: 'onSubmit',
   });
 
-  const handleResetEmail = async () => {};
+  const handleResetEmail = async ({ email, captchaToken }: IForgotPasswordForm) => {
+    setIsLoading(true);
+    const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}${AUTH_ROUTES.RESET_PASSWORD}`,
+      captchaToken,
+    });
+    setIsLoading(false);
+    if (error) {
+      toast.error(error?.message);
+    } else {
+      toast.success('Success! Check your email to reset your password');
+      form.reset();
+      turnstileRef.current?.reset();
+    }
+  };
 
   return (
     <>
@@ -47,7 +65,15 @@ const ForgotPassword: FC<IForgotPasswordProps> = (props) => {
         <FormProvider {...form}>
           <form className="form flex flex-col gap-8" onSubmit={form.handleSubmit(handleResetEmail)}>
             <FormInput name="email" placeholder="you@example.com" label="Email" />
-            <Button fullWidth variant="info">
+            <Turnstile
+              ref={turnstileRef}
+              onSuccess={(token) => {
+                form.setValue('captchaToken', token);
+                form.trigger('captchaToken');
+              }}
+              errorMessage={form.formState?.errors?.captchaToken?.message}
+            />
+            <Button fullWidth variant="info" isLoading={isLoading}>
               Send Reset Email
             </Button>
           </form>
@@ -60,7 +86,6 @@ const ForgotPassword: FC<IForgotPasswordProps> = (props) => {
           </Link>
         </p>
       </div>
-      <LoadingIndicator isLoading={isLoading} />
     </>
   );
 };

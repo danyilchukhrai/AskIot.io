@@ -54,6 +54,28 @@
     animation-delay: 0.3s;
   }
 
+  .tags-input {
+    @apply rounded-lg px-3 py-2.5 shadow-s text-gray-1000 text-base resize-none min-h-[80px] w-full;
+  }
+
+  .tags-input .tagify {
+    border: 0;
+    width: 100%;
+  }
+
+  .tooltip {
+    @apply relative inline-block;
+  }
+
+  .tooltip .tooltip-text {
+    @apply invisible w-[250px] bg-gray-1000 text-white text-s text-center rounded-lg p-2 absolute z-[999] -top-full left-1/2  -translate-x-1/2 opacity-100 transition-opacity duration-300;
+  }
+
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+
   @keyframes dot-flashing {
     0% {
       background-color: #0066ff;
@@ -79,6 +101,13 @@
     transform: translate(-100%, -50%);
   }
 
+  .term-toggle-input ~ .block {
+    background-color: #0066ff;
+  }
+  .term-toggle-input:checked ~ .dot {
+    transform: translate(calc(-100% - 8px), -50%);
+  }
+
   .phone-number-input {
     @apply px-3 py-2.5 border border-gray-200 rounded-lg;
   }
@@ -94,4 +123,10 @@
   .word-break {
     word-break: break-word;
   }
+}
+
+.chat-inner-html img {
+  max-width: 80px;
+  max-height: 80px;
+  margin: 12px 0;
 }

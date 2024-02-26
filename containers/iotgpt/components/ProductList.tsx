@@ -15,6 +15,8 @@ interface IProductListProps {
   products?: IRecommendationInfo[];
   disabledOnClickProductEvent?: boolean;
   onClickProduct?: (product: any) => void;
+  requestQuote?: boolean;
+  onRequestQuote?: () => void;
 }
 
 const ProductList: FC<IProductListProps> = ({
@@ -23,12 +25,14 @@ const ProductList: FC<IProductListProps> = ({
   products = [],
   disabledOnClickProductEvent = false,
   onClickProduct,
+  requestQuote,
+  onRequestQuote,
 }) => {
   const productDrawerRef = useRef<IDrawerElement>(null);
   const saveModalRef = useRef<IModalElement>(null);
   const shareModalRef = useRef<IModalElement>(null);
   const [selectedProduct, setSelectedProduct] = useState<IRecommendationInfo>();
-  const [isRequestQuoteModalOpen, setIsRequestQuoteModalOpen] = useState(false);
+  const [disabledCloseDrawer, setDisabledCloseDrawer] = useState(false);
   const isMobileMatches = useMediaQuery('(max-width: 767px)');
 
   const handleClickProduct = (product?: IRecommendationInfo) => {
@@ -60,6 +64,7 @@ const ProductList: FC<IProductListProps> = ({
         {products.map((item, index) => (
           <div className="rounded-t-xl md:rounded-t-none bg-white" key={index}>
             <ProductItem
+              key={index}
               product={item}
               hiddenDescription={hiddenDescription}
               hideActionButtons={hideActionButtons}
@@ -69,6 +74,8 @@ const ProductList: FC<IProductListProps> = ({
                 shareModalRef.current?.open();
               }}
               onClickProduct={handleClickProduct}
+              requestQuote={requestQuote}
+              onRequestQuote={onRequestQuote}
             />
           </div>
         ))}
@@ -78,13 +85,13 @@ const ProductList: FC<IProductListProps> = ({
         closeIconClassName="md:!top-0 md:left-0 z-10 -translate-x-full rounded-none rounded-s-[6px] !w-11 !h-11 items-center justify-center hidden md:flex"
         disabledPaddingX
         disabledPaddingY={isMobileMatches}
-        closeOnClickOutside={!isRequestQuoteModalOpen}
+        closeOnClickOutside={!disabledCloseDrawer}
       >
         <ProductInfo
           product={selectedProduct}
           onCloseDrawer={handleCloseDrawer}
           products={products}
-          setIsRequestQuoteModalOpen={setIsRequestQuoteModalOpen}
+          setDisabledCloseDrawer={setDisabledCloseDrawer}
         />
       </Drawer>
       <Modal ref={saveModalRef} hideButtons>

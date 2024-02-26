@@ -22,7 +22,7 @@ const FormPhoneNumberInput: FC<IFormPhoneNumberInputProps> = (props) => {
 
   return (
     <div className={clsx('w-full input-container', className)}>
-      {label && <p className="text-gray-700 text-s mb-2">{label}</p>}
+      {label && <p className="text-gray-700 text-lg mb-2">{label}</p>}
       <PhoneInput
         {...field}
         international

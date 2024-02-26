@@ -10,4 +10,4 @@ const QuotesPage = () => {
   return <Quotes />;
 };
 
-export default withAuth(QuotesPage)([USER_TYPE.USER, USER_TYPE.PROVIDER]);
+export default withAuth(QuotesPage)([USER_TYPE.USER]);

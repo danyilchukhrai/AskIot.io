@@ -1,7 +1,8 @@
 import Button from '@/components/Button';
-import TypeFormPopupButton from '@/components/TypeFormPopupButton';
-import { JOIN_WAITLIST_TYPEFORM_ID } from '@/constants/typeform';
+
 import { FC } from 'react';
+import { AUTH_ROUTES } from '@/constants/routes';
+
 
 interface IJoinWaitlistProps {}
 
@@ -13,13 +14,7 @@ const JoinWaitlist: FC<IJoinWaitlistProps> = (props) => {
           Join the elite circle of forward-thinking enterprises with exclusive access to the
           game-changing AI platform, askIoT.
         </p>
-        <TypeFormPopupButton
-          typeformId={JOIN_WAITLIST_TYPEFORM_ID}
-          className="text-l"
-          variant="secondary"
-        >
-          Join Waitlist
-        </TypeFormPopupButton>
+        <Button link={AUTH_ROUTES.SIGN_UP}>Start Building</Button>
       </div>
     </section>
   );

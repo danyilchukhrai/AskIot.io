@@ -10,8 +10,13 @@ import {
   deleteProduct,
   getProductById,
   getProductsByVendor,
+  getProductsByVendorSlug,
   getVendorDetails,
+  getVendorDetailsBySlug,
+  getVendorSettings,
+  publicChatVendorQuery,
   searchVendors,
+  updateLeadEmails,
   updateVendor,
 } from './services';
 import { ISearchVendorsQueryParams } from './type';
@@ -21,6 +26,14 @@ export const useGetVendorDetails = (id: string | number) => {
     queryKey: [VENDOR_API.getVendorDetails.api(id), id],
     queryFn: () => getVendorDetails(id),
     enabled: !!id,
+  });
+};
+
+export const useGetVendorDetailsBySlug = (slug: string, enabled: boolean) => {
+  return useQuery({
+    queryKey: [VENDOR_API.getVendorDetailsBySlug.api(slug), slug],
+    queryFn: () => getVendorDetailsBySlug(slug),
+    enabled: !!slug && enabled,
   });
 };
 
@@ -69,9 +82,23 @@ export const useGetProductsByVendor = (id: string | number) => {
   });
 };
 
+export const useGetProductsByVendorSlug = (slug: string) => {
+  return useQuery({
+    queryKey: [VENDOR_API.getProductsByVendorSlug.api(slug), slug],
+    queryFn: () => getProductsByVendorSlug(slug),
+    enabled: !!slug,
+  });
+};
+
 export const useChatVendorQuery = () => {
   return useMutation({
     mutationFn: chatVendorQuery,
+  });
+};
+
+export const usePublicChatVendorQuery = () => {
+  return useMutation({
+    mutationFn: publicChatVendorQuery,
   });
 };
 
@@ -122,3 +149,18 @@ export const useGetProductById = (id: number, isDevice: boolean) => {
     enabled: !!id,
   });
 };
+
+export const useUpdateLeadEmails = () => {
+  return useMutation({
+    mutationFn: updateLeadEmails,
+  });
+};
+
+export const useGetVendorSettings = () => {
+  return useQuery({
+    queryKey: [VENDOR_API.getVendorSettings.api],
+    queryFn: getVendorSettings,
+  });
+};
+
+

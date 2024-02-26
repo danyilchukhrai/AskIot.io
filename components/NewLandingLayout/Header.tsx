@@ -12,11 +12,11 @@ interface IHeaderProps {}
 
 const NAV = [
   {
-    label: 'Solution Builders',
+    label: 'Create IoT Solution',
     href: '/',
   },
   {
-    label: 'Providers',
+    label: 'IoT Providers',
     href: '/providers',
   },
 ];

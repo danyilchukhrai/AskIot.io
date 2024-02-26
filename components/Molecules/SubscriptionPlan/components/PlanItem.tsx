@@ -1,60 +1,70 @@
+import Badge from '@/components/Badge';
 import Button from '@/components/Button';
 import clsx from 'clsx';
 import { FC } from 'react';
 
-interface IPlanItemProps {
+export interface IPlanItem {
   title: string;
-  description: string;
-  price: number;
-  features: string[];
-  limits?: string[];
-  isFreePlan?: boolean;
-  onStayOnFree?: () => void;
-  onGoUnlimited?: () => void;
+  price: string;
+  includes: string[];
+  button: string;
+  name: string;
+}
+
+export interface IPlanItemProps extends IPlanItem {
   className?: string;
+  onSelect?: (planName: string, planTitle: string) => void;
+  isMostPopular?: boolean;
 }
 
 const PlanItem: FC<IPlanItemProps> = ({
   title,
-  description,
   price,
-  features,
-  limits = [],
-  isFreePlan,
-  onStayOnFree,
-  onGoUnlimited,
-  className = '',
+  includes,
+  button,
+  className,
+  isMostPopular = false,
+  name,
+  onSelect,
 }) => {
   return (
-    <div className={clsx('plan-item p-6 flex flex-col', className)}>
-      <div className="relative">
-        <p className="title text-3xl font-medium">{title}</p>
-        <p
-          className="desc text-l font-medium mt-2 text-gray-1000"
-          dangerouslySetInnerHTML={{ __html: description }}
+    <div
+      className={clsx(
+        'p-6 rounded-xl border relative pt-8',
+        className,
+        isMostPopular ? 'border-primary-500' : 'border-gray-200',
+      )}
+    >
+      {isMostPopular && (
+        <Badge
+          className="absolute top-2 right-2 bg-primary-500 text-white"
+          label="Most Popular"
+          size="small"
+          color="blue"
         />
-        <p className="text-3xl font-semibold mt-4">{`$${price}`}</p>
-      </div>
-      <ul className="features mt-8 flex flex-col gap-3">
-        {features.map((it, index) => (
-          <li className="flex items-center gap-3" key={index}>
-            <img src="/assets/icons/check-icon.svg" alt="icon check" />
-            <p className="text-l text-gray-1000">{it}</p>
-          </li>
-        ))}
-      </ul>
-      <ul className="limits flex flex-col gap-3 mt-3">
-        {limits.map((it, index) => (
-          <li className="flex items-center gap-3" key={index}>
-            <img src="/assets/icons/x-mark-danger.svg" alt="x mark danger" />
-            <p className="text-l text-gray-1000">{it}</p>
-          </li>
-        ))}
-      </ul>
-      <div className="footer flex-1 mt-5 flex justify-center items-end">
-        <Button variant="info" onClick={isFreePlan ? onStayOnFree : onGoUnlimited}>
-          {isFreePlan ? 'Stay on Free' : 'Go Unlimited'}
-        </Button>
+      )}
+      <p className="text-gray-1000 font-medium text-l">{title}</p>
+      <p className="text-2xl font-semibold py-6" dangerouslySetInnerHTML={{ __html: price }} />
+      <Button
+        className={clsx(' w-full', {
+          '!text-primary-500 bg-white border border-primary-500': !isMostPopular,
+        })}
+        variant="info"
+        onClick={() => onSelect && onSelect(name, title)}
+      >
+        {button}
+      </Button>
+      <div className="h-[1px] bg-gray-200 my-4" />
+      <div>
+        <p className="text-gray-600 text-base pb-3">Includes:</p>
+        <ul className="includes flex flex-col gap-3">
+          {includes.map((it, index) => (
+            <li className="flex items-center gap-2 text-base" key={index}>
+              <img src="/assets/icons/check-icon.svg" alt="icon check" />
+              <p className="text-gray-1000">{it}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

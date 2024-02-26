@@ -1,8 +1,8 @@
+import { ENTER_KEY } from '@/constants/common';
+import clsx from 'clsx';
 import Image from 'next/image';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import Button from '../Button';
-import { ENTER_KEY } from '@/constants/common';
-import clsx from 'clsx';
 
 interface ISearchBoxProps {
   placeholder?: string;
@@ -11,15 +11,17 @@ interface ISearchBoxProps {
   suggestion?: string;
   hideInputIcon?: boolean;
   attachFile?: boolean;
+  disabled?: boolean;
 }
 
 const SearchBox: FC<ISearchBoxProps> = ({
-  placeholder = 'Search anything...',
+  placeholder = 'Ask any IoT question...',
   onChange,
   onSearch,
   suggestion = '',
   hideInputIcon = false,
   attachFile = false,
+  disabled = false,
 }) => {
   const [value, setValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,7 +45,14 @@ const SearchBox: FC<ISearchBoxProps> = ({
   };
 
   return (
-    <div className="flex items-center w-full py-2.5 px-3 bg-white rounded-xl shadow-search-box h-12.5">
+    <div
+      className={clsx(
+        'flex items-center w-full py-2.5 px-3 bg-white rounded-xl shadow-search-box h-12.5',
+        {
+          'bg-gray-300': disabled,
+        },
+      )}
+    >
       <div className="flex items-center flex-1">
         {!hideInputIcon && (
           <Image
@@ -63,6 +72,7 @@ const SearchBox: FC<ISearchBoxProps> = ({
             },
           )}
           value={value}
+          disabled={disabled}
           onChange={handleChange}
           placeholder={placeholder}
           onKeyDown={(e) => {

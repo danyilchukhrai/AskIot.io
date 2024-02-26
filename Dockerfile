@@ -8,7 +8,7 @@ RUN npm ci --only=production
 COPY .next ./.next
 COPY public ./public
 COPY .env ./
-
+COPY next.config.js ./
 
 
 EXPOSE 3000

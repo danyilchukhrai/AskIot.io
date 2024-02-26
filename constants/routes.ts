@@ -3,6 +3,7 @@ export const AUTH_ROUTES = {
   PHONE_LOGIN: '/app/phone-login',
   SIGN_UP: '/app/sign-up',
   FORGOT_PASSWORD: '/app/forgot-password',
+  RESET_PASSWORD: '/app/reset-password',
 };
 
 export const RESTRICTED_APP_ROUTES = {
@@ -10,7 +11,6 @@ export const RESTRICTED_APP_ROUTES = {
   PRODUCTS: '/app/products',
   IOTGPT: '/app/iotgpt',
   PROJECTS: '/app/projects',
-  MESSAGES: '/app/messages',
   QUOTES: '/app/quotes',
   VENDOR_QUOTE: '/app/vendor-quote',
   VENDORS: '/app/vendors',
@@ -21,9 +21,13 @@ export const RESTRICTED_APP_ROUTES = {
   BOT: '/app/bot',
   BOT_LIVE: '/app/bot-live',
   BOT_LIVE_TRAIN: '/app/bot-live/training',
+  BOT_LIVE_LINK: '/app/bot-live/link',
+  BOT_LIVE_CHAT: '/app/bot-live/chats',
   BOT_SUBSCRIPTION: '/app/bot/subscription',
   BOT_SUBSCRIPTION_CANCEL: '/app/bot/cancel',
   BOT_SUBSCRIPTION_SUCCESS: '/app/bot/success',
-  VENDOR_MESSAGES: '/app/vendors/messages',
   VENDOR_QUOTES: '/app/vendors/quotes',
+  VENDOR_LEADS: '/app/vendor-leads',
+  VERIFIED_ALTERNATE_PRODUCTS: '/app/quotes/products',
+  SETTINGS: '/app/settings',
 };

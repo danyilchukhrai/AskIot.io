@@ -1,8 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
-import { createCheckoutSection } from './services';
+import { createCheckoutSession, generatePaymentUrl } from './services';
 
 export const useCreateCheckoutSession = () => {
   return useMutation({
-    mutationFn: createCheckoutSection,
+    mutationFn: createCheckoutSession,
+  });
+};
+
+export const useGeneratePaymentUrl = () => {
+  return useMutation({
+    mutationFn: generatePaymentUrl,
   });
 };

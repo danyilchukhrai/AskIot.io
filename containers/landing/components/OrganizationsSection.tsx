@@ -8,15 +8,16 @@ const OrganizationsSection: FC<IOrganizationsSectionProps> = (props) => {
     <section className="organizations-section md:pt-[117px] pt-15">
       <div className="container flex flex-col justify-center">
         <p className="text-gray-500 text-3xl pb-[57px] text-center">
-          Trusted by the best organizations
+          Trusted by builders from 
         </p>
-        <Image
-          className="mx-auto blur-[20px]"
-          src="/assets/images/organizations-image.png"
-          width={902}
-          height={126}
-          alt="Organizations"
-        />
+        <div className="ml-30"> {/* Adjust ml-10 to whatever margin you want */}
+  <Image
+    src="/assets/images/builders.png"
+    width={902}
+    height={126}
+    alt="Organizations"
+  />
+</div>
       </div>
     </section>
   );

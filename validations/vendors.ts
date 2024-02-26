@@ -1,4 +1,3 @@
-import { DOMAIN_REGEX } from '@/constants/regex';
 import { REQUIRED_MESSAGE } from '@/constants/validation';
 import { VENDOR_ONBOARDING_STEPS } from '@/containers/vendor-onboading';
 import * as Yup from 'yup';
@@ -12,10 +11,7 @@ export const vendorOnboardingSchema = Yup.object().shape({
     is: (step: number) => {
       return step === VENDOR_ONBOARDING_STEPS.CONFIRM_DETAILS;
     },
-    then: (schema) =>
-      schema.required(REQUIRED_MESSAGE).test('vendorurl', 'The URL is invalid', (value) => {
-        return DOMAIN_REGEX.test(value);
-      }),
+    then: () => BASE_VALIDATION.url.required(REQUIRED_MESSAGE),
   }),
   notes: Yup.string().when('step', {
     is: (step: number) => {
@@ -73,11 +69,7 @@ export const vendorOnboardingSchema = Yup.object().shape({
 });
 
 export const vendorDeviceSchema = Yup.object().shape({
-  product_url: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .test('url', 'The URL is invalid', (value) => {
-      return DOMAIN_REGEX.test(value);
-    }),
+  product_url: BASE_VALIDATION.url.required(REQUIRED_MESSAGE),
   product_name: Yup.string().required(REQUIRED_MESSAGE),
   key_features: Yup.string().required(REQUIRED_MESSAGE),
   product_description: Yup.string().required(REQUIRED_MESSAGE),
@@ -117,11 +109,7 @@ export const vendorDeviceSchema = Yup.object().shape({
 export const vendorProductSchema = Yup.object().shape({
   product_name: Yup.string().required(REQUIRED_MESSAGE),
   product_description: Yup.string().required(REQUIRED_MESSAGE),
-  product_url: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .test('product_url', 'The URL is invalid', (value) => {
-      return DOMAIN_REGEX.test(value);
-    }),
+  product_url: BASE_VALIDATION.url.required(REQUIRED_MESSAGE),
   usecase: Yup.string().required(REQUIRED_MESSAGE),
   product_details: Yup.array().min(1, REQUIRED_MESSAGE),
   product_image: Yup.string(),
@@ -137,4 +125,17 @@ export const updateVendorSchema = Yup.object().shape({
   specialties: Yup.string().required(REQUIRED_MESSAGE),
   industry: Yup.string().required(REQUIRED_MESSAGE),
   twitter: Yup.string().required(REQUIRED_MESSAGE),
+});
+
+export const providerSettingsSchema = Yup.object().shape({
+  leadEmails: Yup.array().when('useUserEmail', {
+    is: false,
+    then: (schema) =>
+      schema.of(
+        Yup.object({
+          value: BASE_VALIDATION.email,
+        }),
+      ),
+  }),
+  useUserEmail: Yup.boolean().required(REQUIRED_MESSAGE),
 });

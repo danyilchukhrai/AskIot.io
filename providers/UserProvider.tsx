@@ -29,7 +29,7 @@ const UserProvider: React.FunctionComponent<IUserProviderProps> = (props) => {
   const [askIOTUserDetails, setAskIOTUserDetails] = React.useState<IAskIOTUserDetails | null>(null);
   const [getAskIOTUserIsValid, setAskIOTUserIsValid] = React.useState(true);
   const isNoPaymentStatus = askIOTUserDetails
-    ? askIOTUserDetails?.paymentstatus === PAYMENT_STATUS.NO_PAYMENT ||
+    ? ![PAYMENT_STATUS.PAID, PAYMENT_STATUS.TRIALING].includes(askIOTUserDetails?.paymentstatus) ||
       !askIOTUserDetails?.paymentstatus
     : undefined;
 

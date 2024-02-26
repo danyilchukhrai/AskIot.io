@@ -29,7 +29,7 @@ const FormTags: FC<IFormTagsProps> = ({ className, label, name, placeholder }) =
       {label && <p className="text-gray-700 text-s mb-2">{label}</p>}
       <Tags
         {...inputProps}
-        className="rounded-lg px-3 py-2.5 shadow-s text-gray-1000 text-base resize-none min-h-[80px] w-full"
+        className="tags-input"
         name={name}
         placeholder={placeholder}
         onChange={handleChange}

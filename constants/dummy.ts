@@ -1,4 +1,3 @@
-import { IChatChannel } from '@/interfaces/messages';
 import { v4 as uuidv4 } from 'uuid';
 import { QUOTE_STATUS } from './quotes';
 

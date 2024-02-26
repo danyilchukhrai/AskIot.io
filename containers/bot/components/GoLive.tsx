@@ -2,12 +2,10 @@ import Button from '@/components/Button';
 import { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
 import Input from '@/components/Input';
 import { useRouter } from 'next/navigation';
-import {RESTRICTED_APP_ROUTES } from '@/constants/routes';
+import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import BotAlert from '@/components/BotAlert';
-import { getVendorId, liveBot } from "@/modules/bots/services"
-import { COOKIES_STORAGE_KEYS } from '@/constants/common';
-import * as CookiesStorageService from '@/helpers/storage';
-
+import { liveBot, getVendorId, getTokenByVendorId } from '@/modules/bots/services';
+import { useBotContext } from '@/providers/BotProvider';
 interface IGoLiveProps {
   onBackStep: () => void;
 }
@@ -18,12 +16,13 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
   const [uri, setUri] = useState<string>("");
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const { setGoLive } = useBotContext();
 
   const handleCopyClick = async () => {
     try {
       await navigator.clipboard.writeText(uri);
 
-      setAlertMessage('Successfully copies text to clipboard!');
+      setAlertMessage('Your text is now copied to clipboard. Paste away!');
       setAlert(true);
     } catch (err) {
       console.error('Unable to copy text to clipboard', err);
@@ -34,14 +33,28 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
     localStorage.setItem('uri', uri);
     await liveBot();
     router.push(`${RESTRICTED_APP_ROUTES.BOT_LIVE}`);
+    setGoLive(true);
   }
 
-  const init = async () => {
-    const accessToken = CookiesStorageService.getValue(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
-    console.log('accessToken', accessToken)
+  const [demoUrl, setDemoUrl] = useState(process.env.NEXT_PUBLIC_CHATBOT_URL);
 
+  const init = async () => {
     const vendorId = await getVendorId();
     setUri(`<script type="text/javascript">(function () { d = document; s = d.createElement("script"); s.src = "https://www.askiot.ai/api/${vendorId}.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>`);
+    if (!vendorId) {
+      throw new Error('Failed to retrieve vendor ID');
+    }
+    console.log("the vendorid is ", vendorId);
+
+    // Fetch token by vendorId
+    const token = await getTokenByVendorId(vendorId);
+    console.log("🚀 ~ init ~ token:", token)
+    if (!token) {
+      throw new Error('Failed to retrieve token for vendor');
+    }
+
+    setDemoUrl(`${process.env.NEXT_PUBLIC_CHATBOT_URL}?token=${token}`);
+
   }
 
   useEffect(() => {
@@ -63,9 +76,13 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
               Your chatbot is published now and ready to be shared with the world! Copy this link to share your chatbot
               on social media, messaging app or via email.
             </p>
-            <p className="text-[#000] font-inter text-[13px] font-normal leading-[16px] cursor-pointer">
+            <div className="cursor-pointer text-s md:text-base font-medium rounded-lg shadow-s text-white bg-gray-1000 hover:bg-black focus:ring-2 focus:ring-gray-300 focus:bg-black disabled:bg-gray-600 disabled:text-gray-400 px-3 py-2.5 w-fit"
+              onClick={() => {
+                window.open(demoUrl, '_blank');
+              }}
+            >
               Try Demo
-            </p>
+            </div>
           </div>
 
           <div className='section-embeded w-full'>
@@ -74,15 +91,15 @@ const GoLive: FC<IGoLiveProps> = ({ onBackStep }) => {
               <Input
                 name="liveUri"
                 className="md:w-[343px] w-full"
-                placeholder="This is live Uri"
+                placeholder="This is the bot install code"
                 value={uri}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 }}
               />
-              <div className="flex py-[10px] px-[12px] justify-center items-center rounded-[8px] bg-blue-600 shadow-box cursor-pointer ml-[12px]" onClick={handleCopyClick}>
-                <p className="text-[#F8F9FA] font-inter text-[14px] leading-[20px]">
-                  Copy
-                </p>
+              <div className=" ml-[12px] cursor-pointer text-s md:text-base font-medium rounded-lg shadow-s text-white bg-gray-1000 hover:bg-black focus:ring-2 focus:ring-gray-300 focus:bg-black disabled:bg-gray-600 disabled:text-gray-400 px-3 py-2.5 w-fit"
+                onClick={handleCopyClick}
+              >
+                Copy
               </div>
             </div>
           </div>

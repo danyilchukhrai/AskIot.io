@@ -1,12 +1,12 @@
+import Image from 'next/image';
 import { FC } from 'react';
 import FeaturedItem from './FeaturedItem';
-import Image from 'next/image';
 
 interface IFeaturedSectionProps {}
 
 const FeaturedSection: FC<IFeaturedSectionProps> = (props) => {
   return (
-    <section className="featured-section py-25 md:py-[20px]">
+    <section className="featured-section py-15 md:py-[100px]">
       <div className="container">
         <FeaturedItem
           ImageComponent={
@@ -23,15 +23,17 @@ const FeaturedSection: FC<IFeaturedSectionProps> = (props) => {
           description={
             <>
               <span className="block">
-                Navigating through the myriad of IoT devices,connectivity and platform options can be
+                Navigating through the myriad of IoT devices and connectivity options can be
                 overwhelming. That’s where askIoT steps in.
               </span>
               <span className="block mt-4 md:mt-8">
-                Chat with our IoT trained AI agent to quickly build your solution.
+                From device specifications to connectivity solutions, get a thorough understanding
+                without the technical jargon. Whether it’s the automatic failover to Ethernet on the
+                InRouter900 or comparing different IoT solutions, we’ve got you covered.
               </span>
             </>
           }
-          title="Build your solution within minutes"
+          title="Use Natural Language to understand product capabilities"
         />
         <div className="relative">
           <FeaturedItem
@@ -55,7 +57,7 @@ const FeaturedSection: FC<IFeaturedSectionProps> = (props) => {
                 />
               </div>
             }
-            description={`AskIoT understands your questions, guiding you through IoT options and connecting you with vendors. Replace manual searches with smart, conversational assistance.`}
+            description={`AskIoT comprehends all your free-text inquiries. The AI engages you in a dynamic, human-like conversation to understand your needs, whether it's exploring device options or requesting quotes and availability from vendors. Say goodbye to manual searches and hello to intuitive, AI-powered IoT procurement.`}
             title="Let AI streamline your IoT exploration. No forms, just answers."
             reverse
           />
@@ -82,17 +84,15 @@ const FeaturedSection: FC<IFeaturedSectionProps> = (props) => {
             <div className="relative md:flex-1 md:ml-16 ml-0 flex justify-end mt-8 md:mt-0">
               <Image
                 className="h-auto w-full object-cover"
-                src="/assets/images/featured-quote-image.svg"
+                src="/assets/images/featured-quote-image.webp"
                 width={576}
                 height={589}
                 alt="images"
               />
             </div>
           }
-          description={`Let askIoT's AI sift , categorizing them based on price,
-              availability, and other essential features. No need to dive into each response -
-              it's streamlined by askIoT.`}
-          title="AI-optimized vendor selection, effortlessly."
+          description={`Let askIoT's AI sift through vendor responses, categorizing them based on price, availability, and other essential features. With a simple request, the AI can even recommend the best vendor match for your criteria. Gain a clear perspective on vendor offerings without the hassle of manual comparisons, ensuring your choices are data-driven and tailored to your project needs. No need to dive into each response - it's streamlined by askIoT.`}
+          title="Automatically Harness Vendor Responses."
         />
       </div>
     </section>

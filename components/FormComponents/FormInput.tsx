@@ -6,17 +6,19 @@ import Input, { IInputProps } from '../Input';
 interface IFormInputProps extends IInputProps {
   inputClassName?: string;
   type?: HTMLInputTypeAttribute;
+  label?: string;
+  boldLabel?: boolean;
 }
 
-const FormInput: FC<IFormInputProps> = (props) => {
-  const {
-    name = '',
-    onChange: handleChange,
-    inputClassName = '',
-    type = 'text',
-    className,
-    ...rest
-  } = props;
+const FormInput: FC<IFormInputProps> = ({
+  name = '',
+  onChange: handleChange,
+  type = 'text',
+  className,
+  label,
+  boldLabel = false, // Default to false if not provided
+  ...rest
+}) => {
   const { control } = useFormContext();
   const {
     field: { ref, onChange, ...inputProps },
@@ -28,11 +30,18 @@ const FormInput: FC<IFormInputProps> = (props) => {
 
   return (
     <div className={clsx('w-full input-container', className)}>
+      {label && ( // Conditionally render the label if it exists
+        <label
+          htmlFor={name}
+          className={clsx('form-label', { 'font-bold': boldLabel })} // Apply 'font-bold' based on boldLabel prop
+        >
+          {label}
+        </label>
+      )}
       <Input
         {...rest}
         {...inputProps}
         name={name}
-        className={inputClassName}
         ref={ref}
         type={type}
         onChange={(e) => {

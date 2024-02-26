@@ -1,11 +1,11 @@
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
 import FormPhoneNumberInput from '@/components/FormComponents/FormPhoneNumberInput';
-import FormRadio from '@/components/FormComponents/FormRadio';
+import FormRadio, { RadioControlLabel } from '@/components/FormComponents/FormRadio';
 import FormTextarea from '@/components/FormComponents/FormTextarea';
+import { MAX_LEAD_EMAILS } from '@/constants/vendors';
 import { useUserContext } from '@/providers/UserProvider';
-import clsx from 'clsx';
-import { FC, HTMLProps, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 interface IClaimBusinessProps {
@@ -13,26 +13,6 @@ interface IClaimBusinessProps {
   onBackStep: () => void;
   onSubmit: (data: any) => void;
 }
-
-const MAX_EMAILS = 3;
-
-const RadioControlLable: FC<HTMLProps<HTMLLabelElement>> = ({
-  htmlFor,
-  children,
-  className,
-  ...rest
-}) => (
-  <label
-    {...rest}
-    className={clsx(
-      'hover:cursor-pointer shadow-s px-3 py-2.5 rounded-lg text-base text-gray-1000 peer-checked:bg-primary-500 peer-checked:text-white block',
-      className,
-    )}
-    htmlFor={htmlFor}
-  >
-    {children}
-  </label>
-);
 
 const ClaimBusiness: FC<IClaimBusinessProps> = ({ onNextStep, onBackStep, onSubmit }) => {
   const { isNoPaymentStatus } = useUserContext();
@@ -47,7 +27,7 @@ const ClaimBusiness: FC<IClaimBusinessProps> = ({ onNextStep, onBackStep, onSubm
     control: form.control,
     name: 'emails',
   });
-  const disableAddEmails = form.watch('emails')?.length === MAX_EMAILS;
+  const disableAddEmails = form.watch('emails')?.length === MAX_LEAD_EMAILS;
 
   useEffect(() => {
     if (watchIsSentEmail) {
@@ -84,9 +64,9 @@ const ClaimBusiness: FC<IClaimBusinessProps> = ({ onNextStep, onBackStep, onSubm
                   name="email_associated_with_business"
                   value={true as any}
                   controlLabel={
-                    <RadioControlLable className="w-fit" htmlFor="isEmailAssociated-true">
+                    <RadioControlLabel className="w-fit" htmlFor="isEmailAssociated-true">
                       Yes
-                    </RadioControlLable>
+                    </RadioControlLabel>
                   }
                   isBooleanValue
                 />
@@ -98,21 +78,30 @@ const ClaimBusiness: FC<IClaimBusinessProps> = ({ onNextStep, onBackStep, onSubm
                   name="email_associated_with_business"
                   value={false as any}
                   controlLabel={
-                    <RadioControlLable className="w-fit" htmlFor="isEmailAssociated-false">
+                    <RadioControlLabel className="w-fit" htmlFor="isEmailAssociated-false">
                       No
-                    </RadioControlLable>
+                    </RadioControlLabel>
                   }
+                  isBooleanValue
                   hideErrorMsg
                 />
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-2 items-center">
             <p className="text-l text-black">
               Provide the best number to reach you for verification
             </p>
             <FormPhoneNumberInput name="phone_number" placeholder="Phone number" />
+            <p className="col-span-2 text-sm text-primary-500 font-bold mt-1">
+              <span className="mr-2">📲</span>OTP will be sent to this number
+            </p>
+            <p className="col-span-2 text-xs text-gray-600 mt-1">
+              * Your phone number is for verification purposes only and will not be shared with
+              third parties.
+            </p>
           </div>
+
           <div className="grid grid-cols-2">
             <p className="text-l text-black">First name</p>
             <FormInput name="first_name" placeholder="First name" />
@@ -135,9 +124,9 @@ const ClaimBusiness: FC<IClaimBusinessProps> = ({ onNextStep, onBackStep, onSubm
                   name="isSentEmail"
                   value={true as any}
                   controlLabel={
-                    <RadioControlLable className="w-fit" htmlFor="isSentEmail-true">
+                    <RadioControlLabel className="w-fit" htmlFor="isSentEmail-true">
                       Yes
-                    </RadioControlLable>
+                    </RadioControlLabel>
                   }
                   isBooleanValue
                 />
@@ -149,9 +138,9 @@ const ClaimBusiness: FC<IClaimBusinessProps> = ({ onNextStep, onBackStep, onSubm
                   name="isSentEmail"
                   value={false as any}
                   controlLabel={
-                    <RadioControlLable className="w-fit" htmlFor="isSentEmail-false">
+                    <RadioControlLabel className="w-fit" htmlFor="isSentEmail-false">
                       No
-                    </RadioControlLable>
+                    </RadioControlLabel>
                   }
                   hideErrorMsg
                   isBooleanValue
@@ -162,7 +151,7 @@ const ClaimBusiness: FC<IClaimBusinessProps> = ({ onNextStep, onBackStep, onSubm
           {watchIsSentEmail === false && (
             <div className="grid grid-cols-2">
               <p className="flex-1 text-l text-black">
-                If no, please enter upto three emails where you want to receive theme
+                If no, please enter upto three emails where you want to receive them
               </p>
               <div className="emails flex flex-col gap-3">
                 {emails.map((it, index) => (
@@ -208,6 +197,7 @@ const ClaimBusiness: FC<IClaimBusinessProps> = ({ onNextStep, onBackStep, onSubm
             </div>
           )}
         </div>
+
         <div className="flex items-center justify-between mt-6 w-full">
           <Button className="bg-gray" variant="secondary" onClick={onBackStep}>
             Previous

@@ -2,7 +2,7 @@
 import Button from '@/components/Button';
 import CloseButtonMobile from '@/components/CloseButtonMobile';
 import { CustomImg } from '@/components/CustomImage';
-import { IModalElement } from '@/components/Modal';
+import Modal, { IModalElement } from '@/components/Modal';
 import RequestQuoteModal from '@/components/Molecules/RequestQuoteModal';
 import VerifiedQuotesAlternativeModal from '@/components/Molecules/VerifiedQuotesAlternativeModal';
 import QuoteRequestedAlert from '@/components/QuoteRequestedAlert';
@@ -10,37 +10,46 @@ import QuoteVerification from '@/components/QuoteVerification';
 import RequestQuoteButton from '@/components/RequestQuoteButton';
 import Spinner from '@/components/Spinner';
 import Tabs from '@/components/Tabs';
+import Tooltip from '@/components/Tooltip';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
 import { PRODUCT_TAB_KEY } from '@/constants/products';
+import { SUBSCRIPTION_PLANS } from '@/constants/subscription';
+import { VERIFIED_VENDOR_MESSAGE } from '@/constants/vendors';
 import { useGetRecommendationProductDetail } from '@/modules/iot-gpt/hooks';
 import { IRecommendationInfo } from '@/modules/iot-gpt/type';
+import { useGetVerifiedAlternateProducts } from '@/modules/product/hooks';
 import { IRequestQuoteForm } from '@/modules/quotes/types';
 import { useQuoteSnippetContext } from '@/providers/QuotesSnippetsProvider';
 import { useSavedProductsContext } from '@/providers/SavedProductsProvider';
 import { useUserContext } from '@/providers/UserProvider';
 import { isEmpty } from 'lodash';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import ProductList from './ProductList';
 import ProductOverview from './ProductOverview';
+import SaveForm from './SaveForm';
 
 interface IProductInfoProps {
   product?: IRecommendationInfo;
   onCloseDrawer: () => void;
   products?: IRecommendationInfo[];
-  setIsRequestQuoteModalOpen: Dispatch<SetStateAction<boolean>>;
+  setDisabledCloseDrawer: Dispatch<SetStateAction<boolean>>;
 }
 
 const ProductInfo: FC<IProductInfoProps> = ({
   product: selectedProduct,
   onCloseDrawer,
   products = [],
-  setIsRequestQuoteModalOpen,
+  setDisabledCloseDrawer,
 }) => {
   const router = useRouter();
   const requestQuoteModalRef = useRef<IModalElement>(null);
   const quoteVerificationRef = useRef<IModalElement>(null);
   const verifiedQuotesAlternativeRef = useRef<IModalElement>(null);
+  const saveModalRef = useRef<IModalElement>(null);
+
   const [product, setProduct] = useState<IRecommendationInfo>();
   const [isShowAlert, setIsShowAlert] = useState(false);
   const [quoteId, setQuoteId] = useState<number | undefined>();
@@ -62,6 +71,10 @@ const ProductInfo: FC<IProductInfoProps> = ({
     setIsQuoteRequested,
     setIsQuoteRequestedLoading,
   } = useQuoteSnippetContext();
+  const { data: verifiedAlternateResponse, isFetching } = useGetVerifiedAlternateProducts(
+    Number(productId),
+  );
+  const { alternate_products_verified = [] } = verifiedAlternateResponse || {};
 
   useEffect(() => {
     if (selectedProduct) {
@@ -80,11 +93,6 @@ const ProductInfo: FC<IProductInfoProps> = ({
     }
   }, [quotesSnippets, product]); //eslint-disable-line
 
-  const handleLearnMore = () => {
-    router.push(`/app/${selectedProduct?.recommendationType}/${productData?.slug}`);
-    onCloseDrawer();
-  };
-
   const handleGetNextProduct = () => {
     const currentProductIdIndex = products.findIndex((it) => it?.product_id === productId);
     if (currentProductIdIndex === allProductIds.length - 1) return;
@@ -102,20 +110,32 @@ const ProductInfo: FC<IProductInfoProps> = ({
   const handleRequestQuote = async () => {
     if (askIOTUserDetails?.is_mobile_verified) {
       requestQuoteModalRef.current?.open();
-      setIsRequestQuoteModalOpen(true);
-      // verifiedQuotesAlternativeRef.current?.open();
+      setDisabledCloseDrawer(true);
     } else {
       quoteVerificationRef?.current?.open();
-      setIsRequestQuoteModalOpen(true);
+      setDisabledCloseDrawer(true);
     }
   };
 
-  const requestQuoteHandler = (quote_id: number | undefined, formData: IRequestQuoteForm) => {
+  const requestQuoteHandler = (
+    quote_id: number | undefined,
+    formData: IRequestQuoteForm,
+    subscriptionPlan: SUBSCRIPTION_PLANS,
+  ) => {
     setQuoteId(quote_id);
     setIsShowAlert(true);
     setRequestedQuoteFormData(formData);
     setGetQuotesSnippetsIsValid(true);
-    verifiedQuotesAlternativeRef.current?.open();
+    if (
+      alternate_products_verified.length &&
+      [
+        SUBSCRIPTION_PLANS.BUSINESS,
+        SUBSCRIPTION_PLANS.ENTERPRISE,
+        SUBSCRIPTION_PLANS.PROFESSIONAL,
+      ].includes(subscriptionPlan)
+    ) {
+      verifiedQuotesAlternativeRef.current?.open();
+    }
   };
 
   const onSuccessQuotesVerification = () => {
@@ -127,11 +147,25 @@ const ProductInfo: FC<IProductInfoProps> = ({
     router.push(`/app/${product?.type}/${product?.slug}`);
   };
 
+  const handleOpenSaveForm = () => {
+    if (saved) {
+      toast.info('This product is already saved');
+      return;
+    }
+    saveModalRef.current?.open();
+    setDisabledCloseDrawer(true);
+  };
+
   const tabs = [
     {
       key: PRODUCT_TAB_KEY.Overview,
       label: 'Overview',
-      component: <ProductOverview product={productData} specifications={specifications} />,
+      component: (
+        <ProductOverview
+          product={{ ...(productData || {}), verified: product?.verified }}
+          specifications={specifications}
+        />
+      ),
     },
     {
       key: PRODUCT_TAB_KEY.Features,
@@ -206,12 +240,16 @@ const ProductInfo: FC<IProductInfoProps> = ({
                 <div className="flex flex-col gap-5 flex-1">
                   <h4 className="text-3xl text-gray-1000 font-medium flex items-center">
                     {productData?.name}
-                    <CustomImg
-                      className="w-5 h-5 ml-1.5"
-                      src={
-                        saved ? '/assets/icons/red-heart-icon.svg' : '/assets/icons/gray-heart.svg'
-                      }
-                    />
+                    <Button variant="inline" disabledPadding onClick={handleOpenSaveForm}>
+                      <CustomImg
+                        className="w-5 h-5 ml-1.5"
+                        src={
+                          saved
+                            ? '/assets/icons/red-heart-icon.svg'
+                            : '/assets/icons/gray-heart.svg'
+                        }
+                      />
+                    </Button>
                   </h4>
                   <div className="flex items-center">
                     <CustomImg
@@ -223,6 +261,14 @@ const ProductInfo: FC<IProductInfoProps> = ({
                     <p className="text-base text-gray-1000 pl-2.5">
                       {productData?.vendorname || ''}
                     </p>
+                    {product?.verified && (
+                      <Tooltip textClassName="!-left-15" text={VERIFIED_VENDOR_MESSAGE}>
+                        <img
+                          className="max-w-10 max-h-10"
+                          src="/assets/images/askiot_verified_small.png"
+                        />
+                      </Tooltip>
+                    )}
                   </div>
                   <RequestQuoteButton product={product} requestQuoteHandler={handleRequestQuote} />
                 </div>
@@ -233,13 +279,12 @@ const ProductInfo: FC<IProductInfoProps> = ({
               </div>
             </div>
             <div className="product-info-footer px-8 pt-8 z-10 flex justify-center">
-              <Button
-                className="md:!w-[519px] w-full"
-                variant="secondary"
-                onClick={handleLearnMore}
+              <Link
+                className="text-s md:text-base font-medium rounded-lg shadow-s text-gray-800 bg-white hover:bg-gray focus:ring-1 focus:ring-black disabled:bg-gray disabled:text-gray-300 w-full md:w-[519px] px-3 py-2.5 text-center"
+                href={`/app/${productData?.type}/${product?.slug}`}
               >
                 Learn More
-              </Button>
+              </Link>
             </div>
           </>
         )}
@@ -262,10 +307,19 @@ const ProductInfo: FC<IProductInfoProps> = ({
       <QuoteVerification ref={quoteVerificationRef} onSuccess={onSuccessQuotesVerification} />
       <VerifiedQuotesAlternativeModal
         ref={verifiedQuotesAlternativeRef}
-        products={alternateDevices}
+        products={alternate_products_verified}
         requestedQuoteFormData={requestedQuoteFormData}
-        onClose={() => setIsRequestQuoteModalOpen(false)}
+        onClose={() => setDisabledCloseDrawer(false)}
       />
+      <Modal ref={saveModalRef} hideButtons onClose={() => setDisabledCloseDrawer(false)}>
+        <SaveForm
+          product={selectedProduct}
+          onClose={() => {
+            saveModalRef.current?.close();
+            setDisabledCloseDrawer(false);
+          }}
+        />
+      </Modal>
     </>
   );
 };

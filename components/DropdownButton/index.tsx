@@ -13,12 +13,14 @@ interface IDropdownButtonProps {
   dropdownMenu?: IDropdownMenuItem[];
   className?: string;
   menuPlacement?: 'bottom' | 'top';
+  icon?: string;
 }
 
 const DropdownButton: FC<IDropdownButtonProps> = ({
   className = '',
   dropdownMenu,
   menuPlacement = 'bottom',
+  icon = '/assets/icons/ellipsis-horizontal-icon.svg'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -58,7 +60,7 @@ const DropdownButton: FC<IDropdownButtonProps> = ({
         disabledPadding
         onClick={handleClick}
       >
-        <Image src="/assets/icons/ellipsis-horizontal-icon.svg" width={24} height={24} alt="Icon" />
+        <Image src={icon} width={24} height={24} alt="Icon" />
       </Button>
       {isOpen && (
         <ul

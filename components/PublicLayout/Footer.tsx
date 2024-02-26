@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -102,7 +101,7 @@ const Footer: FC<IFooterProps> = (props) => {
             <p className="text-gray-300 text-xl font-medium leading-[18px]">US Office</p>
             <Link
               className="text-gray-500 text-base pt-4 pb-2 inline-block leading-[18px]"
-              href="#"
+              href="/"
             >
               © Askiot.AI
             </Link>
@@ -110,25 +109,28 @@ const Footer: FC<IFooterProps> = (props) => {
               5830 Granite Parkway Suite 81, Plano, TX 75024
             </p>
           </div>
-          <Link className="text-gray-300 text-3xl font-semibold leading-[18px]" href="https://www.linkedin.com/in/talk2sunder">
+          <Link
+            className="text-gray-300 text-3xl font-semibold leading-[18px]"
+            href="https://www.linkedin.com/company/askiot/"
+          >
             LinkedIn
           </Link>
         </div>
         <div className="footer-bottom flex justify-center items-center pt-6">
           <ul className="flex items-center">
             <li className="mr-5">
-              <Link className="text-gray-1100 text-base" href="#">
+              <Link className="text-gray-1100 text-base" href="/">
                 © Askiot.AI
               </Link>
             </li>
             <li className="mr-5">
-              <Link className="text-gray-1100 text-base" href="#">
-                Privacy Police
+              <Link className="text-gray-1100 text-base" href="/privacy">
+                Privacy Policy
               </Link>
             </li>
             <li>
-              <Link className="text-gray-1100 text-base" href="#">
-                Imprint
+              <Link className="text-gray-1100 text-base" href="/terms">
+                Terms
               </Link>
             </li>
           </ul>

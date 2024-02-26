@@ -1,5 +1,5 @@
-import { DOMAIN_REGEX } from '@/constants/regex';
 import { REQUIRED_MESSAGE } from '@/constants/validation';
+import { isUrl } from '@/helpers/common';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import * as Yup from 'yup';
 
@@ -14,6 +14,6 @@ export const BASE_VALIDATION = {
     return isValidPhoneNumber(value);
   }),
   url: Yup.string().test('url', 'The URL is invalid', (value: any) => {
-    return DOMAIN_REGEX.test(value);
+    return isUrl(value);
   }),
 };

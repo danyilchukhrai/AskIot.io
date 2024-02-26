@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { HTMLProps, ReactNode } from 'react';
+import { FC, HTMLProps, ReactNode } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 
 interface IFormRadioProps extends HTMLProps<HTMLInputElement> {
@@ -8,6 +8,24 @@ interface IFormRadioProps extends HTMLProps<HTMLInputElement> {
   hideErrorMsg?: boolean;
   isBooleanValue?: boolean;
 }
+
+export const RadioControlLabel: FC<HTMLProps<HTMLLabelElement>> = ({
+  htmlFor,
+  children,
+  className,
+  ...rest
+}) => (
+  <label
+    {...rest}
+    className={clsx(
+      'hover:cursor-pointer shadow-s px-3 py-2.5 rounded-lg text-base text-gray-1000 peer-checked:bg-primary-500 peer-checked:text-white block',
+      className,
+    )}
+    htmlFor={htmlFor}
+  >
+    {children}
+  </label>
+);
 
 const FormRadio: React.FC<IFormRadioProps> = ({
   name = '',
@@ -19,7 +37,7 @@ const FormRadio: React.FC<IFormRadioProps> = ({
   isBooleanValue,
   ...rest
 }) => {
-  const { control } = useFormContext();
+  const { control, watch } = useFormContext();
 
   const {
     field: { ref, onChange, ...inputProps },
@@ -28,6 +46,7 @@ const FormRadio: React.FC<IFormRadioProps> = ({
     name,
     control,
   });
+
 
   return (
     <div className="w-full">
@@ -43,6 +62,7 @@ const FormRadio: React.FC<IFormRadioProps> = ({
           onChange(formattedValue);
           handleChange && handleChange(e);
         }}
+        checked={rest.value === watch(name)}
       />
       {controlLabel && controlLabel}
       {invalid && !hideErrorMsg && (

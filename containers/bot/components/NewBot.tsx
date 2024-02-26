@@ -5,11 +5,13 @@ import CreateBot from './CreateBot';
 import TrainBot from './TrainBot';
 import Customize from './Customize';
 import GoLive from './GoLive';
+import AddLinks from './AddLinks';
 
 interface INewBotProps { }
 
 export enum BOT_CREATE_STEPS {
   BOT_CREATE,
+  ADD_LINK,
   TRAIN_BOT,
   CUSTOMIZE,
   GO_LIVE
@@ -21,7 +23,11 @@ const steps = [
     step: BOT_CREATE_STEPS.BOT_CREATE,
   },
   {
-    label: 'Train the Bot',
+    label: 'Add Links',
+    step: BOT_CREATE_STEPS.ADD_LINK,
+  },
+  {
+    label: 'Add Files',
     step: BOT_CREATE_STEPS.TRAIN_BOT,
   },
   {
@@ -36,6 +42,7 @@ const steps = [
 
 const NewBot: FC<INewBotProps> = (props) => {
   const [active, setActive] = useState(BOT_CREATE_STEPS.BOT_CREATE);
+  const [name, setName] = useState<string>("");
   const botForm = useForm({
     defaultValues: {
       botName: '',
@@ -60,7 +67,9 @@ const NewBot: FC<INewBotProps> = (props) => {
   const renderSteps = () => {
     switch (active) {
       case BOT_CREATE_STEPS.BOT_CREATE:
-        return <CreateBot onNextStep={handleNextStep} />;
+        return <CreateBot onNextStep={handleNextStep} name={name} setName={setName}/>;
+      case BOT_CREATE_STEPS.ADD_LINK:
+        return <AddLinks onNextStep={handleNextStep}  onBackStep={handleBackStep}/>;
       case BOT_CREATE_STEPS.TRAIN_BOT:
         return <TrainBot onNextStep={handleNextStep} onBackStep={handleBackStep} />;
       case BOT_CREATE_STEPS.CUSTOMIZE:
@@ -82,6 +91,12 @@ const NewBot: FC<INewBotProps> = (props) => {
         >
           {(active === BOT_CREATE_STEPS.BOT_CREATE || active === BOT_CREATE_STEPS.GO_LIVE ) && (
             <div className="md:w-[795px] w-full md:py-12 md:px-9 py-8 px-6 rounded-xl border border-gray-500">
+              <Stepper active={active} steps={steps} />
+              {renderSteps()}
+            </div>
+          )}
+          {(active === BOT_CREATE_STEPS.ADD_LINK) && (
+            <div className="md:w-[1150px] w-full md:py-12 md:px-9 py-8 px-6 rounded-xl border border-gray-500">
               <Stepper active={active} steps={steps} />
               {renderSteps()}
             </div>

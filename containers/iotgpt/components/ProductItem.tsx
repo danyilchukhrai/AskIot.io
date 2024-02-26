@@ -1,10 +1,13 @@
 import Button from '@/components/Button';
 import { CustomImg } from '@/components/CustomImage';
+import Tooltip from '@/components/Tooltip';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
+import { VERIFIED_VENDOR_MESSAGE } from '@/constants/vendors';
 import { IRecommendationInfo } from '@/modules/iot-gpt/type';
 import { useSavedProductsContext } from '@/providers/SavedProductsProvider';
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 
@@ -16,6 +19,8 @@ interface IProductItemProps {
   onClickProduct?: (product?: IRecommendationInfo) => void;
   hideActionButtons?: boolean;
   className?: string;
+  requestQuote?: boolean;
+  onRequestQuote?: () => void;
 }
 
 const ProductItem: FC<IProductItemProps> = ({
@@ -26,6 +31,8 @@ const ProductItem: FC<IProductItemProps> = ({
   onClickProduct,
   hideActionButtons = false,
   className = '',
+  requestQuote = false,
+  onRequestQuote,
 }) => {
   const router = useRouter();
   const { isSavedProduct } = useSavedProductsContext();
@@ -34,6 +41,7 @@ const ProductItem: FC<IProductItemProps> = ({
   const handleClickProduct = () => {
     onClickProduct && onClickProduct(product);
   };
+
   return (
     <div
       className={clsx(
@@ -46,54 +54,73 @@ const ProductItem: FC<IProductItemProps> = ({
         className={clsx('flex items-center w-full ', hideActionButtons ? 'md:w-1/3' : 'md:w-[23%]')}
       >
         <CustomImg
-          className="max-w-15 h-10 rounded-[6px]"
+          className="max-w-[60px] max-h-[60px] rounded-[6px]"
           src={product?.img || product?.product_image}
           alt={product?.name || ''}
         />
-        <div className="pl-4">
+        <div className="pl-4 pr-1">
           <p className="text-gray-1000 text-base font-medium">
             {product?.name || product?.product_name}
           </p>
         </div>
       </div>
       {!hiddenDescription && (
-        <div className="w-full md:w-[49%] md:px-3 mt-2.5 md:mt-0">
-          <p className="text-primary-500 text-xs font-medium pb-1">{product?.recommendationType}</p>
+        <div
+          className={clsx(
+            'w-full md:px-3 mt-2.5 md:mt-0',
+            requestQuote ? 'md:w-[40%]' : 'md:w-[43%]',
+          )}
+        >
+          {product?.device_type && (
+            <p className="text-primary-500 text-xs font-medium pb-1">{product?.device_type}</p>
+          )}
           <p className="text-gray-1000 text-xs md:line-clamp-2 line-clamp-3">
             {product?.description || product?.product_description}
           </p>
         </div>
       )}
       <div className="manufacturer mt-4 md:mt-0 flex-1 md:flex md:flex-col md:items-center">
-        <div
+        <Link
           className="flex items-center md:hidden"
+          href={`${RESTRICTED_APP_ROUTES.VENDORS}/${product?.vendorslug}`}
           onClick={(e) => {
             e.stopPropagation();
-            product?.vendorid &&
-              router.push(`${RESTRICTED_APP_ROUTES.VENDORS}/${product?.vendorid}`);
           }}
         >
-          <CustomImg
-            className="max-w-[80px] max-h-12.5 object-cover"
-            src={product?.logo || DEFAULT_VENDOR_LOGO}
-            alt="manufacturer"
-          />
-        </div>
-        <div
+          <div className="flex items-center">
+            <CustomImg
+              className="max-w-[80px] max-h-12.5 object-cover"
+              src={product?.vendorlogo || product?.logo || DEFAULT_VENDOR_LOGO}
+              alt="manufacturer"
+            />
+            {product?.verified && (
+              <Tooltip text={VERIFIED_VENDOR_MESSAGE}>
+                <img className="max-w-10 max-h-10" src="/assets/images/askiot_verified_small.png" />
+              </Tooltip>
+            )}
+          </div>
+        </Link>
+        <Link
           className="hidden md:block hover:cursor-pointer"
+          href={`${RESTRICTED_APP_ROUTES.VENDORS}/${product?.vendorslug}`}
           onClick={(e) => {
             e.stopPropagation();
-            product?.vendorid &&
-              router.push(`${RESTRICTED_APP_ROUTES.VENDORS}/${product?.vendorid}`);
           }}
         >
-          <CustomImg
-            className="max-w-[80px] max-h-12.5 object-cover"
-            src={product?.vendorlogo || product?.logo || DEFAULT_VENDOR_LOGO}
-            alt="manufacturer"
-          />
+          <div className="flex items-center">
+            <CustomImg
+              className="max-w-[80px] max-h-12.5 object-cover"
+              src={product?.vendorlogo || product?.logo || DEFAULT_VENDOR_LOGO}
+              alt="manufacturer"
+            />
+            {product?.verified && (
+              <Tooltip text={VERIFIED_VENDOR_MESSAGE}>
+                <img className="max-w-10 max-h-10" src="/assets/images/askiot_verified_small.png" />
+              </Tooltip>
+            )}
+          </div>
           <p className="text-gray-1000 text-base ml-2.5 md:hidden">{product?.vendorname}</p>
-        </div>
+        </Link>
         {!hideActionButtons && (
           <div className="button-groups flex items-center md:justify-center md:gap-3 gap-2.5 mt-2.5">
             <Button
@@ -129,6 +156,11 @@ const ProductItem: FC<IProductItemProps> = ({
           </div>
         )}
       </div>
+      {requestQuote && (
+        <Button className="mt-2 md:mt-0" onClick={onRequestQuote}>
+          Request Quote
+        </Button>
+      )}
     </div>
   );
 };

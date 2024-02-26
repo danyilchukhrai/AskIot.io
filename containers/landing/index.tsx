@@ -2,11 +2,11 @@
 import PublicLayout from '@/components/PublicLayout';
 import { FC } from 'react';
 import AboutSection from './components/AboutSection';
-import OrganizationsSection from './components/OrganizationsSection';
 import FeaturedSection from './components/FeaturedSection';
 import JoinWaitlist from './components/JoinWaitlist';
+import OrganizationsSection from './components/OrganizationsSection';
 import TestimonialsSection from './components/TestimonialsSection';
-import FeaturesSection from './components/FeaturesSection';
+
 
 interface ILandingProps {}
 
@@ -16,8 +16,7 @@ const Landing: FC<ILandingProps> = (props) => {
       <AboutSection />
       <OrganizationsSection />
       <FeaturedSection />
-      <FeaturesSection />
-      <TestimonialsSection />
+       <TestimonialsSection />
       <JoinWaitlist />
     </PublicLayout>
   );

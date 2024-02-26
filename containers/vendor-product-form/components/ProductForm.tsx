@@ -30,43 +30,70 @@ const ProductForm: FC<IProductFormProps> = ({ onSelectFile, onRemoveImage }) => 
   return (
     <div className="grid grid-cols-1 gap-y-4">
       <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-        <FormInput name="product_url" label="Url" placeholder="Enter url" />
-        <FormInput name="product_name" label="Name" placeholder="Enter name" />
+        <FormInput
+          name="product_url"
+          label="URL"
+          placeholder="Enter URL"
+         
+        />
+        <FormInput
+          name="product_name"
+          label="Name"
+          placeholder="Enter Name"
+         
+        />
       </div>
       <FormTextarea
         name="product_description"
-        label="Product description"
-        placeholder="Enter product description"
+        label="Product Description"
+        placeholder="Enter Product Description"
         rows={3}
+        
       />
       <div className="product-details">
-        <p className="text-gray-700 text-s mb-2">Product details</p>
-        <div className="grid grid-cols-1 gap-4">
-          {productDetailsArray.map((field, index) => (
-            <div className="grid grid-cols-1 gap-4" key={field.id}>
-              <FormInput name={`product_details.${index}.name`} placeholder="Feature title" />
-              <FormTextarea
-                name={`product_details.${index}.description`}
-                placeholder="Describe feature"
-                rows={3}
-              />
-            </div>
-          ))}
-        </div>
-
-        <Button
-          className="flex items-center !p-0 mt-6"
-          variant="inline"
-          onClick={handleAddMoreProductDetails}
-        >
-          <Image src="/assets/icons/plus-icon.svg" alt="" width={24} height={24} />
-          <span className="text-primary-500 ml-2.5">Add more</span>
-        </Button>
+  <p className="text-gray-700 text-s mb-2 ">Product details</p>
+  {productDetailsArray.map((field, index) => (
+    <div className="flex items-center gap-4 mb-4" key={field.id}>
+      <div className="flex-1">
+        <label htmlFor={`product_details.${index}.name`} className="block text-sm font-small text-gray-700">
+          Feature Title:
+        </label>
+        <FormInput
+          id={`product_details.${index}.name`}
+          name={`product_details.${index}.name`}
+          placeholder="Enter feature title"
+          className="mt-1"
+        />
       </div>
+      <div className="flex-1">
+        <label htmlFor={`product_details.${index}.description`} className="block text-sm font-small text-gray-700">
+          Feature Description:
+        </label>
+        <FormTextarea
+          id={`product_details.${index}.description`}
+          name={`product_details.${index}.description`}
+          placeholder="Enter feature description"
+          rows={3}
+          className="mt-1"
+        />
+      </div>
+    </div>
+  ))}
+  <Button
+    className="flex items-center !p-0 mt-6"
+    variant="inline"
+    onClick={handleAddMoreProductDetails}
+  >
+    <Image src="/assets/icons/plus-icon.svg" alt="" width={24} height={24} />
+    <span className="text-primary-500 ml-2.5 font-bold">Add more</span>
+  </Button>
+</div>
+
       <FormTags
         name="usecase"
         label="Use case (Please add a comma for multiple values)"
         placeholder="Enter use case"
+        
       />
       <div className="grid grid-cols-1">
         <UploadFileBox

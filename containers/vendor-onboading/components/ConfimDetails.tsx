@@ -61,10 +61,14 @@ const ConfirmDetails: FC<IConfirmDetailsProps> = ({ onBackStep, onNextStep }) =>
     <div className="md:mt-25 mt-20">
       {childStep === CHILD_STEP.REVIEW_DETAILS && (
         <>
-          <p className="text-xl text-primary-500">
-            Please review business details (You will be able to edit details after ownership
-            confirmation)
-          </p>
+          <div className="rounded-xl border border-gray-300 bg-gray-100 p-6 mt-6 shadow-sm">
+      <p className="text-xl text-primary-500 font-semibold">
+        Please review your business details
+      </p>
+      <p className="text-sm text-gray-700 mt-2">
+        You will be able to edit these details after ownership confirmation.
+      </p>
+    </div>
           <div className="rounded-xl border border-gray-300 px-8 py-6 mt-6">
             <div className="flex items-center gap-[13px]">
               <p className="text-gray-1000 text-3xl font-medium">{vendorProfile?.vendorname}</p>

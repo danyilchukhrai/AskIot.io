@@ -15,10 +15,13 @@ import {
 } from 'react';
 import { useAuthContext } from './AuthProvider';
 
+// Temporary
+const HARDCORE_VENDOR_SLUG = 'test-company-extraordinaire';
+
 const UserTypeContext = createContext<{
   currentUserType?: USER_TYPE;
   setCurrentUserType: Dispatch<SetStateAction<USER_TYPE | undefined>>;
-  allowedUserTypes: USER_TYPE[];
+  allowedUserTypes?: USER_TYPE[];
   vendorId?: string | number;
   isVendor: boolean;
 }>({
@@ -44,7 +47,7 @@ interface IUserTypeProvider {
 const UserTypeProvider: FC<IUserTypeProvider> = ({ children }) => {
   const pathname = usePathname();
   const [currentUserType, setCurrentUserType] = useState<USER_TYPE>();
-  const [allowedUserTypes, setAllowedUserTypes] = useState<USER_TYPE[]>([]);
+  const [allowedUserTypes, setAllowedUserTypes] = useState<USER_TYPE[]>();
   const [vendorId, setVendorId] = useState<string | number>();
   const { mutateAsync: getProviderStatus } = useGetProviderStatus();
   const { user, isFetching } = useAuthContext();
@@ -54,22 +57,22 @@ const UserTypeProvider: FC<IUserTypeProvider> = ({ children }) => {
     if (user) {
       handleSetAllowedUserTypes();
     } else {
-      setCurrentUserType(USER_TYPE.USER);
-      setAllowedUserTypes([USER_TYPE.USER]);
+      setAllowedUserTypes([]);
     }
   }, [user, isFetching]);
 
   useEffect(() => {
     // Set user type when route change
-    handleSetUserTypeByPathname(pathname, allowedUserTypes);
+    if (allowedUserTypes) handleSetUserTypeByPathname(pathname, allowedUserTypes);
   }, [pathname, allowedUserTypes]);
 
   const handleSetAllowedUserTypes = () => {
     getProviderStatus('', {
       onSuccess: (data) => {
-        const { status, vendorid } = data || {};
+        const { status, vendorid, vendorslug = '' } = data || {};
         if (status) {
-          vendorid && setVendorId(vendorid);
+          const vendorSlug = vendorslug || HARDCORE_VENDOR_SLUG;
+          (vendorid || vendorSlug) && setVendorId(vendorSlug || vendorid);
           setAllowedUserTypes([USER_TYPE.USER, USER_TYPE.PROVIDER]);
         } else if (status === null) {
           setAllowedUserTypes([USER_TYPE.USER, USER_TYPE.PROVIDER_ONBOARDING]);
@@ -88,7 +91,7 @@ const UserTypeProvider: FC<IUserTypeProvider> = ({ children }) => {
   const handleSetUserTypeByPathname = (pathname: string, allowedUserTypes: USER_TYPE[]) => {
     let userType = USER_TYPE.USER;
     userType = Object.entries(routeConfig).find(([key, value]) =>
-      Object.values(value).includes(pathname),
+      Object.values(value).some((it) => pathname?.includes(it)),
     )?.[0] as USER_TYPE;
 
     if (userType && allowedUserTypes.includes(userType)) {

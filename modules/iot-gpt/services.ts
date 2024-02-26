@@ -4,6 +4,7 @@ import { apiInstance } from '@/helpers/axios';
 import {
   IChatQueryBody,
   IChatQueryResponse,
+  IGreetingsFeedback,
   IRecommendationProductDetail,
   IThread,
   IThreadDetails,
@@ -54,6 +55,25 @@ export const getRecommendationProductDetail = async (
   const result = await apiInstance({
     method: REQUEST_METHOD.GET,
     url: IOT_GPT_API.getRecommendationProductDetail.api(query, recommendationType),
+  });
+
+  return result.data;
+};
+
+export const deleteThread = async (threadId: string) => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.DELETE,
+    url: IOT_GPT_API.deleteThread.api(threadId),
+  });
+
+  return result.data;
+};
+
+export const greetingsFeedback = async (data: IGreetingsFeedback) => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.POST,
+    data,
+    url: IOT_GPT_API.greetingsFeedback.api,
   });
 
   return result.data;

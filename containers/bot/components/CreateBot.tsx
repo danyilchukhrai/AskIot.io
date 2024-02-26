@@ -1,17 +1,18 @@
 import Button from '@/components/Button';
 import { CustomNextImage } from '@/components/CustomImage';
 import FormInput from '@/components/FormComponents/FormInput';
-import { ChangeEvent, FC, useCallback, useState } from 'react';
+import { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { createBot } from '@/modules/bots/services';
 
+
 interface ICreateBotProps {
   onNextStep: () => void;
+  name: string;
+  setName: (name: string) => void;
 }
 
-const CreateBot: FC<ICreateBotProps> = ({ onNextStep }) => {
-  const form = useFormContext();
-  const [name, setName] = useState<string>("");
+const CreateBot: FC<ICreateBotProps> = ({ onNextStep, name, setName }) => {
 
   return (
     <>

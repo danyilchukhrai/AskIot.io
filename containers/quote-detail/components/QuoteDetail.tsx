@@ -1,26 +1,23 @@
 'use client';
+import Badge, { ColorType } from '@/components/Badge';
 import Button from '@/components/Button';
-import { FC, useRef, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import Drawer, { IDrawerElement } from '@/components/Drawer';
+import { API_ENDPOINT } from '@/configs/appConfig';
+import { USER_TYPE } from '@/configs/routeConfig';
+import { QUOTE_STATUS, colorByStatus } from '@/constants/quotes';
+import { AUTH_ROUTES } from '@/constants/routes';
+import { getQuoteStatus } from '@/containers/quotes/utils';
+import { askIOTApiFetch } from '@/helpers/fetchAPI';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { IProviderFormData, IQuoteDetails } from '@/interfaces/quotes';
+import { useAuthContext } from '@/providers/AuthProvider';
+import { useUserTypeContext } from '@/providers/UserTypeProvider';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Badge, { ColorType } from '@/components/Badge';
-import QuoteDetailOverview from './QuoteDetailOverview';
-import Drawer, { IDrawerElement } from '@/components/Drawer';
-import ChatWithVendor from './ChatWithVendor';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useAuthContext } from '@/providers/AuthProvider';
-import { AUTH_ROUTES } from '@/constants/routes';
-import { IQuoteDetails, IProviderFormData } from '@/interfaces/quotes';
-import { askIOTApiFetch } from '@/helpers/fetchAPI';
-import { API_ENDPOINT } from '@/configs/appConfig';
+import { FC, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useUserTypeContext } from '@/providers/UserTypeProvider';
-import { USER_TYPE } from '@/configs/routeConfig';
-import { getQuoteStatus } from '@/containers/quotes/utils';
-import { QUOTE_STATUS, colorByStatus } from '@/constants/quotes';
-import { submitQuoteSchema } from '@/validations/quotes';
+import ChatWithVendor from './ChatWithVendor';
+import QuoteDetailOverview from './QuoteDetailOverview';
 import SubmitQuoteModal from './SubmitQuoteModal';
 
 interface IQuoteDetailProps {
@@ -75,7 +72,7 @@ const QuoteDetail: FC<IQuoteDetailProps> = ({ quoteDetails }) => {
         {},
         'POST',
       );
-      toast?.success('Quote Accepted Success');
+      toast?.success('Quote has been accepted');
       setIsQuoteAccepted(true);
       setIsLoading(false);
     } catch (error: any) {
@@ -153,7 +150,7 @@ const QuoteDetail: FC<IQuoteDetailProps> = ({ quoteDetails }) => {
           <div>
             <div className="flex items-center">
               <p className="text-black text-l md:text-xl font-medium mr-4">
-                {quoteDetails?.productDetails?.Product?.[0]?.product_name}
+                {quoteDetails?.productDetails?.product_name}
               </p>
               <Badge
                 label={quoteStatus}
@@ -161,8 +158,8 @@ const QuoteDetail: FC<IQuoteDetailProps> = ({ quoteDetails }) => {
                 size={isMobileMatches ? 'small' : 'default'}
               />
             </div>
-            <p className="text-primary-500 font-medium text-s mt-1.5">
-              <span>{quoteDetails?.productDetails?.Product?.[0]?.device_type}</span>
+            <p className="text-gray-600 text-s mt-1.5">
+              <span>{quoteDetails?.productDetails?.device_type}</span>
             </p>
           </div>
           <div className="flex items-center mt-2 md:mt-0">

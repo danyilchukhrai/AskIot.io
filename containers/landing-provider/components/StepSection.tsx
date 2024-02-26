@@ -5,18 +5,18 @@ interface IStepSectionProps {}
 
 const STEP_DATA = [
   {
-    title: 'Verify Your Profile',
-    description: `Join askIoT and optimize your pre-filled product profile.`,
+    title: ' Direct from Marketplace',
+    description: `Join 500+ vendors getting leads from askIoT marketplace.`,
     image: '/assets/images/step-1.webp',
   },
   {
-    title: 'Get Quality Leads',
-    description: `Access curated leads tailored to your offerings daily.`,
-    image: '/assets/images/step-2.webp',
+    title: 'Chatbot Conversions',
+    description: `Get leads on your website with our AI website chatbot.`,
+    image: '/assets/images/chatbot-step2.png',
   },
   {
-    title: 'Engage & Quote',
-    description: `Swiftly address inquiries and present your best quotes.`,
+    title: 'GPT Store ',
+    description: `Enterprise leads via the OpenAI GPT Store.`,
     image: '/assets/images/step-3.webp',
   },
 ];
@@ -37,7 +37,7 @@ const StepSection: FC<IStepSectionProps> = (props) => {
                   alt={`step-${index + 1}`}
                 />
                 <p className="text-primary-800 text-xl font-medium text-center md:pt-8 md:pb-5 pt-3 pb-2">
-                  Step {index + 1}
+                  Leads from
                 </p>
                 <p className="text-gray-700 text-[1.625rem] leading-[44px] font-semibold md:pb-6 pb-2 text-center">
                   {item.title}

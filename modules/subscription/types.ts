@@ -1,6 +1,9 @@
+import { PLAN_TERM } from '@/constants/subscription';
+
 export type CheckoutSessionType = 'vendor_onboarding' | 'access_bot';
-export type CheckoutEnvType = 'staging';
 export interface ICreateCheckoutSessionBody {
   type: CheckoutSessionType;
-  env: CheckoutEnvType;
+  env: string;
+  planName: string;
+  term: PLAN_TERM;
 }

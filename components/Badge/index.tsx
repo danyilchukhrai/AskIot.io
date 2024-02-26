@@ -1,5 +1,5 @@
-import { FC, ReactNode } from 'react';
 import clsx from 'clsx';
+import { FC, ReactNode } from 'react';
 
 export type ColorType = 'green' | 'orange' | 'red' | 'gray' | 'blue';
 type SizeType = 'default' | 'small';
@@ -8,9 +8,10 @@ interface IBadgeProps {
   label: ReactNode;
   color?: ColorType;
   size?: SizeType;
+  className?: string;
 }
 
-const Badge: FC<IBadgeProps> = ({ label, color = 'green', size = 'default' }) => {
+const Badge: FC<IBadgeProps> = ({ label, color = 'green', size = 'default', className = '' }) => {
   const getColorStyles = () => {
     switch (color) {
       case 'green':
@@ -36,7 +37,7 @@ const Badge: FC<IBadgeProps> = ({ label, color = 'green', size = 'default' }) =>
     return 'px-2.5 py-[3px] border text-s rounded-[18px]';
   };
 
-  return <p className={clsx(getColorStyles(), getSizeStyles(), 'w-fit')}>{label}</p>;
+  return <p className={clsx(className, getColorStyles(), getSizeStyles(), 'w-fit')}>{label}</p>;
 };
 
 export default Badge;

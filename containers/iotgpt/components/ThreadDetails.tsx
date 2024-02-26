@@ -16,14 +16,20 @@ interface IThreadDetailsProps {
 
 const SUGGESTIONS = [
   'What devices support tank monitoring?',
-  'ISO compliant devices?',
-  'Lorem ipsum dolor sit amet consectetur?',
-  'Quis phasellus morbi leo sed commodo vestibulum?',
+  'whats the command to check battery level on queclink GL550',
+  'Help me design a factory floor solution',
+  'Who can help me install my retail wireless gateways?',
 ];
 
 const ThreadDetails: FC<IThreadDetailsProps> = ({ isOpenSearchList, onOpenSearchList }) => {
-  const { activeThread, threadInteractions, setThreadInteractions, threads, setThreads } =
-    useContext(ProductsContext);
+  const {
+    activeThread,
+    threadInteractions,
+    setThreadInteractions,
+    threads,
+    setThreads,
+    setIsLoading,
+  } = useContext(ProductsContext);
   // const { mutate: chatQuery, isPending: querying } = useChatQuery();
   const { mutate: chatQueryDev, isPending: querying } = useChatQueryDev();
 
@@ -41,6 +47,10 @@ const ThreadDetails: FC<IThreadDetailsProps> = ({ isOpenSearchList, onOpenSearch
   useEffect(() => {
     handleChatQuery();
   }, [threadInteractions]);
+
+  useEffect(() => {
+    setIsLoading(querying);
+  }, [querying]);
 
   const handleSetThreadInteractions = (interactions: IThreadInteraction[]) => {
     const newThreadInteractions = (interactions || []).map((it) => ({
@@ -68,6 +78,7 @@ const ThreadDetails: FC<IThreadDetailsProps> = ({ isOpenSearchList, onOpenSearch
     // Update title of new thread on FE
     if (activeThread?.isInitialThread && newThreads[0].title === DEFAULT_SEARCH) {
       newThreads[0].title = value;
+      newThreads[0].isInitialThread = false;
       setThreads(newThreads);
     }
   };

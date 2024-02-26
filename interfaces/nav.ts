@@ -5,4 +5,5 @@ export interface IMenuItem {
   activeIcon: string;
   label: ReactNode;
   href: string;
+  children?: IMenuItem[]
 }

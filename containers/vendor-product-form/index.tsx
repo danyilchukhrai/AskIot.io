@@ -17,6 +17,7 @@ import {
 } from '@/modules/vendors/hooks';
 import { vendorDeviceSchema, vendorProductSchema } from '@/validations/vendors';
 import { yupResolver } from '@hookform/resolvers/yup';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { FC, useEffect } from 'react';
 import { FormProvider, UseFormReturn, useForm } from 'react-hook-form';
@@ -67,8 +68,8 @@ const VendorProductForm: FC<IVendorProductFormProps> = (props) => {
         product_name: productDetail?.product_name,
         product_description: productDetail?.product_description,
         product_details: productDetail?.product_details?.map((it: any) => ({
-          name: it?.split(': ')[0],
-          description: it?.split(': ')[1],
+          name: typeof it === 'object' ? Object.keys(it)?.[0] : it?.split(': ')?.[0],
+          description: typeof it === 'object' ? Object.values(it)[0] : it?.split(': ')?.[1],
         })),
         usecase: productDetail?.usecase?.join(', '),
         product_url: productDetail?.product_url,
@@ -233,7 +234,13 @@ const VendorProductForm: FC<IVendorProductFormProps> = (props) => {
             </FormProvider>
           )}
         </div>
-        <div className="section-footer flex items-center justify-end">
+        <div className="section-footer flex items-center justify-end gap-3">
+          <Link
+            className="text-s md:text-base font-medium rounded-lg shadow-s text-gray-800 bg-white hover:bg-gray focus:ring-1 focus:ring-black disabled:bg-gray disabled:text-gray-300 w-fit px-3 py-2.5 text-center"
+            href={`${RESTRICTED_APP_ROUTES.MY_COMPANY}?tab=${VENDORS_TAB_KEY.Products}`}
+          >
+            Cancel
+          </Link>
           <Button
             variant="info"
             onClick={

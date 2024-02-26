@@ -2,12 +2,18 @@ import Avatar from '@/components/Avatar';
 import Input from '@/components/Input';
 import Table, { ColumnsProps } from '@/components/Table';
 import Textarea from '@/components/Textarea';
+import Tooltip from '@/components/Tooltip';
 import { USER_TYPE } from '@/configs/routeConfig';
+import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
+import { VERIFIED_VENDOR_MESSAGE } from '@/constants/vendors';
 import { IProductDetails, IProviderFormData, IQuoteDetails } from '@/interfaces/quotes';
 import { useUserTypeContext } from '@/providers/UserTypeProvider';
 import clsx from 'clsx';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Dispatch, FC, SetStateAction } from 'react';
+import { formatWebsiteUrl } from '@/helpers/common'; 
+
 
 interface IQuoteDetailOverviewProps {
   onOpenChatDrawer: () => void;
@@ -33,6 +39,7 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
   const { currentUserType } = useUserTypeContext();
   const IS_USER = currentUserType === USER_TYPE.USER;
   const IS_PROVIDER = currentUserType === USER_TYPE.PROVIDER;
+  const { first_name, last_name, email, website }  = quoteDetails?.user || {}
   const getTotalPrice = (offeredPrice: any) => {
     if (offeredPrice) {
       const totalPrice = offeredPrice || 0;
@@ -67,8 +74,16 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
           <>
             {IS_USER ? (
               <div className="flex items-center md:w-auto w-[140px]">
-                <Image src={row?.vendorlogo} width={20} height={20} alt="" />
+                <Image src={row?.vendorlogo || DEFAULT_VENDOR_LOGO} width={20} height={20} alt="" />
                 <span className="ml-2.5 text-s md:text-base">{row?.vendorname}</span>
+                {row?.verified && (
+                  <Tooltip text={VERIFIED_VENDOR_MESSAGE}>
+                    <img
+                      className="max-w-10 max-h-10"
+                      src="/assets/images/askiot_verified_small.png"
+                    />
+                  </Tooltip>
+                )}
               </div>
             ) : (
               <p className="text-s md:text-base w-20">{`${row?.quantity} `}</p>
@@ -152,21 +167,39 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
           </span>
         </div>
       </div> */}
-      {IS_PROVIDER && quoteDetails?.user?.first_name && (
+      {IS_PROVIDER && (
         <div className="shadow rounded-xl mt-5 p-3 sm:p-4 md:p-6">
           <p className="text-l font-medium">Customer</p>
           <div className="flex items-center mt-3 md:mt-5">
-            <Avatar
-              src="/assets/images/avatar-default.png"
-              firstName={quoteDetails?.user?.first_name}
-              lastName={quoteDetails?.user?.last_name || ''}
-            />
-            <div className="ml-3">
-              <p className="capitalize font-medium text-[14px]">
-                {quoteDetails?.user?.first_name} {quoteDetails?.user?.last_name || ''}
-              </p>
-            </div>
-          </div>
+  <Avatar
+    src="/assets/images/avatar-default.png"
+    firstName={first_name}
+    lastName={last_name || ''}
+    className="bg-blue-600" 
+  />
+  <div className="ml-3">
+    <p className="capitalize font-semibold text-lg text-gray-900"> {/* Increased font weight and size for better visibility */}
+      {first_name} {last_name || ''}
+    </p>
+    <a href={`mailto:${email}`} className="flex items-center text-sm text-blue-500 hover:text-blue-800 mt-1"> {/* Adjusted text colors for your website palette */}
+      <svg className="fill-current mr-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <path d="M2.003 5.884L10 9l7.997-3.116A2 2 0 0 0 16 4H4a2 2 0 0 0-1.997 1.884z"/>
+        <path d="M18 8l-8 4-8-4V14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      </svg>
+      {email}
+    </a>
+    <a href={formatWebsiteUrl(website)} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-blue-500 hover:text-blue-800 mt-1">
+      <svg className="fill-current mr-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> 
+        <path d="M10.59,13.41L9.17,14.83a1,1,0,1,1-1.41-1.41l1.42-1.42a1,1,0,0,1,1.41,1.41Z"/>
+        <path d="M14.83,9.17l1.42-1.42a1,1,0,0,0-1.41-1.41L13.41,7.76a1,1,0,0,0,1.42,1.41Z"/>
+        <path d="M8,11a1,1,0,0,0-1,1v4a1,1,0,0,0,1,1h4a1,1,0,0,0,0-2H9V12A1,1,0,0,0,8,11Z"/>
+        <path d="M16,3H8A5,5,0,0,0,3,8v8a5,5,0,0,0,5,5h8a5,5,0,0,0,5-5V8A5,5,0,0,0,16,3Zm3,10a3,3,0,0,1-3,3H8a3,3,0,0,1-3-3V8A3,3,0,0,1,8,5h8a3,3,0,0,1,3,3Z"/>
+      </svg>
+      {website}
+    </a>
+  </div>
+</div>
+
         </div>
       )}
       {(IS_PROVIDER || (quoteDetails?.vendor_to_user_message && IS_USER)) && (
@@ -228,7 +261,7 @@ const QuoteDetailOverview: FC<IQuoteDetailOverviewProps> = ({
               <Table
                 rows={[
                   {
-                    ...(quoteDetails?.productDetails?.Product?.[0] || quoteDetails?.productDetails),
+                    ...quoteDetails?.productDetails,
                     offered_price: quoteDetails?.offered_price,
                     quantity: quoteDetails?.quantity,
                   },

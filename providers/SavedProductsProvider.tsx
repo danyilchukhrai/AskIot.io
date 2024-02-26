@@ -1,5 +1,6 @@
 'use client';
 
+import { IRecommendationInfo } from '@/modules/iot-gpt/type';
 import { useGetAllSavedProducts } from '@/modules/projects/hooks';
 import * as React from 'react';
 
@@ -26,8 +27,11 @@ const SavedProductsProvider: React.FunctionComponent<ISavedProductsProviderProps
 
   const isSavedProduct = (productId?: number) => {
     if (typeof productId !== 'number') return false;
+    const products = allSavedProducts?.reduce((prev: IRecommendationInfo[], current) => {
+      return [...(current?.products || []), ...prev];
+    }, []);
 
-    return allSavedProducts.findIndex((it) => it?.id === productId) >= 0;
+    return products.findIndex((it) => (it?.id || it?.product_id) === productId) >= 0;
   };
 
   return (

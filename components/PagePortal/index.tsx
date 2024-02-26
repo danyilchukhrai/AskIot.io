@@ -7,7 +7,7 @@ const Portal = ({ children }: any) => {
   const [targetContent, setTargetContent] = useState<Element | DocumentFragment>();
 
   useEffect(() => {
-    const target = document.getElementById('page-wrapper');
+    const target = document.querySelector('body');
     if (target) {
       setTargetContent(target);
     }

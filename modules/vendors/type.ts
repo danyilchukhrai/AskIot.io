@@ -32,6 +32,8 @@ export interface IVendorDetails {
   industries: string;
   specialities: string;
   companyinfo?: string;
+  vendorslug: string;
+  verified: boolean;
 }
 
 export interface ISearchVendorItem {
@@ -94,3 +96,22 @@ export interface IChatVendorQueryBody {
   query: string;
   threadId: string;
 }
+
+export interface IPublicChatVendorQueryBody extends IChatVendorQueryBody {
+  is_email?: boolean;
+  'cf-turnstile-response'?: string;
+}
+
+export interface IProviderSettingsForm {
+  useUserEmail: boolean;
+  leadEmails?: {
+    value: string;
+  }[];
+}
+
+export interface IProviderSettingsBody {
+  useUserEmail: boolean;
+  leadEmails?: string[];
+}
+
+

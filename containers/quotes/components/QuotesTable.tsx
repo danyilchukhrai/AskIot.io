@@ -2,9 +2,11 @@ import Badge, { ColorType } from '@/components/Badge';
 import { CustomNextImage } from '@/components/CustomImage';
 import Spinner from '@/components/Spinner';
 import Table, { ColumnsProps } from '@/components/Table';
+import Tooltip from '@/components/Tooltip';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
 import { QUOTE_STATUS, colorByStatus } from '@/constants/quotes';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
+import { VERIFIED_VENDOR_MESSAGE } from '@/constants/vendors';
 import { askIOTApiFetch } from '@/helpers/fetchAPI';
 import { useUserTypeContext } from '@/providers/UserTypeProvider';
 import { getQuotesURL } from '@/services/quotes';
@@ -58,10 +60,11 @@ const QuotesTable: FC<IQuotesTableProps> = ({ status, currentUserType }) => {
   };
 
   const renderImage = (imageURL: string) => {
+    console.log('imageURL: ', imageURL);
     return (
       <Image
-        className="w-15 h-10 object-cover rounded-[6px]"
         src={imageURL || ''}
+        className="w-15 h-10 object-cover rounded-[6px]"
         width={60}
         height={40}
         alt=""
@@ -92,39 +95,68 @@ const QuotesTable: FC<IQuotesTableProps> = ({ status, currentUserType }) => {
     {
       title: 'Quote',
       key: 'quote',
-      styles: 'w-[30%]',
+      styles: 'w-[28%]',
       renderNode: (row: any) => {
         return (
           <div className="flex items-center md:flex-row flex-col">
-            {renderImage(row?.productDetails?.product_image)}
+            <CustomNextImage
+              src={row?.productDetails?.product_image || ''}
+              className="w-15 h-10 object-cover rounded-[6px]"
+              width={60}
+              height={40}
+              alt=""
+            />
             <div className="md:pl-8 pt-2 md:pt-0">
               <p className="text-base text-gray-1000 font-medium pb-1 text-center md:text-start">
                 {row?.productDetails?.product_name}
               </p>
-              <p className="flex items-center text-s text-gray-600 w-[140px] md:w-auto">
-                <span className="capitalize text-primary-500 font-medium text-xs">{row?.type}</span>
-              </p>
+              {(row?.productDetails?.device_type || row?.device_type) && (
+                <p className="flex items-center text-s text-gray-600 w-[140px] md:w-auto">
+                  <span className="capitalize text-primary-500 font-medium text-xs">
+                    {row?.productDetails?.device_type || row?.device_type}
+                  </span>
+                </p>
+              )}
             </div>
           </div>
         );
       },
     },
+    // Replace 'manufacturer' column renderNode with this:
     {
-      title: 'Manufacturer',
+      title: isVendor ? 'Customer' : 'Manufacturer',
       key: 'manufacturer',
-      styles: 'w-[35%]',
-      renderNode: (row: any) => (
-        <div className="flex items-center">
-          <CustomNextImage
-            src={row?.productDetails?.vendorlogo || DEFAULT_VENDOR_LOGO || ''}
-            width={20}
-            height={20}
-            alt={''}
-          />
-          <p className="text-base text-gray-1000 pl-2.5">{row?.productDetails?.vendorname}</p>
-        </div>
-      ),
+      styles: 'w-[10%] pl-24', // Adjust padding as necessary
+      renderNode: (row: any) => {
+        if (isVendor) {
+          // Assuming customer details are within the row object, modify as per your actual data structure
+          return (
+            <div className="flex items-center">
+              <p className="text-base text-gray-1000">{`${row?.first_name || ''} ${row?.last_name || ''}`.trim()}</p>
+            </div>
+          );
+        } else {
+          // This is the existing code for manufacturer, keep as is
+          return (
+            <div className="flex items-center">
+              <CustomNextImage
+                src={row?.productDetails?.vendorlogo || DEFAULT_VENDOR_LOGO || ''}
+                width={20}
+                height={20}
+                alt={''}
+              />
+              <p className="text-base text-gray-1000 pl-2.5">{row?.productDetails?.vendorname}</p>
+              {row?.productDetails?.verified && (
+                <Tooltip text={VERIFIED_VENDOR_MESSAGE}>
+                  <img className="max-w-10 max-h-10" src="/assets/images/askiot_verified_small.png" />
+                </Tooltip>
+              )}
+            </div>
+          );
+        }
+      },
     },
+    
     {
       title: 'Amount',
       key: 'amount',

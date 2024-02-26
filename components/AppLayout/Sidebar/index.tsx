@@ -3,15 +3,15 @@ import Button from '@/components/Button';
 import CloseButtonMobile from '@/components/CloseButtonMobile';
 import DropdownButton from '@/components/DropdownButton';
 import LoadingIndicator from '@/components/LoadingIndicator';
+import { BILLING_SETTINGS_URL } from '@/configs/appConfig';
 import { USER_TYPE } from '@/configs/routeConfig';
-import { AUTH_ENDPOINTS } from '@/constants/api-endpoints';
-import { COOKIES_STORAGE_KEYS } from '@/constants/common';
-import { AUTH_ROUTES, RESTRICTED_APP_ROUTES } from '@/constants/routes';
+import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import { handleShowError } from '@/helpers/common';
-import { destroy } from '@/helpers/storage';
 import { useGetProviderStatus } from '@/modules/user/hooks';
 import { useAuthContext } from '@/providers/AuthProvider';
+import { useUserContext } from '@/providers/UserProvider';
 import { useUserTypeContext } from '@/providers/UserTypeProvider';
+import { logout } from '@/services/auth';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -27,18 +27,19 @@ const Sidebar: FC<ISidebarProps> = (props) => {
   const { onCloseSidebar } = props;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { setCurrentUserType, currentUserType } = useUserTypeContext();
+  const { setCurrentUserType, currentUserType, allowedUserTypes } = useUserTypeContext();
   const { user } = useAuthContext();
   const { mutate: getProviderStatus, isPending: isGettingProviderStatus } = useGetProviderStatus();
+  const { isNoPaymentStatus } = useUserContext();
 
   const handleLogout = async () => {
     setIsLoading(true);
-    await fetch(AUTH_ENDPOINTS.LOGOUT, {
-      method: 'POST',
-    });
+    await logout();
     setIsLoading(false);
-    destroy(COOKIES_STORAGE_KEYS.ACCESS_TOKEN);
-    window.location.href = AUTH_ROUTES.LOGIN;
+  };
+
+  const handleBillingSettings = () => {
+    window.open(BILLING_SETTINGS_URL, '_blank');
   };
 
   const handleSwitchToProvider = () => {
@@ -59,10 +60,45 @@ const Sidebar: FC<ISidebarProps> = (props) => {
     });
   };
 
+  const handleRedirectToSettings = () => {
+    router.push(RESTRICTED_APP_ROUTES.SETTINGS);
+  };
+
+  const renderSwitchButton = () => {
+    return (
+      <>
+        {currentUserType === USER_TYPE.USER ? (
+          <Button className="flex items-center md:text-s !px-0 !py-0 mt-6" variant="inline">
+            <img src="/assets/icons/ep-right-icon.svg" alt="icon" />
+            <span className="inline-block ml-3" onClick={handleSwitchToProvider}>
+              {allowedUserTypes?.includes(USER_TYPE.PROVIDER)
+                ? 'Switch to Provider'
+                : 'Apply to be a provider'}
+            </span>
+          </Button>
+        ) : (
+          <Button
+            className="flex items-center md:text-s !px-0 !py-0 mt-6"
+            variant="inline"
+            onClick={() => {
+              setCurrentUserType(USER_TYPE.USER);
+              router.push(RESTRICTED_APP_ROUTES.IOTGPT);
+            }}
+          >
+            <img src="/assets/icons/ep-right-icon.svg" alt="icon" />
+            <span className="inline-block ml-3 break-all">Switch to Builders</span>
+          </Button>
+        )}
+      </>
+    );
+  };
+
+  
+
   return (
     <>
-      <LoadingIndicator isLoading={isGettingProviderStatus} />
-      <aside className="fixed left-0 top-0 bottom-0 h-screen w-full md:w-65 bg-white border-r border-gray-100 z-20">
+      <LoadingIndicator isLoading={isGettingProviderStatus || isLoading} />
+      <aside className="fixed left-0 top-0 bottom-0 h-screen w-full md:w-65 bg-white border-r -100 z-20">
         <div className="h-full flex flex-col justify-between">
           <div className="flex-1 relative">
             <div className="flex items-center justify-between md:px-10 px-4 pt-6 md:pt-6">
@@ -85,26 +121,7 @@ const Sidebar: FC<ISidebarProps> = (props) => {
             {currentUserType && (
               <div className="md:pt-12 md:pl-12 pt-6 pl-6">
                 <Menu {...props} />
-                {currentUserType === USER_TYPE.USER ? (
-                  <Button className="flex items-center md:text-s !px-0 !py-0 mt-6" variant="inline">
-                    <img src="/assets/icons/ep-right-icon.svg" alt="icon" />
-                    <span className="inline-block ml-3" onClick={handleSwitchToProvider}>
-                      Switch to Provider
-                    </span>
-                  </Button>
-                ) : (
-                  <Button
-                    className="flex items-center md:text-s !px-0 !py-0 mt-6"
-                    variant="inline"
-                    onClick={() => {
-                      setCurrentUserType(USER_TYPE.USER);
-                      router.push(RESTRICTED_APP_ROUTES.IOTGPT);
-                    }}
-                  >
-                    <img src="/assets/icons/ep-right-icon.svg" alt="icon" />
-                    <span className="inline-block ml-3 break-all">Switch to Builders</span>
-                  </Button>
-                )}
+                {renderSwitchButton()}
               </div>
             )}
           </div>
@@ -113,7 +130,7 @@ const Sidebar: FC<ISidebarProps> = (props) => {
               <div className="flex items-center">
                 <Avatar src="/assets/images/avatar-default.png" />
                 <div className="ml-3.5">
-                  <p className="text-base font-medium text-gray-1000 break-all mb-0.5 line-clamp-1">
+                  <p className="text-base font-small text-gray-1000 break-all mb-0.5 line-clamp-1">
                     {user?.email || user?.phone}
                   </p>
                 </div>
@@ -121,6 +138,10 @@ const Sidebar: FC<ISidebarProps> = (props) => {
             </div>
             <DropdownButton
               dropdownMenu={[
+                {
+                  label: 'Settings',
+                  onAction: handleRedirectToSettings,
+                },
                 {
                   label: 'Logout',
                   onAction: handleLogout,

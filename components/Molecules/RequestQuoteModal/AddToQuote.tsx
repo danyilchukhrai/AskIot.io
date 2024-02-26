@@ -2,7 +2,9 @@ import { CustomNextImage } from '@/components/CustomImage';
 import FormDatePicker from '@/components/FormComponents/DatePicker';
 import FormInput from '@/components/FormComponents/FormInput';
 import FormTextarea from '@/components/FormComponents/FormTextarea';
+import Tooltip from '@/components/Tooltip';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
+import { VERIFIED_VENDOR_MESSAGE } from '@/constants/vendors';
 import { FC } from 'react';
 
 interface IAddToQuoteProps {
@@ -38,9 +40,15 @@ const AddToQuote: FC<IAddToQuoteProps> = ({ product }) => {
               width={60}
               height={40}
             />
+
             <p className="ml-2.5 text-gray-1000 md:text-base text-s font-medium mt-1 md:mt-0">
               {product?.vendorName}
             </p>
+            {product?.verified && (
+              <Tooltip textClassName="!-left-5" text={VERIFIED_VENDOR_MESSAGE}>
+                <img className="max-w-10 max-h-10" src="/assets/images/askiot_verified_small.png" />
+              </Tooltip>
+            )}
           </div>
         </div>
       </div>

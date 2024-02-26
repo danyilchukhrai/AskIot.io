@@ -1,4 +1,4 @@
-import { NUMBER_REGEX } from '@/constants/regex';
+import { DOMAIN_REGEX, NUMBER_REGEX } from '@/constants/regex';
 import { IChatQueryRecommendation, IRecommendationInfo } from '@/modules/iot-gpt/type';
 import { get } from 'lodash';
 import { toast } from 'react-toastify';
@@ -70,6 +70,10 @@ export const serializeObject = (object: any) => {
 };
 
 export const handleShowError = (error: any) => {
+  if (typeof error === 'string') {
+    toast.error(error);
+    return;
+  }
   toast.error(error?.data?.details || error?.data?.error || 'Please try again.');
 };
 
@@ -115,3 +119,14 @@ export const toBase64 = (file: File): Promise<string> =>
 
     reader.onerror = reject;
   });
+
+export const isUrl = (string: string) => {
+  if (typeof string !== 'string') return false;
+
+  return !!DOMAIN_REGEX.test(string);
+};
+
+export const formatWebsiteUrl = (url: string ) => {
+  if (!url) return ''; 
+  return url.startsWith('http://') || url.startsWith('https://') ? url : `http://${url}`;
+};

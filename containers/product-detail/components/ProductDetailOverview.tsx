@@ -2,6 +2,7 @@ import Button from '@/components/Button';
 import Modal, { IModalElement } from '@/components/Modal';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { ISpecification } from '@/modules/iot-gpt/type';
+import { useAuthContext } from '@/providers/AuthProvider';
 import clsx from 'clsx';
 import Image from 'next/image';
 import { FC, useEffect, useRef, useState } from 'react';
@@ -28,6 +29,7 @@ const ProductDetailOverview: FC<IProductDetailOverviewProps> = ({
   onAskAnything,
   specifications,
 }) => {
+  const { user } = useAuthContext();
   const seeAllModalRef = useRef<IModalElement>(null);
   const [openDeviceOffersMobile, setOpenDeviceOffersMobile] = useState(false);
   const [seeAllModalType, setSeeAllModalType] = useState<SEE_ALL_MODAL>(
@@ -167,20 +169,22 @@ const ProductDetailOverview: FC<IProductDetailOverviewProps> = ({
             }}
           />
         )}
-        <Button
-          className="md:hidden flex items-center justify-center w-full mt-6"
-          variant="info"
-          onClick={onAskAnything}
-        >
-          <Image
-            className="md:hidden"
-            src="/assets/icons/ask-anything-icon.svg"
-            alt="ask anything"
-            width={20}
-            height={20}
-          />
-          <span className="ml-2.5 text-base">Ask anything</span>
-        </Button>
+        {user && (
+          <Button
+            className="md:hidden flex items-center justify-center w-full mt-6"
+            variant="info"
+            onClick={onAskAnything}
+          >
+            <Image
+              className="md:hidden"
+              src="/assets/icons/ask-anything-icon.svg"
+              alt="ask anything"
+              width={20}
+              height={20}
+            />
+            <span className="ml-2.5 text-base">Ask anything</span>
+          </Button>
+        )}
       </div>
       <Modal paperClassName="py-4" ref={seeAllModalRef} title={getModalTitle()} hideButtons>
         {getModal()}

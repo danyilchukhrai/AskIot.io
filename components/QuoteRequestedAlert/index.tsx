@@ -1,9 +1,8 @@
-import { FC } from 'react';
-import Alert from '../Alert';
-import { useRouter } from 'next/navigation';
 import { RESTRICTED_APP_ROUTES } from '@/constants/routes';
 import clsx from 'clsx';
-import { IQuoteDetails } from '@/interfaces/quotes';
+import { useRouter } from 'next/navigation';
+import { FC } from 'react';
+import Alert from '../Alert';
 
 interface IQuoteRequestedAlert {
   drawerIsValid?: boolean;
@@ -18,8 +17,8 @@ const QuoteRequestedAlert: FC<IQuoteRequestedAlert> = ({ drawerIsValid = false, 
   return (
     <div
       className={clsx(
-        'fixed z-[100] md:right-8 right-4',
-        drawerIsValid ? 'bottom-[75px]' : ' bottom-8 ',
+        'fixed z-[100] top-8',
+        drawerIsValid ? 'md:right-[150px] right-16' : 'md:right-[200px] right-4',
       )}
     >
       <Alert

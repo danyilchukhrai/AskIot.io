@@ -15,6 +15,7 @@ interface IProductsContext {
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   threadInteractions: IThreadInteraction[];
   setThreadInteractions: Dispatch<SetStateAction<IThreadInteraction[]>>;
+  handleSetDefaultThread: () => void;
 }
 
 interface IProductsContextProviderProps {
@@ -47,16 +48,20 @@ const ProductsContextProvider: FC<IProductsContextProviderProps> = ({ children }
       setThreads(sortedThreads);
       setActiveThread(sortedThreads[0]);
     } else {
-      const defaultThread = {
-        thread_id: uuidv4(),
-        title: DEFAULT_SEARCH,
-        status: '',
-        created_date: dayjs().toString(),
-        isInitialThread: true,
-      };
-      setThreads([defaultThread]);
-      setActiveThread(defaultThread);
+      handleSetDefaultThread();
     }
+  };
+
+  const handleSetDefaultThread = () => {
+    const defaultThread = {
+      thread_id: uuidv4(),
+      title: DEFAULT_SEARCH,
+      status: '',
+      created_date: dayjs().toString(),
+      isInitialThread: true,
+    };
+    setThreads([defaultThread]);
+    setActiveThread(defaultThread);
   };
 
   return (
@@ -73,6 +78,7 @@ const ProductsContextProvider: FC<IProductsContextProviderProps> = ({ children }
           isAscending: true,
         }),
         setThreadInteractions,
+        handleSetDefaultThread,
       }}
     >
       {children}

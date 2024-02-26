@@ -1,16 +1,18 @@
-import { FC } from 'react';
+import { AUTH_ROUTES } from '@/constants/routes';
 import Link from 'next/link';
-import TypeFormPopupButton from '../TypeFormPopupButton';
-import { JOIN_WAITLIST_TYPEFORM_ID } from '@/constants/typeform';
+import { FC, ReactNode } from 'react';
+import Button from '../Button';
 
 interface IMobileMenuProps {
   menu: {
     label: string;
     href: string;
   }[];
+  hideAuthButtons?: boolean;
+  headerButtonComponent?: ReactNode;
 }
 
-const MobileMenu: FC<IMobileMenuProps> = ({ menu }) => {
+const MobileMenu: FC<IMobileMenuProps> = ({ menu, hideAuthButtons, headerButtonComponent }) => {
   return (
     <div className="menu absolute z-10 bg-white py-6 w-full shadow">
       <nav className="header-nav">
@@ -22,11 +24,20 @@ const MobileMenu: FC<IMobileMenuProps> = ({ menu }) => {
               </Link>
             </li>
           ))}
-          <li>
-            <TypeFormPopupButton typeformId={JOIN_WAITLIST_TYPEFORM_ID} className="text-l px-6">
-              Join Waitlist
-            </TypeFormPopupButton>
-          </li>
+          {!hideAuthButtons ? (
+            <>
+              <li className="mb-4">
+                <Button variant="inline" link={AUTH_ROUTES.SIGN_UP}>
+                  Sign up
+                </Button>
+              </li>
+              <li>
+                <Button link={AUTH_ROUTES.LOGIN}>Sign In</Button>
+              </li>
+            </>
+          ) : headerButtonComponent ? (
+            <li>{headerButtonComponent}</li>
+          ) : null}
         </ul>
       </nav>
     </div>

@@ -1,5 +1,7 @@
 import { CustomImg } from '@/components/CustomImage';
+import Tooltip from '@/components/Tooltip';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
+import { VERIFIED_VENDOR_MESSAGE } from '@/constants/vendors';
 import { IVendorDetails } from '@/modules/vendors/type';
 import { FC } from 'react';
 import InfoItem from './InfoItem';
@@ -24,14 +26,19 @@ const VendorInfo: FC<IVendorInfoProps> = ({ vendor }) => {
       </div>
 
       <div className="info px-6">
-        <div className="flex items-start">
-          <p className="text-gray-1000 text-3xl font-medium mr-4">{vendor?.vendorname}</p>
+        <div className="flex items-center">
+          <p className="text-gray-1000 text-3xl font-medium">{vendor?.vendorname}</p>
+          {vendor?.verified && (
+            <Tooltip text={VERIFIED_VENDOR_MESSAGE}>
+              <img className="max-w-10 max-h-10" src="/assets/images/askiot_verified_small.png" />
+            </Tooltip>
+          )}
         </div>
         <div className="text-gray-600 text-s mt-2 flex flex-col md:flex-row gap-[12px]">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-[12px] flex-wrap">
             <InfoItem
               iconSrc="/assets/icons/phone-icon.svg"
-              label={vendor?.orgDetails[0].organization_phone}
+              label={vendor?.orgDetails?.[0].organization_phone}
             />
             <div className="hidden md:block w-[1px] h-3 bg-gray-200 mx-3" />
             <InfoItem
@@ -46,7 +53,7 @@ const VendorInfo: FC<IVendorInfoProps> = ({ vendor }) => {
         </div>
         <div className="members mt-5.5 md:mb-[4px]">
           <ul className="flex flex-col md:flex-row gap-[8px] md:gap-[27px] items-start flex-wrap">
-            {vendor?.personDetails.map((member, index) => (
+            {vendor?.personDetails?.map((member, index) => (
               <li key={index}>
                 <MemberItem
                   avatarSrc={member?.photo_url || ''}

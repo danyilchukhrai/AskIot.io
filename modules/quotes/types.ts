@@ -1,3 +1,5 @@
+import { SUBSCRIPTION_PLANS } from '@/constants/subscription';
+
 export interface IRequestQuoteForm {
   quantity: number;
   notes?: string;
@@ -22,4 +24,5 @@ export interface ICreateQuotesBody {
 export interface ICreateQuotesSuccess {
   message: string;
   quoteId: number;
+  subscriptionPlan: SUBSCRIPTION_PLANS;
 }

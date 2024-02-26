@@ -1,3 +1,5 @@
+import { IRecommendationInfo } from '../iot-gpt/type';
+
 export interface ICreateNewProjectBody {
   userId: string;
   name: string;
@@ -16,9 +18,8 @@ export interface IAddProductToProjectBody {
 }
 
 export interface ISavedProduct {
-  id: number;
-  name: string;
-  type: string;
+  project_id: number;
+  products: IRecommendationInfo[];
 }
 
 export interface IRemoveProductFormProjectParams {

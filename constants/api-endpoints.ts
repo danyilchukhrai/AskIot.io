@@ -1,9 +1,9 @@
 import { RECOMMENDATION_TYPE } from './iot-gpt';
 
 export const AUTH_ENDPOINTS = {
-  LOGIN: '/api/auth/login',
-  SIGNUP: '/api/auth/sign-up',
-  LOGOUT: '/api/auth/logout',
+  LOGIN: '/api/internal/auth/login',
+  SIGNUP: '/api/internal/auth/sign-up',
+  LOGOUT: '/api/internal/auth/logout',
 };
 
 export const IOT_GPT_API = {
@@ -25,11 +25,21 @@ export const IOT_GPT_API = {
         ? `/public/devices/${query}`
         : `/public/products/${query}`,
   },
+  deleteThread: {
+    api: (threadId: string) => `/private/chats/thread/${threadId}`,
+  },
+  greetingsFeedback: {
+    api: '/public/chatbot/feedback',
+  },
 };
 
 export const VENDOR_API = {
   getVendorDetails: {
     api: (id: string | number) => `/private/vendors/${id}`,
+  },
+  getVendorDetailsBySlug: {
+    api: (slug: string) =>
+      Number.isInteger(Number(slug)) ? `/private/vendors/${slug}` : `/public/vendors/${slug}`,
   },
   searchVendors: {
     api: '/private/vendors/search-vendors',
@@ -45,6 +55,9 @@ export const VENDOR_API = {
   },
   getProductsByVendor: {
     api: (vendorId: string | number) => `/private/vendors/productsByVendor/${vendorId}`,
+  },
+  getProductsByVendorSlug: {
+    api: (vendorSlug: string) => `/public/vendors/productsByVendorSlug/${vendorSlug}`,
   },
   chatVendorQuery: {
     api: '/private/chats/process-vendor-query',
@@ -66,6 +79,17 @@ export const VENDOR_API = {
     api: (id: number, isDevice: boolean) =>
       isDevice ? `/private/devices/${id}` : `/private/products/${id}`,
   },
+  updateLeadEmails: {
+    api: '/private/vendors/update-lead-emails',
+  },
+  getVendorSettings: {
+    api: '/private/vendors/email-settings',
+  },
+  publicChatVendorQuery: {
+    api: '/public/chats/process-vendor-query',
+  },
+  
+  
 };
 
 export const QUOTES_API = {
@@ -87,6 +111,14 @@ export const USER_API = {
   createAskIotUser: {
     api: '/private/users/',
   },
+  inviteUser: {
+    api: '/private/users/invite',
+  },
+  getAssociatedVendorUsers: {
+    api: '/private/users/associated',
+  },
+  
+
 };
 
 export const PROJECTS_API = {
@@ -116,7 +148,7 @@ export const PROJECTS_API = {
 
 export const MESSAGE_API = {
   getAllMessages: {
-    api: '/private/messages/',
+    api: '/private/messages',
   },
   getChannelDetailsByQuoteId: {
     api: (quoteId: number) => `/private/messages/quotes/${quoteId}/details`,
@@ -130,6 +162,9 @@ export const PRODUCT_API = {
   queryDevice: {
     api: '/public/chats/queryDevice',
   },
+  getVerifiedAlternateProducts: {
+    api: (productId: number) => `/public/products/${productId}/verified-alternate-products`,
+  },
 };
 
 export const COMMON_API = {
@@ -140,10 +175,12 @@ export const COMMON_API = {
 
 export const SUBSCRIPTION_API = {
   createCheckoutSession: {
-    // api: '/public/stripe/create-checkout-session',
-    api: '/api/checkout/create-checkout-session',
+    api: '/private/stripe/create-checkout-session',
   },
   createPortalSession: {
-    api: '/api/checkout/create-portal-session',
+    api: '/api/internal/checkout/create-portal-session',
+  },
+  generatePaymentUrl: {
+    api: `/api/internal/checkout/generate-payment-url`,
   },
 };

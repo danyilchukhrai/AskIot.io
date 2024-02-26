@@ -8,16 +8,16 @@ interface ITestimonialsSectionProps {}
 
 const REVIEWS = [
   {
-    content: `Eagerly awaiting askIoT's launch. It promises to redefine our customer interactions in the IoT space. This is the game-changer we've been waiting for.`,
-    name: 'Landon Garner',
-    position: 'Chief Marketing Officer, Kajeet',
-    image: '/assets/images/reviewer-lg.png'
+    content: `With askIoT launching, I now have a co-pilot that not only understands my queries but also connects me to the right vendors effortlessly. It's like having an expert colleague who’s always there to guide you through the IoT maze.`,
+    name: 'Michael Gersmeyer',
+    position: 'Sr. Product Manager ',
+    image: '/assets/images/reviewer-gers.png'
   },
   {
-    content: `As askIoT prepares to launch, we're excited for enterprises to discover the depth of Queclink's offerings. This platform promises to be a win-win, setting the stage for greater collaborations and amplified impact.`,
-    name: 'Manny Hernandez',
-    position: 'Vice President of North America, Queclink Wireless Solutions Co Ltd',
-    image: '/assets/images/reviewer-mg.png'
+    content: `As a Solutions Architect, I am eager to see how askIoT revolutionizes the way we approach IoT systems design and integration.`,
+    name: 'Vitor Ribeiro',
+    position: 'Solutions Architect, KORE Wireless',
+    image: '/assets/images/reviewer-vr.png'
   },
 ];
 
@@ -45,7 +45,7 @@ const TestimonialsSection: FC<ITestimonialsSectionProps> = (props) => {
       <div className="container">
         <p className="text-primary-500 text-2xl font-medium text-center">Testimonials</p>
         <p className="mt-5 text-gray-1200 text-4xl md:text-[2.5rem] md:leading-[56px] font-bold text-center">
-          What Providers Say
+          What Builders Say
         </p>
         <div className="md:pt-12 pt-6">
           <Carousel

@@ -1,87 +1,86 @@
-import Button from '@/components/Button';
-import LoadingIndicator from '@/components/LoadingIndicator';
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import FileUpload from '@/containers/bot/components/FileUpload';
 import Table from './Table';
 import { getTrainedData, removeTrainedData, uploadFiles, processUploads } from '@/modules/bots/services';
 import BackButton from '@/components/BackButton';
 import { ITrainData } from '@/modules/bots/types';
 import { IFile } from '@/modules/bots/types';
+import { toast } from 'react-toastify';
 
-interface ITrainBotProps {
-}
+import LoadingIndicator from '@/components/LoadingIndicator';
+import Button from '@/components/Button';
 
-const TrainBot: FC<ITrainBotProps> = ({ }) => {
+const TrainBot = () => {
   const fileTypes = ["PDF", "pdf"];
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [trainedList, setTrainedList] = useState<ITrainData[]>([]);
 
-
   const initialize = async () => {
     setIsLoading(true);
-    const response: any = await getTrainedData();
+    const response = await getTrainedData();
     setTrainedList(response);
     setIsLoading(false);
-  }
+  };
 
   const removeFile = async (data: ITrainData) => {
     setIsLoading(true);
-
     try {
-      await removeTrainedData(data.file_id);
-
-      const response: any = await getTrainedData();
+      const result = await removeTrainedData(data.file_id);
+      
+      // Check if result is not null before accessing message property
+      if (result && result.message) {
+        const successMessage = result.message;
+        toast.success(successMessage);
+      } else {
+        // If result is null, you can either throw an error or show a default success message
+        toast.success('File removed successfully.');
+      }
+  
+      const response = await getTrainedData();
       setTrainedList(response);
     } catch (e) {
-      console.log('removeFile error : ', e)
+      console.error('removeFile error : ', e);
+      toast.error('Failed to remove the file.'); // Show error toast if something goes wrong
     }
-
     setIsLoading(false);
-  }
+  };
+  
 
   const onUpload = async () => {
     setIsLoading(true);
-
     try {
-      const data: IFile[] = await uploadFiles(files);
+      const data = await uploadFiles(files);
       await processUploads(data);
-
-      const response: any = await getTrainedData();
+      const response = await getTrainedData();
       setTrainedList(response);
-
       setFiles([]);
     } catch (e) {
-      console.log('onUpload error', e);
+      console.error('onUpload error', e);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     initialize();
-  }, [])
+  }, []);
 
   if (isLoading) return <LoadingIndicator />;
 
   return (
-    <>
-      <div className="md:mt-[48px] p-12 mt-12 flex flex-col items-center">
-        <div className="header flex items-center justify-between mb-5 w-full">
-          <BackButton />
-        </div>
-        <div className="flex flex-col items-center mx-auto w-full">
-          <p className="text-gray-1000 text-l text-center mb-5">
-            Train the Bot
-          </p>
-          <Table rows={trainedList} removeFile={removeFile} />
-          <div className='class="flex flex-col items-center mx-auto'>
-            <FileUpload files={files} setFiles={setFiles} type={fileTypes} />
-          </div>
-          <Button className='mt-5' onClick={() => { onUpload() }}>Upload</Button>
-        </div>
+    <div className="container mx-auto p-12 pt-16">
+      <div className="mb-4">
+        <BackButton />
       </div>
-    </>
+      <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">Upload your files for training </h1>
+      <FileUpload files={files} setFiles={setFiles} type={fileTypes} />
+      <Button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" onClick={onUpload}>
+        Upload
+      </Button>
+      <Table rows={trainedList} removeFile={removeFile} />
+    </div>
   );
 };
 
 export default TrainBot;
+

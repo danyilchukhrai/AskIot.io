@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import FileUpload from '@/containers/bot/components/FileUpload';
 import Table from '@/containers/bot/components/Table';
-import { uploadFiles, processUploads, getTrainedData } from '@/modules/bots/services'
+import { uploadFiles, processUploads, getTrainedData } from '@/modules/bots/services';
 import { IFile } from '@/modules/bots/types';
 
 interface ITrainBotProps {
@@ -18,7 +18,7 @@ enum CHILD_STEP {
 }
 
 const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
-  const fileTypes = ["PDF", "pdf"];
+  const fileTypes = ['PDF', 'pdf'];
   const [childStep, setChildStep] = useState(CHILD_STEP.UPLOAD_FILES);
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -38,16 +38,16 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
       onNextStep();
     }
     setIsLoading(false);
-  }
+  };
 
   const onHandleBack = () => {
     if (childStep === CHILD_STEP.UPLOAD_FILES) {
       onBackStep();
     } else {
-      setFiles([])
+      setFiles([]);
       setChildStep(CHILD_STEP.UPLOAD_FILES);
     }
-  }
+  };
 
   const fetchTrainedData = async () => {
     const trainedData: any = await getTrainedData();
@@ -72,18 +72,23 @@ const TrainBot: FC<ITrainBotProps> = ({ onBackStep, onNextStep }) => {
     <>
       <div className="md:mt-[48px] mt-12 flex flex-col items-center">
         <div className="flex flex-col items-center mx-auto">
-          <p className="text-gray-1000 text-l text-center mb-5">
-            Train the Bot
-          </p>
-          {childStep === CHILD_STEP.UPLOAD_FILES && <FileUpload files={files} setFiles={setFiles} type={fileTypes} />}
+          <p className="text-gray-1000 text-l text-center mb-5">Add PDF files for training</p>
+          {childStep === CHILD_STEP.UPLOAD_FILES && (
+            <FileUpload files={files} setFiles={setFiles} type={fileTypes} />
+          )}
           {childStep === CHILD_STEP.REVIEW_TRAIN && <Table rows={trainedResult} />}
         </div>
 
-        <div className={`flex items-center justify-between mt-6 ${childStep === CHILD_STEP.UPLOAD_FILES ? 'w-[260px]' : 'w-[710px]'}`}>
+        <div className="flex w-full justify-between mt-6">
           <Button className="bg-gray" variant="secondary" onClick={onHandleBack}>
             Previous
           </Button>
-          <Button onClick={onHandleNext}>Next</Button>
+          <div className="flex gap-4">
+            <Button className="bg-gray" variant="secondary" onClick={form.handleSubmit(onNextStep)}>
+              Skip
+            </Button>
+            <Button onClick={onHandleNext}>Next</Button>
+          </div>
         </div>
       </div>
     </>

@@ -5,7 +5,7 @@ import { useAuthContext } from '@/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-export const withRestricted = (Component: React.FC) => (props: any) => {
+export const withRestricted = (Component: React.FC<any>) => (props: any) => {
   const router = useRouter();
   const [isValidRoute, setIsValidRoute] = useState(false);
   const { isFetching, user } = useAuthContext();

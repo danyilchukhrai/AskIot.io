@@ -2,6 +2,7 @@
 import Button from '@/components/Button';
 import FormInput from '@/components/FormComponents/FormInput';
 import FormPasswordInput from '@/components/FormComponents/FormPasswordInput';
+import Turnstile from '@/components/Turnstile';
 import { supabaseClient } from '@/configs/supabase';
 import { AUTH_ENDPOINTS } from '@/constants/api-endpoints';
 import { COOKIES_STORAGE_KEYS } from '@/constants/common';
@@ -21,6 +22,7 @@ interface ISignInProps {}
 interface ISignInForm {
   email: string;
   password: string;
+  captchaToken: string;
 }
 
 type SocialLoginProviderType = 'github' | 'google' | 'linkedin_oidc';
@@ -48,17 +50,18 @@ const SignIn: FC<ISignInProps> = (props) => {
     defaultValues: {
       email: '',
       password: '',
+      captchaToken: undefined,
     },
     resolver: yupResolver(loginSchema),
     mode: 'onSubmit',
   });
   const router = useRouter();
 
-  const handleSignIn = async ({ email, password }: ISignInForm) => {
+  const handleSignIn = async ({ email, password, captchaToken }: ISignInForm) => {
     setIsLoading(true);
     const res = await fetch(AUTH_ENDPOINTS.LOGIN, {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, captchaToken }),
     });
     const { error, accessToken } = (await res.json()) || {};
     setIsLoading(false);
@@ -78,7 +81,7 @@ const SignIn: FC<ISignInProps> = (props) => {
 
   const handleSocialLogin = async (provider: SocialLoginProviderType) => {
     let options: any = {
-      redirectTo: `${window.location.origin}/api/auth/callback/`,
+      redirectTo: `${window.location.origin}/api/internal/auth/callback/`,
     };
 
     if (provider === 'google') {
@@ -123,6 +126,13 @@ const SignIn: FC<ISignInProps> = (props) => {
               Forget password?
             </Link>
           </div>
+          <Turnstile
+            onSuccess={(token) => {
+              form.setValue('captchaToken', token);
+              form.trigger('captchaToken');
+            }}
+            errorMessage={form.formState?.errors?.captchaToken?.message}
+          />
           <Button
             onClick={form.handleSubmit(handleSignIn)}
             fullWidth
@@ -134,29 +144,7 @@ const SignIn: FC<ISignInProps> = (props) => {
         </form>
       </FormProvider>
       <div className="login-footer mt-4.5 flex flex-col items-center">
-        <p className="text-black flex items-center text-s before:content-[''] before:inline-block before:h-[1px] before:bg-gray-200 before:flex-1 after:content-[''] after:inline-block after:h-[1px] after:bg-gray-200 after:flex-1 before:mr-2 after:ml-2 mb-4.5 w-full lowercase md:capitalize">
-          Or
-        </p>
-        <ul className="socials flex items-center gap-[19px] mb-9">
-          {SOCIAL_LOGIN_DATA.map((it, index) => (
-            <li key={index}>
-              <div
-                className="hover:cursor-pointer w-[55px] h-[55px] bg-gray-100 rounded-full flex items-center justify-center"
-                onClick={() => handleSocialLogin(it.provider)}
-              >
-                <Image src={it.icon} width={24} height={24} alt="icon" />
-              </div>
-            </li>
-          ))}
-          <li>
-            <div
-              className="hover:cursor-pointer w-[55px] h-[55px] bg-gray-100 rounded-full flex items-center justify-center"
-              onClick={() => router.push(AUTH_ROUTES.PHONE_LOGIN)}
-            >
-              <Image src="/assets/icons/phone-login-icon.svg" width={24} height={24} alt="icon" />
-            </div>
-          </li>
-        </ul>
+        
         <p className="md:text-center text-s self-start">
           <span className="text-black">Don’t have an account? </span>
           <Link className="text-primary-500" href={AUTH_ROUTES.SIGN_UP}>

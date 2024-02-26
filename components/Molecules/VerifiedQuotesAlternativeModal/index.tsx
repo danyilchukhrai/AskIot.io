@@ -57,7 +57,13 @@ const VerifiedQuotesAlternativeModal = forwardRef<
 
   return (
     <>
-      <Modal ref={modalRef} primaryButtonLabel="Request Quote" onClose={onClose} hideButtons>
+      <Modal
+        paperClassName="md:!w-[1200px] w-full mx-4 md:max-w-[100%]"
+        ref={modalRef}
+        primaryButtonLabel="Request Quote"
+        onClose={onClose}
+        hideButtons
+      >
         <ProductQuotes
           products={products}
           onRequestQuote={handleRequestQuote}

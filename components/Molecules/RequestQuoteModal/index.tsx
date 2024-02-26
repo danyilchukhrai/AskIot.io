@@ -1,5 +1,6 @@
 import LoadingIndicator from '@/components/LoadingIndicator';
 import Modal, { IModalElement } from '@/components/Modal';
+import { SUBSCRIPTION_PLANS } from '@/constants/subscription';
 import { handleShowError } from '@/helpers/common';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useCreateQuotes } from '@/modules/quotes/hooks';
@@ -14,7 +15,11 @@ import AddToQuoteMobile from './AddToQuoteMobile';
 
 interface IRequestQuoteModalProps {
   product?: any;
-  onSuccess?: (quoteId: number, formData: IRequestQuoteForm) => void;
+  onSuccess?: (
+    quoteId: number,
+    formData: IRequestQuoteForm,
+    subscriptionPlan: SUBSCRIPTION_PLANS,
+  ) => void;
   onClose?: () => void;
 }
 
@@ -66,9 +71,9 @@ const RequestQuoteModal = forwardRef<IRequestQuoteModalElement, IRequestQuoteMod
       createQuotes(
         { item: data },
         {
-          onSuccess: ({ message, quoteId }) => {
+          onSuccess: ({ message, quoteId, subscriptionPlan }) => {
             if (onSuccess) {
-              onSuccess(quoteId, data);
+              onSuccess(quoteId, data, subscriptionPlan);
             } else {
               toast.success(message);
             }

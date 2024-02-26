@@ -23,7 +23,7 @@ const Quotes: FC<IQuotesProps> = () => {
     },
     {
       key: QUOTE_TAB_KEYS.VendorResponded,
-      label: 'Vendor Responded',
+      label: 'Provider Responded',
       component: (
         <QuotesTable currentUserType={currentUserType} status={QUOTE_STATUS.VendorResponded} />
       ),

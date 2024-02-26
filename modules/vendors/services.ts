@@ -6,6 +6,8 @@ import {
   IClaimVendorBody,
   ICreateVendorBody,
   IProductsByVendorResponse,
+  IProviderSettingsBody,
+  IPublicChatVendorQueryBody,
   ISearchVendorsQueryParams,
   ISearchVendorsResponse,
   IVendorDetails,
@@ -15,6 +17,15 @@ export const getVendorDetails = async (id: string | number): Promise<IVendorDeta
   const result = await apiInstance({
     method: REQUEST_METHOD.GET,
     url: VENDOR_API.getVendorDetails.api(id),
+  });
+
+  return result.data;
+};
+
+export const getVendorDetailsBySlug = async (slug: string): Promise<IVendorDetails> => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.GET,
+    url: VENDOR_API.getVendorDetailsBySlug.api(slug),
   });
 
   return result.data;
@@ -63,6 +74,17 @@ export const getProductsByVendor = async (
   return result.data;
 };
 
+export const getProductsByVendorSlug = async (
+  vendorSlug: string,
+): Promise<IProductsByVendorResponse> => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.GET,
+    url: VENDOR_API.getProductsByVendorSlug.api(vendorSlug),
+  });
+
+  return result.data;
+};
+
 export const chatVendorQuery = async (
   data: IChatVendorQueryBody,
 ): Promise<{ response?: string; greeting?: string }> => {
@@ -70,6 +92,18 @@ export const chatVendorQuery = async (
     method: REQUEST_METHOD.POST,
     data,
     url: VENDOR_API.chatVendorQuery.api,
+  });
+
+  return result.data;
+};
+
+export const publicChatVendorQuery = async (
+  data: IPublicChatVendorQueryBody,
+): Promise<{ response?: string; greeting?: string; is_email?: boolean }> => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.POST,
+    data,
+    url: VENDOR_API.publicChatVendorQuery.api,
   });
 
   return result.data;
@@ -122,3 +156,28 @@ export const getProductById = async (id: number, isDevice: boolean) => {
 
   return result.data;
 };
+
+export const updateLeadEmails = async (data: IProviderSettingsBody) => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.POST,
+    data,
+    url: VENDOR_API.updateLeadEmails.api,
+  });
+
+  return result.data;
+};
+
+export const getVendorSettings = async (): Promise<{
+  isUserEmailUsed: boolean;
+  emails: string[];
+}> => {
+  const result = await apiInstance({
+    method: REQUEST_METHOD.GET,
+    url: VENDOR_API.getVendorSettings.api,
+  });
+
+  return result.data;
+};
+
+
+

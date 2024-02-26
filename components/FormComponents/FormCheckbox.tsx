@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { HTMLProps, ReactNode } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
+import Checkbox from '../Checkbox';
 
 interface IFormCheckboxProps extends HTMLProps<HTMLInputElement> {
   inputClassName?: string;
@@ -22,7 +23,7 @@ const FormCheckBox: React.FC<IFormCheckboxProps> = ({
   const checkboxId = uuidv4();
 
   const {
-    field: { onChange, value, ...inputProps },
+    field: { onChange, value, ref, ...inputProps },
     fieldState: { error, invalid },
   } = useController({
     name,
@@ -39,6 +40,7 @@ const FormCheckBox: React.FC<IFormCheckboxProps> = ({
             <input
               {...inputProps}
               {...rest}
+              ref={ref}
               value={formValue}
               id={checkboxId}
               name={name}
@@ -56,27 +58,22 @@ const FormCheckBox: React.FC<IFormCheckboxProps> = ({
           <p className="ml-2 text-gray-700 text-s">{label}</p>
         </label>
       ) : (
-        <div className="flex items-center gap-2">
-          <input
-            {...inputProps}
-            {...rest}
-            value={formValue}
-            id={checkboxId}
-            name={name}
-            className={clsx('checkbox-input', inputClassName)}
-            type="checkbox"
-            onChange={(e) => {
-              onChange(e);
-              handleChange && handleChange(e);
-            }}
-            checked={formValue}
-          />
-          {label && (
-            <label className="text-s text-gray-700 hover:cursor-pointer" htmlFor={checkboxId}>
-              {label}
-            </label>
-          )}
-        </div>
+        <Checkbox
+          {...inputProps}
+          {...rest}
+          ref={ref}
+          value={formValue}
+          id={checkboxId}
+          name={name}
+          className={clsx('checkbox-input', inputClassName)}
+          type="checkbox"
+          onChange={(e) => {
+            onChange(e);
+            handleChange && handleChange(e);
+          }}
+          checked={formValue}
+          label={label}
+        />
       )}
       {invalid && <p className="text-red-500 text-s mt-2 error-msg">{error?.message}</p>}
     </div>

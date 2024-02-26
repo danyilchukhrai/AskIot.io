@@ -13,7 +13,7 @@ interface IRow {
 }
 
 const Table: FC<ITableProps> = ({ rows }: ITableProps) => {
-    if (rows.length === 0) {
+    if (rows?.length === 0) {
         return <>
             <Spinner />
         </>

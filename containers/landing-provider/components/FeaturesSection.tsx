@@ -14,7 +14,7 @@ const FeaturesSection: FC<IFeaturesSectionProps> = (props) => {
             description="Showcase your offerings on the first AI driven IoT marketplace"
             child={[
               'Top-tier exposure with high-intent users.',
-              'Brand mplification across your products.',
+              'Brand amplification across your products.',
               'Tailored placement to help win more leads.',
             ]}
             imgSrc="/assets/images/new-feature-1.webp"

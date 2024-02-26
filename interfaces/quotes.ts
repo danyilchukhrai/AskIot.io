@@ -33,6 +33,9 @@ export interface IProductDetails {
   category: string;
   quantity: number;
   offered_price: string;
+  alternate_products: any[];
+  specifications: { name: string; value: string; icon: string }[];
+  verified: boolean;
 }
 
 export interface IQuoteDetails {
@@ -51,12 +54,8 @@ export interface IQuoteDetails {
   message_content: string;
   user_to_vendor_message: string | null;
   vendor_to_user_message: string | null;
-  user: { first_name: string; last_name: string; website: string };
-  productDetails: {
-    Product: IProductDetails[];
-    alternate_products: any[];
-    specifications: { name: string; value: string; icon: string }[];
-  };
+  user: { first_name: string; last_name: string; website: string; email?: string };
+  productDetails: IProductDetails;
 }
 
 export interface IProviderFormData {

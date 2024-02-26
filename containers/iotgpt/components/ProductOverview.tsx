@@ -1,5 +1,7 @@
 import { CustomImg, CustomNextImage } from '@/components/CustomImage';
+import Tooltip from '@/components/Tooltip';
 import { DEFAULT_VENDOR_LOGO } from '@/constants/common';
+import { VERIFIED_VENDOR_MESSAGE } from '@/constants/vendors';
 import { generateSpecificationIconPath } from '@/helpers/common';
 import { ISpecification } from '@/modules/iot-gpt/type';
 import clsx from 'clsx';
@@ -70,6 +72,11 @@ const ProductOverview: FC<IProductOverviewProps> = ({ product, specifications = 
           <p className="text-gray-1000 text-base font-medium pl-2.5">
             {product?.vendorName || product?.vendorname || ''}
           </p>
+          {product?.verified && (
+            <Tooltip textClassName="!left-[calc(50%+32px)]" text={VERIFIED_VENDOR_MESSAGE}>
+              <img className="max-w-10 max-h-10" src="/assets/images/askiot_verified_small.png" />
+            </Tooltip>
+          )}
         </div>
       </div>
       {!!product?.product_details?.length && (

@@ -3,7 +3,6 @@
 import { useAuthContext } from '@/providers/AuthProvider';
 import SavedProductsProvider from '@/providers/SavedProductsProvider';
 import { FC, ReactNode } from 'react';
-import LoadingIndicator from '../LoadingIndicator';
 import MobileHeader from './MobileHeader';
 import Sidebar from './Sidebar';
 
@@ -12,9 +11,8 @@ interface IAppLayoutProps {
 }
 
 const AppLayout: FC<IAppLayoutProps> = ({ children }) => {
-  const { user, isFetching } = useAuthContext();
+  const { user } = useAuthContext();
 
-  if (isFetching) return <LoadingIndicator />;
   if (!user) return <>{children}</>;
   return (
     <SavedProductsProvider>

@@ -2,9 +2,11 @@ import Button from '@/components/Button';
 import Chat from '@/components/Molecules/Chat';
 import { handleShowError } from '@/helpers/common';
 import { IThreadInteraction } from '@/modules/iot-gpt/type';
-import { useChatVendorQuery } from '@/modules/vendors/hooks';
+import { useChatVendorQuery, usePublicChatVendorQuery } from '@/modules/vendors/hooks';
+import { useAuthContext } from '@/providers/AuthProvider';
 import Image from 'next/image';
-import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 
 interface IVendorChatProps {
@@ -14,19 +16,30 @@ interface IVendorChatProps {
 }
 
 const SUGGESTION = [
-  'Other alternatives',
-  'Something',
-  'Recommended contact',
-  'Recommended platform',
+  'what are the key features?',
+  'what are the usecases supported',
+  'What verticals are supported',
 ];
 
 const threadId = uuidv4();
 
 const VendorChat: FC<IVendorChatProps> = ({ setIsOpenChat, vendorId, vendorLogo }) => {
+  const { user } = useAuthContext();
   const [messageData, setMessageData] = useState<IThreadInteraction[]>([]);
-  const { mutate: chatVendorQuery, isPending: querying } = useChatVendorQuery();
+  const [requiredCaptcha, setRequiredCaptcha] = useState(false);
+  const [submittingEmail, setSubmittingEmail] = useState(false);
 
-  const handleSendMessage = (value: string) => {
+  const { mutate: chatVendorQuery, isPending: querying } = useChatVendorQuery();
+  const { mutate: publicChatVendorQuery, isPending: publicVendorQuerying } =
+    usePublicChatVendorQuery();
+
+  useEffect(() => {
+    if (!user) {
+      setRequiredCaptcha(true);
+    }
+  }, [user]);
+
+  const handleSendMessage = (value: string, captchaToken: string) => {
     const interactionId = messageData.length + 1;
     const newInteractionItem = {
       id: interactionId,
@@ -38,22 +51,46 @@ const VendorChat: FC<IVendorChatProps> = ({ setIsOpenChat, vendorId, vendorLogo 
     let newMessageData = [...messageData, newInteractionItem];
 
     setMessageData(newMessageData);
-    chatVendorQuery(
-      {
-        vendorId,
-        query: value,
-        threadId,
-      },
-      {
-        onSuccess: (data) => {
-          // Update message data with aiResponse after query successfully
-          const latestMessage = newMessageData[newMessageData.length - 1];
-          latestMessage.ai = data?.response || data?.greeting || '';
-          setMessageData(newMessageData);
+    setRequiredCaptcha(false);
+
+    if (user) {
+      chatVendorQuery(
+        {
+          vendorId,
+          query: value,
+          threadId,
         },
-        onError: handleShowError,
-      },
-    );
+        {
+          onSuccess: (data) => {
+            updateMessageDataAfterQuery(data, newMessageData);
+          },
+          onError: handleShowError,
+        },
+      );
+    } else {
+      publicChatVendorQuery(
+        {
+          vendorId,
+          query: value,
+          threadId,
+          is_email: false,
+          'cf-turnstile-response': captchaToken,
+        },
+        {
+          onSuccess: (data) => updateMessageDataAfterQuery(data, newMessageData),
+          onError: handleShowError,
+        },
+      );
+    }
+  };
+
+  const updateMessageDataAfterQuery = (data: any, messageData: IThreadInteraction[]) => {
+    // Update message data with aiResponse after query successfully
+    const newMessageData = [...messageData];
+    const latestMessage = newMessageData[newMessageData.length - 1];
+    latestMessage.ai = data?.response || data?.greeting || '';
+    latestMessage.is_email = data?.is_email;
+    setMessageData(newMessageData);
   };
 
   const getConversationHistory = (): string[] => {
@@ -66,10 +103,31 @@ const VendorChat: FC<IVendorChatProps> = ({ setIsOpenChat, vendorId, vendorLogo 
     }, []);
   };
 
+  const handleSubmitEmail = (email: string, captchaToken: string) => {
+    setSubmittingEmail(true);
+    publicChatVendorQuery(
+      {
+        vendorId: vendorId,
+        query: email,
+        threadId,
+        is_email: true,
+        'cf-turnstile-response': captchaToken,
+      },
+      {
+        onSuccess: (data) => {
+          const successMessage = data.greeting || 'Thank you. A member of the team will reach out to you!'; 
+          toast.success(successMessage);
+        },
+        onError: handleShowError,
+        onSettled: () => setSubmittingEmail(false),
+      },
+    );
+  };
+
   return (
     <div className="md:h-screen h-[calc(100vh-79px)] max-h-screen flex flex-col">
       <div className="flex items-center justify-between p-8 border-b border-gray-200">
-        <p className="text-gray-1000 text-l font-medium">Ask anything about this vendor</p>
+        <p className="text-gray-1000 text-l font-medium">Ask anything about this provider</p>
         <Button
           className="absolute top-8 right-8"
           variant="inline"
@@ -83,9 +141,12 @@ const VendorChat: FC<IVendorChatProps> = ({ setIsOpenChat, vendorId, vendorLogo 
         <Chat
           messageData={messageData}
           onSend={handleSendMessage}
-          isLoading={querying}
+          isLoading={querying || publicVendorQuerying}
           placeholder="Ask anything about this product..."
           suggestionList={SUGGESTION}
+          requiredCaptcha={requiredCaptcha}
+          submittingEmail={submittingEmail}
+          onSubmitEmail={handleSubmitEmail}
         />
       </div>
     </div>

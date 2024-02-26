@@ -27,9 +27,7 @@ const ProjectDetail: FC = () => {
   useEffect(() => {
     getProjectDetails();
   }, []); //eslint-disable-line
-
-  console.log('projectDetails', projectDetails);
-
+  
   return (
     <>
       {isProjectDetailsLoading ? (

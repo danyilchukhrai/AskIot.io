@@ -104,15 +104,15 @@ const config: Config = {
       },
     },
     fontSize: {
-      xs: ['0.6875rem', '14px'],
-      s: ['0.8125rem', '16px'],
-      base: ['0.875rem', '20px'],
-      l: ['1rem', '24px'],
-      xl: ['1.125rem', '28px'],
-      '2xl': ['1.25rem', '30px'],
-      '3xl': ['1.5rem', '32px'],
-      '4xl': '2.125rem',
-      '5xl': '4rem',
+      xs: ['0.625rem', '12px'], // Smaller font size
+      s: ['0.75rem', '14px'],  // Smaller font size
+      base: ['0.8125rem', '18px'], // Smaller font size
+      l: ['0.875rem', '22px'], // Smaller font size
+      xl: ['1rem', '26px'], // Smaller font size
+      '2xl': ['1.125rem', '28px'], // Smaller font size
+      '3xl': ['1.375rem', '30px'], // Smaller font size
+      '4xl': '2.125rem', // 34px font size
+      '5xl': '4rem', // 64px font size
     },
     boxShadow: {
       DEFAULT:
@@ -145,6 +145,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailgrids/plugin")],
 };
 export default config;

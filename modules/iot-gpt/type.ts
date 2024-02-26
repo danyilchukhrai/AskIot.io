@@ -8,18 +8,21 @@ export interface IRecommendationInfo {
   product_id?: number;
   product_image?: string;
   product_name?: string;
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
   product_description?: string;
-  img: string;
+  img?: string;
   vendorname: string;
-  logo: string;
+  logo?: string;
   slug?: string;
   recommendationType?: string;
   vendorid: number;
-  device_type: string;
+  device_type?: string;
   type: string;
   vendorlogo: string;
+  vendorslug: string;
+  category: string;
+  verified: boolean;
 }
 
 export interface IChatQueryRecommendation {
@@ -37,6 +40,7 @@ export interface IThread {
   status: string;
   created_date: string;
   isInitialThread?: boolean;
+  isLocalThread?: boolean;
 }
 
 export interface IThreadInteraction {
@@ -46,6 +50,8 @@ export interface IThreadInteraction {
   keywords: string;
   recommendations?: IChatQueryRecommendation;
   aiLogo?: string;
+  is_email?: boolean;
+  feedback?: boolean;
 }
 
 export interface IThreadDetails {
@@ -91,6 +97,7 @@ export interface IProduct {
   }[];
   usecase: string[];
   product_name: string;
+  verified: boolean;
 }
 
 export interface ISpecification {
@@ -103,4 +110,11 @@ export interface IRecommendationProductDetail extends IProduct {
   Product: IProduct[];
   specifications: ISpecification[];
   alternate_products: IRecommendationInfo[];
+}
+
+export interface IGreetingsFeedback {
+  threadId?: string;
+  interaction?: number;
+  feedback: boolean;
+  source: string;
 }

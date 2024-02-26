@@ -1,11 +1,9 @@
 import {
   DUMMY_CHANNEL_MESSAGES,
-  DUMMY_CHAT_CHANNELS,
   DUMMY_PRODUCT_LIST,
   DUMMY_QUOTES,
   DUMMY_VENDORS,
 } from '@/constants/dummy';
-import { IChatChannel } from '@/interfaces/messages';
 import { IMessage, IProduct } from '@/interfaces/products';
 import { IVendor } from '@/interfaces/vendor';
 import { get } from 'lodash';
@@ -54,14 +52,6 @@ export const getQuotes = (): Promise<any[]> => {
     setTimeout(() => {
       resolve(DUMMY_QUOTES);
     });
-  });
-};
-
-export const getChatChannel = (): Promise<IChatChannel[]> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(DUMMY_CHAT_CHANNELS);
-    }, 0);
   });
 };
 

@@ -1,59 +1,69 @@
+'use client';
+
 import Button from '@/components/Button';
-import LoadingIndicator from '@/components/LoadingIndicator';
 import Chat from '@/components/Molecules/Chat';
 import Tabs from '@/components/Tabs';
 import { RECOMMENDATION_TYPE } from '@/constants/iot-gpt';
 import { PRODUCT_TAB_KEY } from '@/constants/products';
 import { AUTH_ROUTES } from '@/constants/routes';
 import { handleShowError } from '@/helpers/common';
-import { useGetRecommendationProductDetail } from '@/modules/iot-gpt/hooks';
-import { IThreadInteraction } from '@/modules/iot-gpt/type';
+import { IRecommendationProductDetail, IThreadInteraction } from '@/modules/iot-gpt/type';
 import { useQueryDevice } from '@/modules/product/hooks';
-import { useChatVendorQuery } from '@/modules/vendors/hooks';
+import { useChatVendorQuery, usePublicChatVendorQuery } from '@/modules/vendors/hooks';
 import { useAuthContext } from '@/providers/AuthProvider';
+import { ProductDetailContext } from '@/providers/PublicProductDetailProvider';
 import QuoteSnippetProvider from '@/providers/QuotesSnippetsProvider';
 import clsx from 'clsx';
 import Image from 'next/image';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import { FC, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { FC, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 import ProductList from '../iotgpt/components/ProductList';
 import ProductDetailInfo from './components/ProductDetailInfo';
 import ProductDetailOverview from './components/ProductDetailOverview';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-interface IProductDetailProps {}
+interface IProductDetailProps {
+  productDetails?: IRecommendationProductDetail;
+}
 
-const SUGGESTIONS = [
-  'Other alternatives',
-  'Something',
-  'Recommended contact',
-  'Recommended platform',
-];
+const SUGGESTIONS = ['Key features', 'Key usecases supported', 'What verticals are supported'];
 
 const threadId = uuidv4();
 
-const ProductDetail: FC<IProductDetailProps> = ({}) => {
-  const params = useParams();
+const ProductDetail: FC<IProductDetailProps> = ({ productDetails }) => {
+  const { isOpenAskAnything, setIsOpenAskAnything } = useContext(ProductDetailContext);
   const pathName = usePathname();
-  const { products = [] } = params || {};
-  const [type, productSlug] = products as string[];
   const [messageData, setMessageData] = useState<IThreadInteraction[]>([]);
-  const [isOpenAskAnything, setIsOpenAskAnything] = useState(false);
+  const [requiredCaptcha, setRequiredCaptcha] = useState(false);
+  const [submittingEmail, setSubmittingEmail] = useState(false);
+
   const { user } = useAuthContext();
   const router = useRouter();
-  const { data: recommendationProductDetail, isLoading: fetchingProductDetails } =
-    useGetRecommendationProductDetail(productSlug, type as RECOMMENDATION_TYPE);
   const {
     Product = [],
     alternate_products: alternateDevices,
     specifications,
-  } = recommendationProductDetail || {};
+  } = productDetails || {};
   const { mutate: queryDevice, isPending: querying } = useQueryDevice();
   const { mutate: chatVendorQuery, isPending: vendorQuerying } = useChatVendorQuery();
+  const { mutate: publicChatVendorQuery, isPending: publicVendorQuerying } =
+    usePublicChatVendorQuery();
+  const isMobileMatches = useMediaQuery('(max-width: 767px)');
 
   const productData = Product[0];
 
-  const handleSendMessage = (value: string) => {
+  useEffect(() => {
+    if (!user) {
+      setRequiredCaptcha(true);
+      if (!isMobileMatches) {
+        setIsOpenAskAnything(true);
+      }
+    }
+  }, [user]);
+
+  const handleSendMessage = (value: string, captchaToken: string) => {
     const interactionId = messageData.length + 1;
     const newInteractionItem = {
       id: interactionId,
@@ -63,8 +73,23 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
     };
     let newMessageData = [...messageData, newInteractionItem];
     setMessageData(newMessageData);
+    setRequiredCaptcha(false);
 
-    if (productData?.type === RECOMMENDATION_TYPE.DEVICES) {
+    if (!user) {
+      publicChatVendorQuery(
+        {
+          vendorId: productData?.vendorid,
+          query: value,
+          threadId,
+          is_email: false,
+          'cf-turnstile-response': captchaToken,
+        },
+        {
+          onSuccess: (data) => updateMessageDataAfterQuery(data, newMessageData),
+          onError: handleShowError,
+        },
+      );
+    } else if (productData?.type === RECOMMENDATION_TYPE.DEVICES) {
       queryDevice(
         {
           deviceId: productData?.id,
@@ -92,12 +117,31 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
     }
   };
 
-  const updateMessageDataAfterQuery = (aiMessage: string, messageData: IThreadInteraction[]) => {
+  const updateMessageDataAfterQuery = (data: any, messageData: IThreadInteraction[]) => {
     // Update message data with aiResponse after query successfully
     const newMessageData = [...messageData];
     const latestMessage = newMessageData[newMessageData.length - 1];
-    latestMessage.ai = aiMessage;
+    latestMessage.ai = data?.response || data?.greeting || '';
+    latestMessage.is_email = data?.is_email;
     setMessageData(newMessageData);
+  };
+
+  const handleSubmitEmail = (email: string, captchaToken: string) => {
+    setSubmittingEmail(true);
+    publicChatVendorQuery(
+      {
+        vendorId: productData?.vendorid,
+        query: email,
+        threadId,
+        is_email: true,
+        'cf-turnstile-response': captchaToken,
+      },
+      {
+        onSuccess: () => toast.success('Successfully!'),
+        onError: handleShowError,
+        onSettled: () => setSubmittingEmail(false),
+      },
+    );
   };
 
   const getConversationHistory = (isDevicesType: boolean): string[] => {
@@ -157,15 +201,14 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
     },
   ];
 
-  if (fetchingProductDetails) return <LoadingIndicator />;
-
   return (
     <QuoteSnippetProvider>
       <div className="flex">
         <div
           className={clsx(
-            'product-detail md:p-8 p-4 h-screen relative overflow-auto',
+            'product-detail relative',
             isOpenAskAnything ? 'w-3/5' : 'w-full',
+            user ? 'md:p-8 p-4 h-screen overflow-auto' : 'md:p-1 md:py-8 p-1 py-4',
           )}
         >
           <div
@@ -187,7 +230,7 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
                 </Button>
               </div>
             )}
-            {!isOpenAskAnything && (
+            {!isOpenAskAnything && user && (
               <Button
                 className="md:flex hidden items-center ml-4 w-28 md:w-fit md:!px-2.5 !px-1"
                 variant="info"
@@ -223,7 +266,9 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
           className={clsx(
             'ask-anything border-l border-gray-200 bg-gray flex flex-col',
             isOpenAskAnything
-              ? 'md:w-2/5 md:static fixed top-[79px] right-0 left-0 bottom-0 md:h-screen h-[calc(100vh-79px)]'
+              ? user
+                ? 'md:w-2/5 md:static fixed top-[79px] right-0 left-0 bottom-0 md:h-screen h-[calc(100vh-79px)]'
+                : 'md:fixed md:top-0 md:right-0 md:left-unset md:bottom-unset md:z-50 md:h-screen md:w-2/5 fixed top-[79px] right-0 left-0 bottom-0 h-[calc(100vh-79px)]'
               : 'hidden',
           )}
         >
@@ -244,7 +289,7 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
                 height={20}
               />
               <p className="text-gray-1000 text-base md:text-l font-medium pl-3 md:pl-0">
-                Ask anything about this device
+                Ask anything about this product
               </p>
             </div>
             <Button
@@ -260,9 +305,12 @@ const ProductDetail: FC<IProductDetailProps> = ({}) => {
             <Chat
               messageData={messageData}
               onSend={handleSendMessage}
-              isLoading={querying || vendorQuerying}
+              isLoading={querying || vendorQuerying || publicVendorQuerying}
+              submittingEmail={submittingEmail}
               placeholder="Ask anything about this product..."
               suggestionList={SUGGESTIONS}
+              onSubmitEmail={handleSubmitEmail}
+              requiredCaptcha={requiredCaptcha}
             />
           </div>
         </div>

@@ -3,9 +3,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   chatQuery,
   chatQueryDev,
+  deleteThread,
   getRecommendationProductDetail,
   getThreadDetails,
   getUserThreads,
+  greetingsFeedback,
 } from './services';
 import { IChatQueryBody } from './type';
 
@@ -56,5 +58,17 @@ export const useGetRecommendationProductDetail = (
     ],
     queryFn: () => getRecommendationProductDetail(query, recommendationType),
     enabled: !!query && !!recommendationType,
+  });
+};
+
+export const useDeleteThread = () => {
+  return useMutation({
+    mutationFn: deleteThread,
+  });
+};
+
+export const useGreetingsFeedback = () => {
+  return useMutation({
+    mutationFn: greetingsFeedback,
   });
 };

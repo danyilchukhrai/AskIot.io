@@ -1,3 +1,5 @@
+import { PAYMENT_STATUS } from '@/constants/common';
+
 export interface IAskIOTUserDetails {
   user_id: string;
   is_provider: boolean;
@@ -8,7 +10,7 @@ export interface IAskIOTUserDetails {
   first_name: string;
   last_name: string;
   is_mobile_verified: boolean;
-  paymentstatus: string;
+  paymentstatus: PAYMENT_STATUS;
 }
 
 export interface IUserQuoteSnippets {

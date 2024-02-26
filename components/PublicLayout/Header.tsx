@@ -1,22 +1,23 @@
 'use client';
-import { FC, useState } from 'react';
-import Image from 'next/image';
-import Button from '@/components/Button';
-import TypeFormPopupButton from '../TypeFormPopupButton';
-import { JOIN_WAITLIST_TYPEFORM_ID } from '@/constants/typeform';
+import { AUTH_ROUTES } from '@/constants/routes';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
+import Image from 'next/image';
 import Link from 'next/link';
-import MobileMenu from './MobileMenu';
+import { FC, ReactNode, useState } from 'react';
+import Button from '../Button';
 import HamburgerButton from '../HamburgerButton';
+import MobileMenu from './MobileMenu';
 
 interface IHeaderProps {
   isNewLanding?: boolean;
+  headerButtonComponent?: ReactNode;
+  hideAuthButtons?: boolean;
 }
 
 const NAV = [
   {
-    label: 'Solution Builders',
+    label: 'Builders',
     href: '/',
   },
   {
@@ -25,7 +26,11 @@ const NAV = [
   },
 ];
 
-const Header: FC<IHeaderProps> = ({ isNewLanding = false }) => {
+const Header: FC<IHeaderProps> = ({
+  isNewLanding = false,
+  headerButtonComponent,
+  hideAuthButtons,
+}) => {
   const isShowHamburger = useMediaQuery('(max-width: 767px)');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -63,14 +68,25 @@ const Header: FC<IHeaderProps> = ({ isNewLanding = false }) => {
         <div className="header-right">
           {isShowHamburger ? (
             <HamburgerButton onClick={() => setShowMobileMenu((prev) => !prev)} />
-          ) : (
-            <TypeFormPopupButton typeformId={JOIN_WAITLIST_TYPEFORM_ID} className="text-l px-6">
-              Join Waitlist
-            </TypeFormPopupButton>
-          )}
+          ) : !hideAuthButtons ? (
+            <div className="flex items-center gap-2">
+              <Button variant="inline" link={AUTH_ROUTES.SIGN_UP}>
+                Sign up
+              </Button>
+              <Button link={AUTH_ROUTES.LOGIN}>Sign In</Button>
+            </div>
+          ) : headerButtonComponent ? (
+            headerButtonComponent
+          ) : null}
         </div>
       </div>
-      {showMobileMenu && <MobileMenu menu={NAV} />}
+      {showMobileMenu && (
+        <MobileMenu
+          menu={NAV}
+          hideAuthButtons={hideAuthButtons}
+          headerButtonComponent={headerButtonComponent}
+        />
+      )}
     </header>
   );
 };

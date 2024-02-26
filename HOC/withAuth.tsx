@@ -13,12 +13,12 @@ export const withAuth = (Component: React.FC) => (allowedRoles: USER_TYPE[]) => 
   const { isFetching: isFetchingUserInfo, user } = useAuthContext();
 
   useEffect(() => {
-    if (isFetchingUserInfo || !allowedUserTypes.length || !currentUserType) return;
+    if (isFetchingUserInfo || !allowedUserTypes || !currentUserType) return;
     handleCheckPermission();
   }, [isFetchingUserInfo, allowedUserTypes, currentUserType]);
 
   const handleCheckPermission = () => {
-    if (user && !allowedRoles.some((it) => allowedUserTypes.includes(it))) {
+    if (user && !allowedRoles.some((it) => allowedUserTypes?.includes(it))) {
       setIsValidRoute(false);
       setTimeout(() => {
         if (currentUserType) {
